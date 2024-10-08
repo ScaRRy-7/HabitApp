@@ -13,6 +13,10 @@ public final class Registration {
         return registration;
     }
 
+    public void registrate(String email) {
+
+    }
+
 
 
 

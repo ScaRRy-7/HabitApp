@@ -13,5 +13,9 @@ public final class Authorization {
         return authorization;
     }
 
+    public void start() {
+
+    }
+
 
 }
