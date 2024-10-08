@@ -11,4 +11,13 @@ public final class UsersController {
     public User getUserFromDatabase(String email) {
         return usersStorage.getUser(email);
     }
+
+    public void updateRedactedUser(User user, String email) {
+        usersStorage.removeUser(email);
+        usersStorage.addUser(user);
+    }
+
+    public void removeUserFromDatabase(String email)  {
+        usersStorage.removeUser(email);
+    }
 }

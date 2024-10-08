@@ -30,4 +30,8 @@ public final class UsersStorage {
         return users.get(email);
     }
 
+    public void removeUser(String email) {
+        users.remove(email);
+    }
+
 }

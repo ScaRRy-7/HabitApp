@@ -10,4 +10,8 @@ public class AuthenticationWriter {
         System.out.println("Ошибка! Пароль должен содержать хотя бы одну строчную букву и " +
                 "длиной от 1 до 16 символов (только латинский алфавит)");
     }
+
+    public void infoIncorrectPassword() {
+        System.out.println("Пароль не верный!");
+    }
 }

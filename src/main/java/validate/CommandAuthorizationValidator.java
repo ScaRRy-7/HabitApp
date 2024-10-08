@@ -1,6 +1,6 @@
 package validate;
 
-public class CommandValidator {
+public class CommandAuthorizationValidator {
 
     public boolean isValid(String command) {
         if (command.isEmpty()) return false;

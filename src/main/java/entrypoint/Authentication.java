@@ -30,6 +30,10 @@ public final class Authentication {
             if (passwordChecker.checkPassword(email, password)) {
                 User user = usersController.getUserFromDatabase(email);
                 authorization.start(user);
+            } else {
+                writer.infoIncorrectPassword();
+                waiter.waitSecond();
+                login(email);
             }
         } else {
             writer.reportInvalidPassword();

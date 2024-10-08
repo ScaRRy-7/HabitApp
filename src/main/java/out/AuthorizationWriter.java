@@ -5,7 +5,7 @@ import storage.User;
 public class AuthorizationWriter {
 
     public void greetings(User user) {
-        System.out.printf("Привет, %s! Выбери команду: %n", user.getName());
+        System.out.printf("Привет, %s! Выбери команду %n", user.getName());
     }
 
     public void getCommands() {

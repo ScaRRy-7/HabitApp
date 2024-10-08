@@ -6,7 +6,7 @@ import actions.ProfileRedactor;
 import in.AuthorizationReader;
 import out.AuthorizationWriter;
 import storage.User;
-import validate.CommandValidator;
+import validate.CommandAuthorizationValidator;
 import wait.Waiter;
 
 public final class Authorization {
@@ -16,19 +16,18 @@ public final class Authorization {
     private final HabitsRedactor habitsRedactor = new HabitsRedactor();
     private final HabitsStatistics habitsStatistics = new HabitsStatistics();
     private final ProfileRedactor profileRedactor = new ProfileRedactor();
-    private final CommandValidator commandValidator = new CommandValidator();
+    private final CommandAuthorizationValidator commandValidator = new CommandAuthorizationValidator();
     private final Waiter waiter = new Waiter();
     private User currentUser;
 
     public void start(User user) {
         currentUser = user;
         writer.greetings(user);
-        writer.getCommands();
-
-        selectComand();
+        selectCommand();
     }
 
-    public void selectComand() {
+    public void selectCommand() {
+        writer.getCommands();
         String commandString = (reader.readCommand());
         int command = 0;
 
@@ -37,7 +36,7 @@ public final class Authorization {
         } else {
             writer.reportInvalidCommand();
             waiter.waitSecond();
-            selectComand();
+            selectCommand();
         }
 
         switch (command) {
@@ -53,8 +52,8 @@ public final class Authorization {
             case 4:
                 Start.main(null);
                 break;
-
         }
+        selectCommand();
     }
 
 
