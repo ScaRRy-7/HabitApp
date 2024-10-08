@@ -4,14 +4,6 @@ import in.IdentificationReader;
 
 public final class IdentificationWriter {
 
-    private static final IdentificationWriter identificationWriter = new IdentificationWriter();
-
-    private IdentificationWriter() {}
-
-    public static IdentificationWriter getInstance() {
-        return identificationWriter;
-    }
-
     public void writeGreetings() {
         System.out.println("Введи свою почту, а я проверю, есть ли у тебя аккаунт: ");
     }

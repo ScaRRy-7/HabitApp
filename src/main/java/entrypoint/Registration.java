@@ -11,21 +11,13 @@ import wait.Waiter;
 
 public final class Registration {
 
-    private static final Registration registration = new Registration();
-
-    private final RegistrationWriter writer = RegistrationWriter.getInstance();
-    private final RegistrationReader reader = RegistrationReader.getInstance();
-    private final NameValidator nameValidator = NameValidator.getInstance();
-    private final Waiter waiter = Waiter.getInstance();
-    private final PasswordValidator passwordValidator = PasswordValidator.getInstance();
-    private final UsersController usersController = UsersController.getInstance();
-    private final Authorization authorization = Authorization.getInstance();
-
-    private Registration() {}
-
-    public static Registration getInstance() {
-        return registration;
-    }
+    private final RegistrationWriter writer = new RegistrationWriter();
+    private final RegistrationReader reader = new RegistrationReader();
+    private final NameValidator nameValidator = new NameValidator();
+    private final Waiter waiter = new Waiter();
+    private final PasswordValidator passwordValidator = new PasswordValidator();
+    private final UsersController usersController = new UsersController();
+    private final Authorization authorization = new Authorization();
 
     public void registrate(String email) {
         writer.askName();
@@ -39,7 +31,7 @@ public final class Registration {
             // имя указано некорректно (пустое/символы не из латинского алфавита или кириллицы)
             // сообщаем пользователю о некорректности имени и просим ввести его заново
             writer.reportInvalidName();
-            waiter.wait(1);
+            waiter.waitSecond();
             registrate(email);
         }
     }
@@ -58,7 +50,7 @@ public final class Registration {
         } else {
             // пароль не валиден
             writer.reportInvalidPassword();
-            waiter.wait(1);
+            waiter.waitSecond();
             createPassword(email, name);
         }
     }

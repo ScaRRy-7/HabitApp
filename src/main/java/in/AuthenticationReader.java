@@ -2,16 +2,11 @@ package in;
 
 import java.util.Scanner;
 
-public final class RegistrationReader {
+public class AuthenticationReader {
 
     private final Scanner scanner = new Scanner(System.in);
 
-    public String getName() {
-        String name = scanner.nextLine();
-        return name;
-    }
-
-    public String getPassword() {
+    public String readPassword() {
         String password = scanner.nextLine();
         return password;
     }

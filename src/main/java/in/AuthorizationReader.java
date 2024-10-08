@@ -1,12 +1,13 @@
 package in;
 
+import java.util.Scanner;
+
 public class AuthorizationReader {
 
-    private static final AuthorizationReader instance = new AuthorizationReader();
+    private final Scanner scanner = new Scanner(System.in);
 
-    private AuthorizationReader() {}
-
-    public static AuthorizationReader getInstance() {
-        return instance;
+    public String readCommand() {
+        String command = scanner.nextLine();
+        return command;
     }
 }

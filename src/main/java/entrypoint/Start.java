@@ -9,7 +9,7 @@ public final class Start {
         если почта найдена - редирект в авторизацию
 
          */
-        Identification identification = Identification.getInstance();
+        Identification identification = new Identification();
         identification.start();
     }
 }

@@ -1,14 +1,12 @@
 package storage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public final class UsersStorage {
 
     private static final UsersStorage usersStorage = new UsersStorage();
 
-    private List<User> users = new ArrayList<>();
+    private Map<String, User> users = new HashMap<>();
 
     private UsersStorage() {}
 
@@ -17,20 +15,19 @@ public final class UsersStorage {
     }
 
     public void addUser(User user) {
-        users.add(user);
+        users.put(user.getEmail(), user);
     }
 
-    public List<User> getUsers() {
-        return users;
+    public Collection<User> getUsers() {
+        return users.values();
     }
 
     public boolean hasUser(String email) {
-        for (User user : users) {
-            if (user.getEmail().equals(email)) {
-                return true;
-            }
-        }
-        return false;
+        return users.get(email) != null;
+    }
+
+    public User getUser(String email) {
+        return users.get(email);
     }
 
 }
