@@ -11,6 +11,6 @@ public final class PasswordValidator {
     }
 
     public boolean isValid(String password) {
-        return password.matches("^(?=.*[a-z])[A-Za-z]{1,16}$\n");
+        return password.matches("^(?=.*[a-z])[A-Za-z\\d]{1,16}$");
     }
 }

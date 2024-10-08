@@ -12,11 +12,11 @@ public final class RegistrationWriter {
 
 
     public void askName() {
-        System.out.print("Введи своё имя. оно не может быть пустым, содержать пробелы или цифры: ");
+        System.out.println("Введи своё имя. оно не может быть пустым, содержать пробелы или цифры: ");
     }
 
     public void askPassword() {
-        System.out.print("Придумай пароль: ");
+        System.out.println("Придумай пароль: ");
     }
 
 

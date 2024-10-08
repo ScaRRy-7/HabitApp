@@ -4,6 +4,9 @@ import in.IdentificationReader;
 import out.IdentificationWriter;
 import storage.UsersStorage;
 import validate.EmailValidator;
+import wait.Waiter;
+
+import java.util.Arrays;
 
 public final class Identification {
 
@@ -15,6 +18,7 @@ public final class Identification {
     private final UsersStorage usersStorage = UsersStorage.getInstance();
     private final Authentication authentication = Authentication.getInstance();
     private final Registration registration = Registration.getInstance();
+    private final Waiter waiter = Waiter.getInstance();
 
     private Identification() {}
 
@@ -33,6 +37,7 @@ public final class Identification {
         } else {
             // емэйл не валиден, необходимо сообщить об этом пользователю и запросить емэйл повторно
             writer.reportInvalidEmail();
+            waiter.wait(1);
             start();
         }
     }
@@ -41,10 +46,12 @@ public final class Identification {
         if (usersStorage.hasUser(email)) {
             //  пользователь с таким емэйлом существует - направляем на аутентификацию
             writer.infoRedirectAuthentication();
+            waiter.wait(1);
             authentication.login(email);
         } else {
             // пользователя с таким емэйлом не существует - направляем на регистрацию
             writer.infoRedirectRegistration();
+            waiter.wait(1);
             registration.registrate(email);
         }
 

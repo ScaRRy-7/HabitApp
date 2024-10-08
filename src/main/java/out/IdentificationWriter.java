@@ -13,7 +13,7 @@ public final class IdentificationWriter {
     }
 
     public void writeGreetings() {
-        System.out.println("Введи свою почту, а я проверю, есть ли ты в базе");
+        System.out.println("Введи свою почту, а я проверю, есть ли у тебя аккаунт: ");
     }
 
     public void reportInvalidEmail() {

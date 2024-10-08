@@ -12,7 +12,7 @@ public final class Waiter {
 
     public void wait(int seconds) {
         try {
-            Thread.sleep(seconds*1000);
+            Thread.sleep(seconds* 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

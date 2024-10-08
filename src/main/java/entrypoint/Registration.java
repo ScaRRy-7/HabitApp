@@ -19,6 +19,7 @@ public final class Registration {
     private final Waiter waiter = Waiter.getInstance();
     private final PasswordValidator passwordValidator = PasswordValidator.getInstance();
     private final UsersController usersController = UsersController.getInstance();
+    private final Authorization authorization = Authorization.getInstance();
 
     private Registration() {}
 
@@ -49,8 +50,9 @@ public final class Registration {
 
         if (passwordValidator.isValid(password)) {
             // пароль валиден, создаем пользователя
-            User user = new User(email, name, password);
+            User user = new User(name, email, password);
             usersController.addUserToDatabase(user);
+            authorization.start(user);
 
 
         } else {

@@ -6,7 +6,9 @@ import storage.User;
 public final class Authorization {
 
     private static final Authorization authorization = new Authorization();
+
     private final AuthorizationWriter writer = AuthorizationWriter.getInstance();
+    private User currentUser;
 
     private Authorization() {}
 
@@ -14,7 +16,8 @@ public final class Authorization {
         return authorization;
     }
 
-    public void login(User user) {
-
+    public void start(User user) {
+        currentUser = user;
+        writer.greetings(user);
     }
 }
