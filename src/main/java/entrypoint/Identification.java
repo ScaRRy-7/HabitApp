@@ -40,9 +40,11 @@ public final class Identification {
     public void identificate(String email) {
         if (usersStorage.hasUser(email)) {
             //  пользователь с таким емэйлом существует - направляем на аутентификацию
+            writer.infoRedirectAuthentication();
             authentication.login(email);
         } else {
             // пользователя с таким емэйлом не существует - направляем на регистрацию
+            writer.infoRedirectRegistration();
             registration.registrate(email);
         }
 

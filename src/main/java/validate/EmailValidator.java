@@ -1,6 +1,6 @@
 package validate;
 
-public class EmailValidator {
+public final class EmailValidator {
 
     private static final EmailValidator emailValidator = new EmailValidator();
 

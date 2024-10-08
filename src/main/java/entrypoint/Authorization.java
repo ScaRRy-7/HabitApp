@@ -1,6 +1,7 @@
 package entrypoint;
 
 import out.AuthorizationWriter;
+import storage.User;
 
 public final class Authorization {
 
@@ -13,9 +14,7 @@ public final class Authorization {
         return authorization;
     }
 
-    public void start() {
+    public void login(User user) {
 
     }
-
-
 }

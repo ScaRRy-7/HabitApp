@@ -1,6 +1,6 @@
 package storage;
 
-public class User {
+public final class User {
 
     private String name;
     private String email;

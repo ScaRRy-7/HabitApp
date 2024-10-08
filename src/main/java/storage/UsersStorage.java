@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class UsersStorage {
+public final class UsersStorage {
 
     private static final UsersStorage usersStorage = new UsersStorage();
 

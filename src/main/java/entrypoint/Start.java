@@ -1,6 +1,6 @@
 package entrypoint;
 
-public class Start {
+public final class Start {
 
     public static void main(String[] args) {
         /* программа начинается с попытки идентификации пользователя

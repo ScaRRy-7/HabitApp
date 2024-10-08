@@ -2,7 +2,7 @@ package out;
 
 import in.IdentificationReader;
 
-public class IdentificationWriter {
+public final class IdentificationWriter {
 
     private static final IdentificationWriter identificationWriter = new IdentificationWriter();
 
@@ -18,5 +18,13 @@ public class IdentificationWriter {
 
     public void reportInvalidEmail() {
         System.out.println("Ты ввел некорректную почту! Попробуй ещё раз");
+    }
+
+    public void infoRedirectRegistration() {
+        System.out.println("Пользователь с такой почтой еще не существует, направляю тебя на регистрацию!");
+    }
+
+    public void infoRedirectAuthentication() {
+        System.out.println("Пользователь с такой почтой существует!");
     }
 }

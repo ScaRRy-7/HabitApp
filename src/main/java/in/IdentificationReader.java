@@ -2,7 +2,7 @@ package in;
 
 import java.util.Scanner;
 
-public class IdentificationReader {
+public final class IdentificationReader {
 
     private static final IdentificationReader reader = new IdentificationReader();
     private final Scanner scanner = new Scanner(System.in);

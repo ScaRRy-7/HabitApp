@@ -1,6 +1,6 @@
 package entrypoint;
 
-public class Authentication {
+public final class Authentication {
 
     private static final Authentication authentication = new Authentication();
 
