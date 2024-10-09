@@ -1,6 +1,6 @@
-package checker;
+package checkers;
 
-import storage.User;
+import entities.User;
 import storage.UsersController;
 
 public class PasswordChecker {

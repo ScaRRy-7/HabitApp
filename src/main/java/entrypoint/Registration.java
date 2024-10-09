@@ -1,10 +1,10 @@
 package entrypoint;
 
+import in.Reader;
+import menus.AuthorizationMenu;
 import out.RegistrationWriter;
-import in.RegistrationReader;
-import storage.User;
+import entities.User;
 import storage.UsersController;
-import storage.UsersStorage;
 import validate.NameValidator;
 import validate.PasswordValidator;
 import wait.Waiter;
@@ -12,16 +12,16 @@ import wait.Waiter;
 public final class Registration {
 
     private final RegistrationWriter writer = new RegistrationWriter();
-    private final RegistrationReader reader = new RegistrationReader();
+    private final Reader reader = new Reader();
     private final NameValidator nameValidator = new NameValidator();
     private final Waiter waiter = new Waiter();
     private final PasswordValidator passwordValidator = new PasswordValidator();
     private final UsersController usersController = new UsersController();
-    private final Authorization authorization = new Authorization();
+    private final AuthorizationMenu authorizationMenu = new AuthorizationMenu();
 
     public void registrate(String email) {
         writer.askName();
-        String name = reader.getName();
+        String name = reader.read();
 
         if (nameValidator.isValid(name)) {
             // имя указано корректно, можно переходить к созданию пароля
@@ -38,13 +38,13 @@ public final class Registration {
 
     public void createPassword(String email, String name) {
         writer.askPassword();
-        String password = reader.getPassword();
+        String password = reader.read();
 
         if (passwordValidator.isValid(password)) {
             // пароль валиден, создаем пользователя
             User user = new User(name, email, password);
             usersController.addUserToDatabase(user);
-            authorization.start(user);
+            authorizationMenu.start(user);
 
 
         } else {

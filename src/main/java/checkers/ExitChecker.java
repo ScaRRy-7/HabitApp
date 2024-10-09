@@ -1,4 +1,4 @@
-package checker;
+package checkers;
 
 import entrypoint.Identification;
 

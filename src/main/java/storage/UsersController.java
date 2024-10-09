@@ -1,5 +1,8 @@
 package storage;
 
+import entities.Habit;
+import entities.User;
+
 public final class UsersController {
 
     private final UsersStorage usersStorage = UsersStorage.getInstance();
@@ -19,5 +22,21 @@ public final class UsersController {
 
     public void removeUserFromDatabase(String email)  {
         usersStorage.removeUser(email);
+    }
+
+    public void addNewHabit(User user, Habit habit) {
+        usersStorage.addHabitToUser(user, habit);
+    }
+
+    public void changeHabit(User user, Habit habit, int habitNumber) {
+        int habitIndex = habitNumber-1;
+        user.getHabits().set(habitIndex, habit);
+        usersStorage.addUser(user);
+    }
+
+    public void removeHabit(User user, int habitNumber) {
+        user.getHabits().remove(habitNumber-1);
+        usersStorage.addUser(user);
+
     }
 }

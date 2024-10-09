@@ -1,9 +1,10 @@
-package actions;
+package menus;
 
+import enums.ProfileCommand;
 import entrypoint.Start;
-import in.ProfileRedactorReader;
+import in.Reader;
 import out.ProfileRedactorWriter;
-import storage.User;
+import entities.User;
 import storage.UsersController;
 import validate.CommandProfileValidator;
 import validate.EmailValidator;
@@ -11,59 +12,72 @@ import validate.NameValidator;
 import validate.PasswordValidator;
 import wait.Waiter;
 
-public class ProfileRedactor {
+public class ProfileMenu implements Commander {
 
     private final CommandProfileValidator commandValidator = new CommandProfileValidator();
     private final PasswordValidator passwordValidator = new PasswordValidator();
     private final ProfileRedactorWriter writer = new ProfileRedactorWriter();
-    private final ProfileRedactorReader reader = new ProfileRedactorReader();
+    private final Reader reader = new Reader();
     private final UsersController usersController = new UsersController();
     private final EmailValidator emailValidator = new EmailValidator();
     private final NameValidator nameValidator = new NameValidator();
-
     private final Waiter waiter = new Waiter();
     private User currentUser;
 
     public void start(User user) {
         currentUser = user;
-        writer.writeCommands();
         selectCommand();
     }
 
     public void selectCommand() {
-        String commandString = reader.readCommand();
-        int command = 0;
+        writer.writeCommands();
+        String commandString = reader.read();
+        ProfileCommand command;
 
         if (commandValidator.isValid(commandString)) {
-            command = Integer.parseInt(commandString);
+            command = getProfileCommandByNumber(Integer.parseInt(commandString));
             switch (command) {
-                case 1:
+                case CHANGENAME:
                     changeName();
                     break;
-                case 2:
+                case CHANGEEMAIL:
                     changeEmail();
                     break;
-                case 3:
+                case CHANGEPASSWORD:
                     changePassword();
                     break;
-                case 4:
+                case DELETEACCOUNT:
                     deleteAccount();
                     break;
-                case 5:
+                case RETURNTOMENU:
+                    return;
+                case EXIT:
                     Start.main(null);
                     break;
             }
         } else {
             writer.reportInvalidCommand();
             waiter.waitSecond();
-            selectCommand();
-        }
 
+        }
+        selectCommand();
+    }
+
+    private ProfileCommand getProfileCommandByNumber(int commandNumber) {
+        return switch (commandNumber) {
+            case 1 -> ProfileCommand.CHANGENAME;
+            case 2 -> ProfileCommand.CHANGEEMAIL;
+            case 3 -> ProfileCommand.CHANGEPASSWORD;
+            case 4 -> ProfileCommand.DELETEACCOUNT;
+            case 5 -> ProfileCommand.RETURNTOMENU;
+            case 6 -> ProfileCommand.EXIT;
+            default -> throw new IllegalArgumentException("Invalid command number");
+        };
     }
 
     public void changeName() {
         writer.askName();
-        String name = reader.readName();
+        String name = reader.read();
 
         if (nameValidator.isValid(name)) {
             currentUser.setName(name);
@@ -79,7 +93,7 @@ public class ProfileRedactor {
 
     public void changeEmail() {
         writer.askEmail();
-        String email = reader.readEmail();
+        String email = reader.read();
 
         if (emailValidator.isValid(email)) {
             String oldEmail = currentUser.getEmail();
@@ -96,7 +110,7 @@ public class ProfileRedactor {
 
     public void changePassword() {
         writer.askPassword();
-        String password = reader.readPassword();
+        String password = reader.read();
 
         if (passwordValidator.isValid(password)) {
             currentUser.setPassword(password);

@@ -1,10 +1,11 @@
 package entrypoint;
 
-import checker.ExitChecker;
-import checker.PasswordChecker;
-import in.AuthenticationReader;
+import checkers.ExitChecker;
+import checkers.PasswordChecker;
+import in.Reader;
+import menus.AuthorizationMenu;
 import out.AuthenticationWriter;
-import storage.User;
+import entities.User;
 import storage.UsersController;
 import validate.PasswordValidator;
 import wait.Waiter;
@@ -12,16 +13,16 @@ import wait.Waiter;
 public final class Authentication {
 
     private final AuthenticationWriter writer = new AuthenticationWriter();
-    private final AuthenticationReader reader = new AuthenticationReader();
+    private final Reader reader = new Reader();
     private final PasswordValidator passwordValidator = new PasswordValidator();
     private final Waiter waiter = new Waiter();
     private final PasswordChecker passwordChecker = new PasswordChecker();
-    private final Authorization authorization = new Authorization();
+    private final AuthorizationMenu authorizationMenu = new AuthorizationMenu();
     private final UsersController usersController = new UsersController();
 
     public void login(String email) {
         writer.askPassword();
-        String password = reader.readPassword();
+        String password = reader.read();
 
         // если пользователь вдруг решил выйти
         ExitChecker.check(password);
@@ -29,7 +30,7 @@ public final class Authentication {
         if (passwordValidator.isValid(password)) {
             if (passwordChecker.checkPassword(email, password)) {
                 User user = usersController.getUserFromDatabase(email);
-                authorization.start(user);
+                authorizationMenu.start(user);
             } else {
                 writer.infoIncorrectPassword();
                 waiter.waitSecond();

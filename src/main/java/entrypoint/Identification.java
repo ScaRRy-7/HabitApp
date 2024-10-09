@@ -1,17 +1,15 @@
 package entrypoint;
 
-import in.IdentificationReader;
+import in.Reader;
 import out.IdentificationWriter;
 import storage.UsersStorage;
 import validate.EmailValidator;
 import wait.Waiter;
 
-import java.util.Arrays;
-
 public final class Identification {
 
     private final IdentificationWriter writer = new IdentificationWriter();
-    private final IdentificationReader reader = new IdentificationReader();
+    private final Reader reader = new Reader();
     private final EmailValidator emailValidator = new EmailValidator();
     private final UsersStorage usersStorage = UsersStorage.getInstance();
     private final Authentication authentication = new Authentication();
@@ -20,7 +18,7 @@ public final class Identification {
 
     public void start() {
         writer.writeGreetings();
-        String email = reader.readEmail();
+        String email = reader.read();
 
         if (emailValidator.isValid(email)) {
             // емэйл валиден, можно пробовать идентифицировать

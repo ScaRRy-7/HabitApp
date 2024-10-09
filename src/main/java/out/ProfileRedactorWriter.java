@@ -8,7 +8,8 @@ public class ProfileRedactorWriter {
                 "\n\t2 - Изменить почту" +
                 "\n\t3 - Изменить пароль" +
                 "\n\t4 - Удалить аккаунт" +
-                "\n\t5 - Выйти из аккаунта");
+                "\n\t5 - Вернуться в меню" +
+                "\n\t6 - Выйти из аккаунта");
     }
 
     public void reportInvalidCommand() {

@@ -1,6 +1,6 @@
 package out;
 
-import storage.User;
+import entities.User;
 
 public class AuthorizationWriter {
 

@@ -1,7 +1,5 @@
 package out;
 
-import in.IdentificationReader;
-
 public final class IdentificationWriter {
 
     public void writeGreetings() {

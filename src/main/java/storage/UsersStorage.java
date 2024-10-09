@@ -1,5 +1,8 @@
 package storage;
 
+import entities.Habit;
+import entities.User;
+
 import java.util.*;
 
 public final class UsersStorage {
@@ -34,4 +37,8 @@ public final class UsersStorage {
         users.remove(email);
     }
 
+    public void addHabitToUser(User user, Habit habit) {
+        user.addHabit(habit);
+        users.put(user.getEmail(), user);
+    }
 }
