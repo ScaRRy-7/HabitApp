@@ -2,8 +2,12 @@ package out;
 
 import entities.Habit;
 import entities.User;
+import habitchangers.HabitUnmarker;
 
 public class HabitsRedactorWriter {
+
+    private final HabitUnmarker habitUnmarker = new HabitUnmarker();
+
 
     public void writeCommands() {
         System.out.println("Список доступных  команд, введи соотвествующую цифру для выбора команды:" +
@@ -47,6 +51,7 @@ public class HabitsRedactorWriter {
     }
 
     public void askNumberOfHabitRemove(User user) {
+        habitUnmarker.checkHabits(user);
         writeHabits(user);
         System.out.println("Введи номер привычки, которую хочешь удалить:");
     }

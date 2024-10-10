@@ -18,8 +18,9 @@ public class HabitUnmarker {
         for (Habit habit : user.getHabits()) {
             if (!habit.isComplited()) continue;
 
-            long daysPassed = ChronoUnit.MINUTES.between(habit.getDaysHabitComplited().getLast(), LocalDateTime.now());
-            if ( (daysPassed >= 1 && habit.getFrequenсy() == DAILY) || (daysPassed >= 7 && habit.getFrequenсy() == WEEKLY)) {
+            long daysPassed = ChronoUnit.DAYS.between(habit.getDaysHabitComplited().getLast(), LocalDateTime.now());
+
+            if ( (daysPassed >= 1 && habit.getFrequency() == DAILY) || (daysPassed >= 7 && habit.getFrequency() == WEEKLY)) {
                 habit.setUncomplited();
             }
         }

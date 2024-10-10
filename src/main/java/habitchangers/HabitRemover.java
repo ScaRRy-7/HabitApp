@@ -21,7 +21,6 @@ public class HabitRemover {
             writer.infoNoHabits();
             waiter.waitSecond();
         } else {
-            habitUnmarker.checkHabits(currentUser); // ПРЕДВАРИТЕЛЬНО РАЗМАРКИРОВКА ПРИВЫЧЕК ЕСЛИ ПРОШЕЛ СРОК (ДЕНЬ ИЛИ МЕСЯЦ)
             writer.askNumberOfHabitRemove(currentUser);
             String habitNumberStr = reader.read();
             if (habitValidator.isValidHabitNumber(currentUser, habitNumberStr)) {

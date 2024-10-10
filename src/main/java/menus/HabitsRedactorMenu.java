@@ -69,8 +69,8 @@ public class HabitsRedactorMenu implements Commander {
             case 3 -> HabitCommand.MARKHABIT;
             case 4 -> HabitCommand.DELETEHABIT;
             case 5 -> HabitCommand.SHOWHMYHABITS;
-            case 6 -> HabitCommand.RETURNTOMENU;
-            default -> throw new IllegalArgumentException("Invalid command number");
+            default -> HabitCommand.RETURNTOMENU;
+
         };
     }
 

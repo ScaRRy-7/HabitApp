@@ -15,7 +15,7 @@ public class Habit implements Comparable<Habit>{
     private LocalDateTime createdDateTime;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private boolean isComplited;
-    private List<LocalDateTime> daysHabitComplited = new ArrayList<>();
+    private final List<LocalDateTime> daysHabitComplited = new ArrayList<>();
 
     public Habit(String name, String description, HabitFrequency frequency) {
         this.name = name;
@@ -33,7 +33,7 @@ public class Habit implements Comparable<Habit>{
         return description;
     }
 
-    public HabitFrequency getFrequenсy() {
+    public HabitFrequency getFrequency() {
         return frequenсy;
     }
     public LocalDateTime getCreatedDateTime() {
@@ -71,7 +71,7 @@ public class Habit implements Comparable<Habit>{
     @Override
     public String toString() {
         return "Название привычки: " + getName() + "\n\tОписание привычки: " + getDescription() +
-                    "\n\tЧастота: " + getFrequenсy().getName() + "\n\tСоздана: " +
+                    "\n\tЧастота: " + getFrequency().getName() + "\n\tСоздана: " +
                 getCreatedDateTime().format(formatter) + "\n\tСтатус: " + (isComplited ? "Выполнена" : "Не выполнена");
     }
 

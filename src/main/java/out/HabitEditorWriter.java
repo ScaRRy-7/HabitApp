@@ -2,8 +2,11 @@ package out;
 
 import entities.Habit;
 import entities.User;
+import habitchangers.HabitUnmarker;
 
 public class HabitEditorWriter {
+
+    private final HabitUnmarker habitUnmarker = new HabitUnmarker();
 
     public void askNewHabitName() {
         System.out.println("Напиши новое имя привычки (5-30 символов):");
@@ -36,6 +39,7 @@ public class HabitEditorWriter {
     }
 
     public void askNumberOfHabitRedact(User user) {
+        habitUnmarker.checkHabits(user);
         writeHabits(user);
         System.out.println("Введи номер привычки, которую хочешь отредактировать:");
 

@@ -8,7 +8,7 @@ import validate.CommandAuthorizationValidator;
 import wait.Waiter;
 import enums.MenuCommand;
 
-public final class AuthorizationMenu {
+public final class AuthorizationMenu implements Commander {
 
     private final AuthorizationWriter writer = new AuthorizationWriter();
     private final Reader reader = new Reader();
