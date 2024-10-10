@@ -6,17 +6,17 @@ public class CommandHabitValidator {
 
     public boolean isValidCommand(String command) {
         return switch (command) {
-            case "1", "2", "3", "4", "5" -> true;
+            case "1", "2", "3", "4", "5", "6" -> true;
             default -> false;
         };
     }
 
     public boolean isValidHabitName(String habitName) {
-        return habitName.matches("^[\\w\\s]{5,30}$");
+        return habitName.matches("^[a-zA-Z0-9а-яА-ЯёЁ()@%*!?., ]{5,30}$");
     }
 
     public boolean isValidDescription(String habitDescription) {
-        return habitDescription.matches("^[\\w\\s.,!?]{5,100}$");
+        return habitDescription.matches("^[a-zA-Z0-9а-яА-ЯёЁ()@%*!?., ]{5,100}$");
     }
 
     public boolean isValidFrequency(String frequencyNumber) {

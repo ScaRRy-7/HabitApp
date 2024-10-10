@@ -20,12 +20,14 @@ public class HabitEditor {
     private final HabitEditorValidator validator = new HabitEditorValidator();
     private final UsersController usersController = new UsersController();
     private final Waiter waiter = new Waiter();
+    private final HabitUnmarker habitUnmarker = new HabitUnmarker();
 
     public void redactHabit(User currentUser) {
         if (currentUser.getHabits().isEmpty()) {
             writer.infoNoHabits();
             waiter.waitSecond();
         } else {
+            habitUnmarker.checkHabits(currentUser); // ПРЕДВАРИТЕЛЬНО РАЗМАРКИРОВКА ПРИВЫЧЕК ЕСЛИ ПРОШЕЛ СРОК (ДЕНЬ ИЛИ МЕСЯЦ)
             writer.askNumberOfHabitRedact(currentUser);
             String habitNumberStr = reader.read();
             if (habitValidator.isValidHabitNumber(currentUser, habitNumberStr)) {

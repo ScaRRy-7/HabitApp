@@ -2,10 +2,7 @@ package menus;
 
 import entities.*;
 import enums.HabitCommand;
-import habitchangers.HabitCreator;
-import habitchangers.HabitEditor;
-import habitchangers.HabitIndicator;
-import habitchangers.HabitRemover;
+import habitchangers.*;
 import in.Reader;
 import out.HabitsRedactorWriter;
 import storage.UsersController;
@@ -24,6 +21,8 @@ public class HabitsRedactorMenu implements Commander {
     private final HabitCreator habitCreator = new HabitCreator();
     private final HabitIndicator habitIndicator = new HabitIndicator();
     private final HabitRemover habitRemover = new HabitRemover();
+    private final IncomplitedHabitsMenu incomplitedHabitsMenu = new IncomplitedHabitsMenu();
+    private final HabitUnmarker habitUnmarker = new HabitUnmarker();
 
     public void start(User user) {
         currentUser = user;
@@ -43,6 +42,9 @@ public class HabitsRedactorMenu implements Commander {
                     break;
                 case REDACTHABIT:
                     habitEditor.redactHabit(currentUser);
+                    break;
+                case MARKHABIT:
+                    incomplitedHabitsMenu.start(currentUser);
                     break;
                 case DELETEHABIT:
                     habitRemover.removeHabit(currentUser);
@@ -64,9 +66,10 @@ public class HabitsRedactorMenu implements Commander {
         return switch (commandNumber) {
             case 1 -> HabitCommand.CREATEHABIT;
             case 2 -> HabitCommand.REDACTHABIT;
-            case 3 -> HabitCommand.DELETEHABIT;
-            case 4 -> HabitCommand.SHOWHMYHABITS;
-            case 5 -> HabitCommand.RETURNTOMENU;
+            case 3 -> HabitCommand.MARKHABIT;
+            case 4 -> HabitCommand.DELETEHABIT;
+            case 5 -> HabitCommand.SHOWHMYHABITS;
+            case 6 -> HabitCommand.RETURNTOMENU;
             default -> throw new IllegalArgumentException("Invalid command number");
         };
     }

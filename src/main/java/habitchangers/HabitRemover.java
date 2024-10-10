@@ -14,12 +14,14 @@ public class HabitRemover {
     private final CommandHabitValidator habitValidator = new CommandHabitValidator();
     private final Reader reader = new Reader();
     private final UsersController usersController = new UsersController();
+    private final HabitUnmarker habitUnmarker = new HabitUnmarker();
 
     public void removeHabit(User currentUser) {
         if (currentUser.getHabits().isEmpty()) {
             writer.infoNoHabits();
             waiter.waitSecond();
         } else {
+            habitUnmarker.checkHabits(currentUser); // ПРЕДВАРИТЕЛЬНО РАЗМАРКИРОВКА ПРИВЫЧЕК ЕСЛИ ПРОШЕЛ СРОК (ДЕНЬ ИЛИ МЕСЯЦ)
             writer.askNumberOfHabitRemove(currentUser);
             String habitNumberStr = reader.read();
             if (habitValidator.isValidHabitNumber(currentUser, habitNumberStr)) {

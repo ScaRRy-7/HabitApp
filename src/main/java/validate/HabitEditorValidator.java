@@ -10,11 +10,11 @@ public class HabitEditorValidator {
     }
 
     public boolean isValidHabitName(String habitName) {
-        return habitName.matches("^[\\w\\s]{5,30}$");
+        return habitName.matches("^[a-zA-Z0-9а-яА-ЯёЁ]{5,30}$");
     }
 
     public boolean isValidHabitDescription(String habitDescription) {
-        return habitDescription.matches("^[\\w\\s.,!?]{5,100}$");
+        return habitDescription.matches("^[a-zA-Z0-9а-яА-ЯёЁ,.]{5,100}$");
     }
 
     public boolean isValidHabitFrequencyNumber(String habitFrequencyNumber) {
