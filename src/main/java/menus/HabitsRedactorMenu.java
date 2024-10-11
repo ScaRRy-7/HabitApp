@@ -50,7 +50,7 @@ public class HabitsRedactorMenu implements Commander {
                     habitRemover.removeHabit(currentUser);
                     break;
                 case SHOWHMYHABITS:
-                    habitIndicator.showHabits(currentUser);
+                    habitIndicator.chooseSorting(currentUser);
                     break;
                 case RETURNTOMENU:
                    return;

@@ -4,6 +4,8 @@ import entities.Habit;
 import entities.User;
 import habitchangers.HabitUnmarker;
 
+import java.util.List;
+
 public class HabitsRedactorWriter {
 
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
@@ -74,5 +76,23 @@ public class HabitsRedactorWriter {
             System.out.println(num + " - " + habit + "\n");
             num++;
         }
+    }
+
+    public void writeHabits(List<Habit> habits) {
+        int num = 1;
+        for (Habit habit : habits) {
+            System.out.println(num + " - " + habit + "\n");
+            num++;
+        }
+    }
+
+    public void reportInvalidSorting() {
+        System.out.println("Указна некорректная сортировка! Введите соответствующую цифру: ");
+    }
+
+    public void askSorting() {
+        System.out.println("Выбери тип сортировки твоих привычек:" +
+                "\n\t1 - по дате" +
+                "\n\t2 - по частоте");
     }
 }

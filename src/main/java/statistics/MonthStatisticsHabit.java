@@ -7,7 +7,6 @@ import habitchangers.HabitUnmarker;
 import out.MonthStatisticsHabitWriter;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
