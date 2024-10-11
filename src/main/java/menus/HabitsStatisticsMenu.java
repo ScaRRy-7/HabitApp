@@ -4,6 +4,9 @@ import entities.User;
 import enums.StatisticsCommand;
 import in.Reader;
 import out.HabitsStatisticsMenuWriter;
+import statistics.ProgressReport;
+import statistics.StreakCalculator;
+import statistics.SuccessCalculator;
 import validate.StatisticsValidator;
 import wait.Waiter;
 
@@ -15,6 +18,9 @@ public class HabitsStatisticsMenu implements Commander {
     private final StatisticsValidator statisticsValidator = new StatisticsValidator();
     private final Waiter waiter = new Waiter();
     private final ChooserStatisticsPeriodMenu chooserStatisticsPeriodMenu = new ChooserStatisticsPeriodMenu();
+    private final StreakCalculator streakCalculator = new StreakCalculator();
+    private final SuccessCalculator successCalculator = new SuccessCalculator();
+    private final ProgressReport progressReport = new ProgressReport();
 
 
     public void start(User user) {
@@ -40,13 +46,13 @@ public class HabitsStatisticsMenu implements Commander {
                     chooserStatisticsPeriodMenu.start(currentUser);
                     break;
                 case CALCULATE_STREAKS:
-
+                    streakCalculator.start(currentUser);
                     break;
                 case CALCULATE_SUCCESS_COMPLETION_FOR_PERIOD:
-
+                    successCalculator.start(currentUser);
                     break;
                 case GENERATE_COMPLETION_REPORT:
-
+                    progressReport.generateReport(currentUser);
                     break;
                 case RETURN_TO_MENU:
                     return;
