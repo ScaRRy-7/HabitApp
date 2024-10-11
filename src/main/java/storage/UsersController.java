@@ -37,6 +37,9 @@ public final class UsersController {
     public void removeHabit(User user, int habitNumber) {
         user.getHabits().remove(habitNumber-1);
         usersStorage.addUser(user);
+    }
 
+    public void blockUser(String email) {
+        usersStorage.getUser(email).setBlocked();
     }
 }

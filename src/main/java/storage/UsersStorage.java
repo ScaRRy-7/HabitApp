@@ -41,4 +41,7 @@ public final class UsersStorage {
         user.addHabit(habit);
         users.put(user.getEmail(), user);
     }
+
+
+
 }

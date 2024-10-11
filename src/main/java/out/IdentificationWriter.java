@@ -17,4 +17,8 @@ public final class IdentificationWriter {
     public void infoRedirectAuthentication() {
         System.out.println("Пользователь с такой почтой существует!");
     }
+
+    public void infoUserBlocked() {
+        System.out.println("Доступ этому пользователю запрещён!");
+    }
 }

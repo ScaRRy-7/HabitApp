@@ -9,6 +9,7 @@ public final class User {
     private String email;
     private String password;
     private List<Habit> habits = new ArrayList<>();
+    private boolean isBlocked = false;
 
     public User(String name, String email, String password) {
         this.name = name;
@@ -46,5 +47,13 @@ public final class User {
 
     public List<Habit> getHabits() {
         return habits;
+    }
+
+    public void setBlocked() {
+        isBlocked = true;
+    }
+
+    public boolean isBlocked() {
+        return isBlocked;
     }
 }
