@@ -14,7 +14,7 @@ public class HabitEditorValidator {
     }
 
     public boolean isValidHabitDescription(String habitDescription) {
-        return habitDescription.matches("^[a-zA-Z0-9а-яА-ЯёЁ,.]{5,100}$");
+        return habitDescription.matches("^[a-zA-Z0-9а-яА-ЯёЁ,. ]{5,100}$");
     }
 
     public boolean isValidHabitFrequencyNumber(String habitFrequencyNumber) {

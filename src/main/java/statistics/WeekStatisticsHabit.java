@@ -41,7 +41,7 @@ public class WeekStatisticsHabit implements StatisticsCreator {
                 isHabitCompleted = habit.getDaysHabitComplited().stream()
                         .anyMatch(dateTime -> dateTime.toLocalDate().equals(date));
             } else if (habit.getFrequency() == HabitFrequency.WEEKLY) {
-                LocalDate lastCompletedDate = habit.getDaysHabitComplited().getLast().toLocalDate();
+                LocalDate lastCompletedDate = habit.getDaysHabitComplited().get(habit.getDaysHabitComplited().size()-1).toLocalDate();
                 isHabitCompleted = ChronoUnit.DAYS.between(lastCompletedDate, date) % 7 == 0;
             }
 

@@ -1,6 +1,6 @@
 package wait;
 
-public final class Waiter {
+public class Waiter {
 
     public void waitSecond() {
         try {

@@ -13,7 +13,7 @@ public class Habit implements Comparable<Habit>{
     private String description;
     private HabitFrequency frequenсy;
     private LocalDateTime createdDateTime;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private boolean isComplited;
     private final List<LocalDateTime> daysHabitComplited = new ArrayList<>();
 

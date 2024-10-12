@@ -14,8 +14,19 @@ import java.util.List;
 
 public class MonthStatisticsHabit implements StatisticsCreator {
 
-    private HabitUnmarker habitUnmarker = new HabitUnmarker();
-    private final MonthStatisticsHabitWriter writer = new MonthStatisticsHabitWriter();
+    private HabitUnmarker habitUnmarker;
+    private final MonthStatisticsHabitWriter writer;
+
+    public MonthStatisticsHabit() {
+        habitUnmarker = new HabitUnmarker();
+        writer = new MonthStatisticsHabitWriter();
+    }
+
+    public MonthStatisticsHabit(HabitUnmarker habitUnmarker, MonthStatisticsHabitWriter writer) {
+        this.habitUnmarker = habitUnmarker;
+        this.writer = writer;
+    }
+
 
     @Override
     public void getStatistics(User user, Habit habit) {
@@ -39,7 +50,7 @@ public class MonthStatisticsHabit implements StatisticsCreator {
                 isHabitCompleted = habit.getDaysHabitComplited().stream()
                         .anyMatch(dateTime -> dateTime.toLocalDate().isEqual(finalDate));
             } else if (habit.getFrequency() == HabitFrequency.WEEKLY) { // Еженедельная привычка
-                LocalDate lastCompletedDate = habit.getDaysHabitComplited().getLast().toLocalDate();
+                LocalDate lastCompletedDate = habit.getDaysHabitComplited().get(habit.getDaysHabitComplited().size() - 1).toLocalDate();
                 isHabitCompleted = ChronoUnit.DAYS.between(lastCompletedDate, date) % 7 == 0;
             }
 

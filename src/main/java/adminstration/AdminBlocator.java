@@ -9,13 +9,28 @@ import wait.Waiter;
 
 public class AdminBlocator {
 
-    private final UsersStorage usersStorage = UsersStorage.getInstance();
-    private final Reader reader = new Reader();
-    private final AdminUserChangerWriter writer = new AdminUserChangerWriter();
+    private final UsersStorage usersStorage;
+    private final Reader reader;
+    private final AdminUserChangerWriter writer;
     private final Waiter waiter = new Waiter();
-    private final AdminRemoverValidator validator = new AdminRemoverValidator();
-    private final UsersController usersController = new UsersController();
+    private final AdminRemoverValidator validator;
+    private final UsersController usersController;
 
+    public AdminBlocator() {
+        usersStorage = UsersStorage.getInstance();
+        reader = new Reader();
+        writer = new AdminUserChangerWriter();
+        validator = new AdminRemoverValidator();
+        usersController = new UsersController();
+    }
+
+    public AdminBlocator(UsersStorage usersStorageMock, Reader readerMock, AdminUserChangerWriter writerMock, Waiter waiterMock, AdminRemoverValidator validatorMock, UsersController usersControllerMock) {
+        this.usersStorage = usersStorageMock;
+        this.reader = readerMock;
+        this.writer = writerMock;
+        this.validator = validatorMock;
+        this.usersController = usersControllerMock;
+    }
 
     public void blockUser() {
         if (usersStorage.getUsers().isEmpty()) {
