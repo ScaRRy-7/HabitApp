@@ -14,6 +14,8 @@ git clone https://github.com/ScaRRy-7/HabitApp.git
 clean
 package
 
+Запустите jar архив командой java -jar target/Habitapp-1.0-SNAPSHOT.jar
+
 Задание 1
 Это первое домашнее задание по курсу Y_LAB.
 
