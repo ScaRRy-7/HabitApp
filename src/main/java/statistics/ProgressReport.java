@@ -5,7 +5,7 @@ import enums.HabitFrequency;
 import entities.User;
 import habitchangers.HabitUnmarker;
 import out.ProgressReportWriter;
-
+import org.slf4j.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -17,8 +17,10 @@ public class ProgressReport {
     private final StreakCalculator streakCalculator = new StreakCalculator();
     private final SuccessCalculator successCalculator = new SuccessCalculator();
     private final ProgressReportWriter writer = new ProgressReportWriter();
+    private final Logger logger = LoggerFactory.getLogger(ProgressReport.class);
 
     public void generateReport(User user) {
+        logger.debug("Генерируется прогресс по привычкам");
         habitUnmarker.checkHabits(user);
         System.out.println("Отчет о прогрессе выполнения привычек для пользователя: " + user.getName());
 

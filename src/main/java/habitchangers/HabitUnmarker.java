@@ -3,18 +3,19 @@ package habitchangers;
 import entities.Habit;
 import entities.User;
 import storage.UsersController;
-
+import org.slf4j.*;
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDateTime;
-
 import static enums.HabitFrequency.DAILY;
 import static enums.HabitFrequency.WEEKLY;
 
 public class HabitUnmarker {
 
     private final UsersController usersController = new UsersController();
+    private final Logger logger = LoggerFactory.getLogger(HabitUnmarker.class);
 
     public void checkHabits(User user) {
+        logger.info("Запущена размаркировка выполненных привычек если уже прошло время");
         for (Habit habit : user.getHabits()) {
             if (!habit.isComplited()) continue;
 

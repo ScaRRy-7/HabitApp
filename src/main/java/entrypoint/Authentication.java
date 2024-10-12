@@ -9,6 +9,7 @@ import entities.User;
 import storage.UsersController;
 import validate.PasswordValidator;
 import wait.Waiter;
+import org.slf4j.*;
 
 public final class Authentication {
 
@@ -19,6 +20,7 @@ public final class Authentication {
     private final PasswordChecker passwordChecker = new PasswordChecker();
     private final AuthorizationMenu authorizationMenu = new AuthorizationMenu();
     private final UsersController usersController = new UsersController();
+    private final Logger logger = LoggerFactory.getLogger(Authentication.class);
 
     public void login(String email) {
         writer.askPassword();

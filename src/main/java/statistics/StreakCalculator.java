@@ -13,8 +13,18 @@ import java.util.List;
 
 public class StreakCalculator {
 
-    private final HabitUnmarker habitUnmarker = new HabitUnmarker();
-    private final StreakCalculatorWriter writer = new StreakCalculatorWriter();
+    private final HabitUnmarker habitUnmarker;
+    private final StreakCalculatorWriter writer;
+
+    public StreakCalculator() {
+        this.habitUnmarker = new HabitUnmarker();
+        this.writer = new StreakCalculatorWriter();
+    }
+
+    public StreakCalculator(HabitUnmarker habitUnmarker, StreakCalculatorWriter writer) {
+        this.habitUnmarker = habitUnmarker;
+        this.writer = writer;
+    }
 
     public void start(User user) {
         habitUnmarker.checkHabits(user);
@@ -26,6 +36,7 @@ public class StreakCalculator {
 
     public int calculateStreak(Habit habit) {
         List<LocalDateTime> completedDates = habit.getDaysHabitComplited();
+
         if (completedDates.isEmpty()) {
             return 0;
         }
