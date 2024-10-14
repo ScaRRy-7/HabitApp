@@ -12,6 +12,19 @@ import validate.NameValidator;
 import validate.PasswordValidator;
 import wait.Waiter;
 
+/**
+ * Отвечает за предоставление пользователю меню для управления его профилем.
+ * Это меню позволяет пользователю выполнять следующие действия:
+ * 1. Изменение имени
+ * 2. Изменение электронной почты
+ * 3. Изменение пароля
+ * 4. Удаление аккаунта
+ * 5. Возврат в предыдущее меню
+ * 6. Выход из приложения
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class ProfileMenu implements Commander {
 
     private final CommandProfileValidator commandValidator = new CommandProfileValidator();
@@ -24,11 +37,22 @@ public class ProfileMenu implements Commander {
     private final Waiter waiter = new Waiter();
     private User currentUser;
 
+    /**
+     * Запускает меню управления профилем для авторизованного пользователя.
+     * Вызывает метод {@link #selectCommand()} для отображения списка команд и обработки выбранной пользователем команды.
+     *
+     * @param user авторизованный пользователь
+     */
     public void start(User user) {
         currentUser = user;
         selectCommand();
     }
 
+    /**
+     * Отображает список команд меню управления профилем и обрабатывает выбранную пользователем команду.
+     * Если пользователь выбрал корректную команду, выполняется соответствующая функциональность.
+     * Если пользователь выбрал некорректную команду, пользователю предлагается ввести команду еще раз.
+     */
     public void selectCommand() {
         writer.writeCommands();
         String commandString = reader.read();
@@ -63,6 +87,13 @@ public class ProfileMenu implements Commander {
         selectCommand();
     }
 
+    /**
+     * Преобразует число, введенное пользователем, в соответствующую команду меню управления профилем.
+     *
+     * @param commandNumber номер команды, введенный пользователем
+     * @return соответствующая команда меню
+     * @throws IllegalArgumentException если введен некорректный номер команды
+     */
     private ProfileCommand getProfileCommandByNumber(int commandNumber) {
         return switch (commandNumber) {
             case 1 -> ProfileCommand.CHANGENAME;
@@ -75,22 +106,33 @@ public class ProfileMenu implements Commander {
         };
     }
 
-    public void changeName() {
-        writer.askName();
-        String name = reader.read();
+/**
+ * Позволяет пользователю изменить свое имя.
 
-        if (nameValidator.isValid(name)) {
-            currentUser.setName(name);
-            usersController.updateRedactedUser(currentUser, currentUser.getEmail());
-            writer.infoNameChanged();
-            waiter.waitSecond();
-        } else {
-            writer.reportInvalidName();
-            waiter.waitSecond();
-            changeName();
-        }
+ * Новое имя проверяется на валидность, и если оно корректно, оно сохраняется в профиле пользователя.
+ * Если имя некорректно, пользователю предлагается ввести имя еще раз.
+ */
+public void changeName() {
+    writer.askName();
+    String name = reader.read();
+
+    if (nameValidator.isValid(name)) {
+        currentUser.setName(name);
+        usersController.updateRedactedUser(currentUser, currentUser.getEmail());
+        writer.infoNameChanged();
+        waiter.waitSecond();
+    } else {
+        writer.reportInvalidName();
+        waiter.waitSecond();
+        changeName();
     }
+}
 
+    /**
+     * Позволяет пользователю изменить свой email.
+     * Новый email проверяется на валидность, и если он корректен, он сохраняется в профиле пользователя.
+     * Если email некорректен, пользователю предлагается ввести email еще раз.
+     */
     public void changeEmail() {
         writer.askEmail();
         String email = reader.read();
@@ -108,6 +150,11 @@ public class ProfileMenu implements Commander {
         }
     }
 
+    /**
+     * Позволяет пользователю изменить свой пароль.
+     * Новый пароль проверяется на валидность, и если он корректен, он сохраняется в профиле пользователя.
+     * Если пароль некорректен, пользователю предлагается ввести пароль еще раз.
+     */
     public void changePassword() {
         writer.askPassword();
         String password = reader.read();
@@ -124,11 +171,14 @@ public class ProfileMenu implements Commander {
         }
     }
 
+    /**
+     * Позволяет пользователю удалить свой аккаунт.
+     * Пользователь удаляется из базы данных, и приложение возвращается в главное меню.
+     */
     public void deleteAccount() {
         usersController.removeUserFromDatabase(currentUser.getEmail());
         writer.infoAccDeleted();
         waiter.waitSecond();
         Start.main(null);
-
     }
 }

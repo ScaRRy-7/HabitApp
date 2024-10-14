@@ -10,12 +10,33 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Класс SuccessCalculator отвечает за расчет процента успешного выполнения привычек.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class SuccessCalculator {
-
+    /**
+     * Объект класса HabitUnmarker для проверки и размаркировки привычек.
+     */
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
+
+    /**
+     * Объект класса SuccessCalculatorWriter для вывода результатов расчета на экран.
+     */
     private final SuccessCalculatorWriter writer = new SuccessCalculatorWriter();
+
+    /**
+     * Объект класса Logger для логирования событий.
+     */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Запускает расчет процента успешного выполнения привычек для всех привычек пользователя.
+     *
+     * @param user текущий пользователь
+     */
     public void start(User user) {
         logger.debug("Запущен калькулятор выполняемости привычек в %");
         habitUnmarker.checkHabits(user);
@@ -25,6 +46,12 @@ public class SuccessCalculator {
         }
     }
 
+    /**
+     * Рассчитывает процент успешного выполнения указанной привычки.
+     *
+     * @param habit привычка, для которой нужно рассчитать процент успешного выполнения
+     * @return процент успешного выполнения привычки
+     */
     public double calculateSuccessRate(Habit habit) {
         var completedDates = habit.getDaysHabitComplited();
         var createdDateTime = habit.getCreatedDateTime();

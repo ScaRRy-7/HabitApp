@@ -2,17 +2,25 @@ package entrypoint;
 
 import org.slf4j.*;
 
-public final class Start {
+/**
+ * Точка входа в приложение.
+ * Этот класс запускает процесс идентификации пользователя, который направляет его на регистрацию или аутентификацию.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
+public class Start {
 
     private static final Logger logger = LoggerFactory.getLogger(Start.class);
 
+    /**
+     * Точка входа в приложение.
+     * Создает объект идентификации и запускает процесс идентификации пользователя.
+     *
+     * @param args аргументы командной строки (не используются)
+     */
     public static void main(String[] args) {
-        /* программа начинается с попытки идентификации пользователя
 
-        если почта не будет найдена - редирект в регистрацию
-        если почта найдена - редирект в авторизацию
-
-         */
         Identification identification = new Identification();
         logger.info("создан обьект идентификации из метода main");
         identification.start();

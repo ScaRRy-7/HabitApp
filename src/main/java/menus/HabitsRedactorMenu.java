@@ -10,6 +10,19 @@ import validate.CommandHabitValidator;
 import wait.Waiter;
 import org.slf4j.*;
 
+/**
+ * Отвечает за предоставление пользователю меню для управления его привычками.
+ * Это меню позволяет пользователю выполнять следующие действия:
+ * 1. Создание новой привычки
+ * 2. Редактирование существующей привычки
+ * 3. Отметка привычки как выполненной
+ * 4. Удаление привычки
+ * 5. Просмотр списка своих привычек
+ * 6. Возврат в предыдущее меню
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class HabitsRedactorMenu implements Commander {
 
     private final HabitsRedactorWriter writer = new HabitsRedactorWriter();
@@ -26,12 +39,22 @@ public class HabitsRedactorMenu implements Commander {
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
     private final Logger logger = LoggerFactory.getLogger(HabitsRedactorMenu.class);
 
+    /**
+     * Запускает меню управления привычками для авторизованного пользователя.
+     *
+     * @param user авторизованный пользователь
+     */
     public void start(User user) {
         logger.info("Запущено меню привычек");
         currentUser = user;
         selectCommand();
     }
 
+    /**
+     * Отображает список команд меню управления привычками и обрабатывает выбранную пользователем команду.
+     * Если пользователь выбрал корректную команду, выполняется соответствующая функциональность.
+     * Если пользователь выбрал некорректную команду, пользователю предлагается ввести команду еще раз.
+     */
     public void selectCommand() {
         writer.writeCommands();
         String commandString = reader.read();
@@ -62,7 +85,7 @@ public class HabitsRedactorMenu implements Commander {
                     habitIndicator.chooseSorting(currentUser);
                     break;
                 case RETURNTOMENU:
-                   return;
+                    return;
             }
         } else {
             logger.info("Пользователь ввел некорректную команду, выбор действия запустится снова");
@@ -72,6 +95,12 @@ public class HabitsRedactorMenu implements Commander {
         selectCommand();
     }
 
+    /**
+     * Преобразует число, введенное пользователем, в соответствующую команду меню управления привычками.
+     *
+     * @param commandNumber номер команды, введенный пользователем
+     * @return соответствующая команда меню
+     */
     private HabitCommand getHabitCommandByNumber(int commandNumber) {
         return switch (commandNumber) {
             case 1 -> HabitCommand.CREATEHABIT;
@@ -83,6 +112,4 @@ public class HabitsRedactorMenu implements Commander {
 
         };
     }
-
-
 }

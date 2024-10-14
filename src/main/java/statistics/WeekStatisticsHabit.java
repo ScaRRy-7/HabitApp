@@ -12,12 +12,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.temporal.ChronoUnit;
 
-
+/**
+ * Класс WeekStatisticsHabit отвечает за создание статистики по привычкам за неделю.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class WeekStatisticsHabit implements StatisticsCreator {
-
+    /**
+     * Объект класса HabitUnmarker для проверки и размаркировки привычек.
+     */
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
+
+    /**
+     * Объект класса WeekStatisticsHabitWriter для вывода статистики на экран.
+     */
     private final WeekStatisticsHabitWriter writer = new WeekStatisticsHabitWriter();
 
+    /**
+     * Получает и записывает статистику по привычке пользователя за последнюю неделю.
+     *
+     * @param user  текущий пользователь
+     * @param habit выбранная привычка
+     */
     @Override
     public void getStatistics(User user, Habit habit) {
         habitUnmarker.checkHabits(user);
@@ -50,6 +67,5 @@ public class WeekStatisticsHabit implements StatisticsCreator {
         }
 
         writer.writeWeekStatistics(statisticsWeek);
-
     }
 }

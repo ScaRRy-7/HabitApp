@@ -13,6 +13,17 @@ import statistics.WeekStatisticsHabit;
 import validate.StatisticsPeriodMenuValidator;
 import wait.Waiter;
 
+/**
+ * Отвечает за предоставление пользователю возможности выбрать период для просмотра статистики по его привычкам.
+ * Пользователю предлагается выбрать период из следующих вариантов:
+ * 1. День
+ * 2. Неделя
+ * 3. Месяц
+ * В зависимости от выбранного периода, отображается соответствующая статистика по выбранной пользователем привычке.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class ChooserStatisticsPeriodMenu {
 
     private final ChooserStatisticsPeriodMenuWriter writer = new ChooserStatisticsPeriodMenuWriter();
@@ -25,11 +36,21 @@ public class ChooserStatisticsPeriodMenu {
     private final HabitChooser habitChooser = new HabitChooser();
     User currentUser;
 
+    /**
+     * Запускает меню выбора периода для просмотра статистики по привычкам пользователя.
+     *
+     * @param user авторизованный пользователь
+     */
     public void start(User user) {
         currentUser = user;
         selectPeriod();
     }
 
+    /**
+     * Отображает список периодов для просмотра статистики и обрабатывает выбор пользователя.
+     * Если пользователь выбрал корректный период, отображается соответствующая статистика по выбранной привычке.
+     * Если пользователь выбрал некорректный период, пользователю предлагается выбрать период еще раз.
+     */
     private void selectPeriod() {
         writer.writePeriods();
         String periodString = reader.read();
@@ -57,6 +78,12 @@ public class ChooserStatisticsPeriodMenu {
         selectPeriod();
     }
 
+    /**
+     * Преобразует число, введенное пользователем, в соответствующий период для просмотра статистики.
+     *
+     * @param periodNumber номер периода, введенный пользователем
+     * @return соответствующий период
+     */
     Period getPeriodByNumber(int periodNumber) {
         return switch (periodNumber) {
             case 1 -> Period.DAY;

@@ -11,6 +11,18 @@ import validate.StatisticsValidator;
 import wait.Waiter;
 import org.slf4j.*;
 
+/**
+ * Отвечает за предоставление пользователю меню для просмотра статистики по его привычкам.
+ * Это меню позволяет пользователю выполнять следующие действия:
+ * 1. Просмотреть статистику по привычкам за определенный период
+ * 2. Рассчитать количество стриков по привычкам
+ * 3. Рассчитать процент успешного выполнения привычек за определенный период
+ * 4. Сгенерировать отчет по завершенным привычкам
+ * 5. Вернуться в предыдущее меню
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class HabitsStatisticsMenu implements Commander {
 
     private User currentUser;
@@ -24,6 +36,13 @@ public class HabitsStatisticsMenu implements Commander {
     private final ProgressReport progressReport = new ProgressReport();
     private final Logger logger = LoggerFactory.getLogger(HabitsStatisticsMenu.class);
 
+    /**
+     * Запускает меню статистики привычек для авторизованного пользователя.
+     * Если у пользователя есть привычки, отображается список доступных команд.
+     * Если у пользователя нет привычек, отображается сообщение, что просмотр статистики невозможен.
+     *
+     * @param user авторизованный пользователь
+     */
     public void start(User user) {
         logger.info("Запущено меню статистики");
         this.currentUser = user;
@@ -38,6 +57,11 @@ public class HabitsStatisticsMenu implements Commander {
         }
     }
 
+    /**
+     * Отображает список команд меню статистики привычек и обрабатывает выбранную пользователем команду.
+     * Если пользователь выбрал корректную команду, выполняется соответствующая функциональность.
+     * Если пользователь выбрал некорректную команду, пользователю предлагается ввести команду еще раз.
+     */
     public void selectCommand() {
         logger.debug("Пользователь выбирает команду");
         writer.writeCommands();
@@ -61,6 +85,7 @@ public class HabitsStatisticsMenu implements Commander {
                     successCalculator.start(currentUser);
                     break;
                 case GENERATE_COMPLETION_REPORT:
+
                     logger.debug("Пользователь выбрал генерацию отчета по привычкам");
                     progressReport.generateReport(currentUser);
                     break;
@@ -76,6 +101,12 @@ public class HabitsStatisticsMenu implements Commander {
         selectCommand();
     }
 
+    /**
+     * Преобразует число, введенное пользователем, в соответствующую команду меню статистики привычек.
+     *
+     * @param command номер команды, введенный пользователем
+     * @return соответствующая команда меню
+     */
     StatisticsCommand getStatisticsCommandByNumber(int command) {
         return switch (command) {
             case 1 -> StatisticsCommand.STATISTICS_FOR_PERIOD;

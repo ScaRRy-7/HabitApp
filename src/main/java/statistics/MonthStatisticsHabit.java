@@ -12,22 +12,48 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс MonthStatisticsHabit отвечает за создание статистики по привычкам за месяц.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class MonthStatisticsHabit implements StatisticsCreator {
-
+    /**
+     * Объект класса HabitUnmarker для проверки и размаркировки привычек.
+     */
     private HabitUnmarker habitUnmarker;
+
+    /**
+     * Объект класса MonthStatisticsHabitWriter для вывода статистики на экран.
+     */
     private final MonthStatisticsHabitWriter writer;
 
+    /**
+     * Конструктор по умолчанию инициализирует объекты HabitUnmarker и MonthStatisticsHabitWriter.
+     */
     public MonthStatisticsHabit() {
         habitUnmarker = new HabitUnmarker();
         writer = new MonthStatisticsHabitWriter();
     }
 
+    /**
+     * Конструктор с параметрами, позволяющий установить объекты HabitUnmarker и MonthStatisticsHabitWriter.
+     *
+     * @param habitUnmarker объект класса HabitUnmarker
+     * @param writer        объект класса MonthStatisticsHabitWriter
+     */
     public MonthStatisticsHabit(HabitUnmarker habitUnmarker, MonthStatisticsHabitWriter writer) {
         this.habitUnmarker = habitUnmarker;
         this.writer = writer;
     }
 
-
+    /**
+     * Получает и записывает статистику по привычке пользователя за последний месяц.
+     *
+     * @param user  текущий пользователь
+     * @param habit выбранная привычка
+     */
     @Override
     public void getStatistics(User user, Habit habit) {
         habitUnmarker.checkHabits(user);

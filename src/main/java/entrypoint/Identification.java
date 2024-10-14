@@ -9,7 +9,14 @@ import wait.Waiter;
 import org.slf4j.*;
 import java.util.ResourceBundle;
 
-public final class Identification {
+/**
+ * Основная точка входа для процесса идентификации пользователей.
+ * Этот класс отвечает за обработку процесса идентификации и направления пользователей на регистрацию или аутентификацию.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
+public class Identification {
 
     private final IdentificationWriter writer = new IdentificationWriter();
     private final Reader reader = new Reader();
@@ -23,6 +30,10 @@ public final class Identification {
     private final AdminPanel adminPanel = new AdminPanel();
     private final Logger logger = LoggerFactory.getLogger(Identification.class);
 
+    /**
+     * Запускает процесс идентификации пользователя.
+     * Принимает email пользователя, проверяет его валидность и направляет пользователя на регистрацию или аутентификацию.
+     */
     public void start() {
         writer.writeGreetings();
         String email = reader.read();
@@ -46,6 +57,13 @@ public final class Identification {
         }
     }
 
+    /**
+     * Идентифицирует пользователя по его email.
+     * Если пользователь уже существует, направляет его на аутентификацию.
+     * Если пользователь не существует, направляет его на регистрацию.
+     *
+     * @param email email пользователя
+     */
     public void identificate(String email) {
         if (usersStorage.hasUser(email)) {
             if (usersStorage.getUser(email).isBlocked()) {

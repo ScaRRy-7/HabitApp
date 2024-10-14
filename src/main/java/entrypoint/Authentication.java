@@ -11,7 +11,14 @@ import validate.PasswordValidator;
 import wait.Waiter;
 import org.slf4j.*;
 
-public final class Authentication {
+/**
+ * Основная точка входа для процесса аутентификации.
+ * Этот класс отвечает за обработку процесса входа в систему, включая валидацию пароля, проверку пароля и авторизацию пользователя.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
+public class Authentication {
 
     private final AuthenticationWriter writer = new AuthenticationWriter();
     private final Reader reader = new Reader();
@@ -22,11 +29,16 @@ public final class Authentication {
     private final UsersController usersController = new UsersController();
     private final Logger logger = LoggerFactory.getLogger(Authentication.class);
 
+    /**
+     * Обрабатывает процесс входа пользователя в систему.
+     *
+     * @param email электронный адрес пользователя, пытающегося войти в систему
+     */
     public void login(String email) {
         writer.askPassword();
         String password = reader.read();
 
-        // если пользователь вдруг решил выйти
+        // Если пользователь решил выйти
         ExitChecker.check(password);
 
         if (passwordValidator.isValid(password)) {
@@ -43,6 +55,5 @@ public final class Authentication {
             waiter.waitSecond();
             login(email);
         }
-
     }
 }

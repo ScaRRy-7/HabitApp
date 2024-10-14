@@ -10,7 +10,15 @@ import validate.PasswordValidator;
 import wait.Waiter;
 import org.slf4j.*;
 
-public final class Registration {
+/**
+ * Отвечает за процесс регистрации нового пользователя.
+ * Этот класс отвечает за сбор необходимой информации от пользователя (имя и пароль), валидацию этой информации
+ * и создание нового пользователя в системе.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
+public class Registration {
 
     private final RegistrationWriter writer = new RegistrationWriter();
     private final Reader reader = new Reader();
@@ -21,6 +29,11 @@ public final class Registration {
     private final AuthorizationMenu authorizationMenu = new AuthorizationMenu();
     private final Logger logger = LoggerFactory.getLogger(Registration.class);
 
+    /**
+     * Выполняет процесс регистрации нового пользователя.
+     *
+     * @param email email нового пользователя
+     */
     public void registrate(String email) {
         writer.askName();
         String name = reader.read();
@@ -40,6 +53,13 @@ public final class Registration {
         }
     }
 
+    /**
+     * Создает новый пароль для нового пользователя.
+     * Валидирует введенный пользователем пароль и создает нового пользователя в базе данных.
+     *
+     * @param email email нового пользователя
+     * @param name  имя нового пользователя
+     */
     public void createPassword(String email, String name) {
         writer.askPassword();
         String password = reader.read();

@@ -9,18 +9,61 @@ import wait.Waiter;
 import org.slf4j.*;
 import java.util.ResourceBundle;
 
+/**
+ * Класс AdminPanel отвечает за работу панели администратора.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class AdminPanel {
-
+    /**
+     * Объект класса Reader для чтения ввода пользователя.
+     */
     private final Reader reader = new Reader();
+
+    /**
+     * Имя файла с настройками администратора.
+     */
     private final String ADMIN_PROPERTIES_FILE = "admin";
+
+    /**
+     * Объект ResourceBundle для получения настроек администратора из файла.
+     */
     private final ResourceBundle adminBundle = ResourceBundle.getBundle(ADMIN_PROPERTIES_FILE);
+
+    /**
+     * Объект класса AdministationPanelWriter для записи сообщений для администратора.
+     */
     private final AdministationPanelWriter writer = new AdministationPanelWriter();
+
+    /**
+     * Объект класса AdminPanelValidator для валидации ввода пользователя.
+     */
     private final AdminPanelValidator validator = new AdminPanelValidator();
+
+    /**
+     * Объект класса Waiter для ожидания определенного времени.
+     */
     private final Waiter waiter = new Waiter();
+
+    /**
+     * Объект класса AdminBlocator для блокировки пользователей.
+     */
     private final AdminBlocator adminBlocator = new AdminBlocator();
+
+    /**
+     * Объект класса AdminRemover для удаления пользователей.
+     */
     private final AdminRemover adminRemover = new AdminRemover();
+
+    /**
+     * Объект класса Logger для логирования информации.
+     */
     private final Logger logger = LoggerFactory.getLogger(AdminPanel.class);
 
+    /**
+     * Выполняет аутентификацию администратора.
+     */
     public void authentication() {
         writer.askNickname();
         String nickName = reader.read();
@@ -37,6 +80,9 @@ public class AdminPanel {
         }
     }
 
+    /**
+     * Запускает панель администратора.
+     */
     private void start() {
         logger.info("Админка запустилась");
         writer.writeAdminCommands();
@@ -63,6 +109,12 @@ public class AdminPanel {
         start();
     }
 
+    /**
+     * Возвращает команду администратора по ее номеру.
+     *
+     * @param num номер команды администратора
+     * @return команда администратора
+     */
     private AdminCommand getAdminCommandByNum(int num) {
         return switch (num) {
             case 1 -> AdminCommand.BLOCK_USER;

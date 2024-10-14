@@ -13,6 +13,13 @@ import org.slf4j.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Отвечает за предоставление пользователю возможности отметить выполненную, но неотмеченную ранее привычку.
+ * Пользователю отображается список всех его неотмеченных привычек, и он может выбрать одну из них для отметки как выполненную.
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
 public class IncomplitedHabitsMenu {
 
     private final UsersController usersController = new UsersController();
@@ -24,6 +31,14 @@ public class IncomplitedHabitsMenu {
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
     private final Logger logger = LoggerFactory.getLogger(IncomplitedHabitsMenu.class);
 
+    /**
+     * Запускает меню для отметки неотмеченных привычек пользователя.
+     * Сначала проверяется, есть ли у пользователя неотмеченные привычки.
+     * Если есть, выводится список этих привычек, и пользователь может выбрать одну из них для отметки.
+     * Если нет, выводится соответствующее сообщение.
+     *
+     * @param user авторизованный пользователь
+     */
     public void start(User user) {
         logger.info("Запущен отбор неотмеченных привычек из всех привычек у пользователя");
         habitUnmarker.checkHabits(user);
@@ -44,6 +59,14 @@ public class IncomplitedHabitsMenu {
         }
     }
 
+    /**
+     * Отображает список неотмеченных привычек пользователя и позволяет ему выбрать одну из них для отметки.
+     * Если пользователь выбирает корректный номер привычки, выбранная привычка отмечается как выполненная.
+     * Если пользователь выбирает некорректный номер привычки, ему предлагается ввести номер еще раз.
+     *
+     * @param user            авторизованный пользователь
+     * @param incomplitedHabits список неотмеченных привычек пользователя
+     */
     private void showIncomplitedHabits(User user, List<Habit> incomplitedHabits) {
         logger.info("Неотмеченные привычки есть, запускается их вывод");
         writer.writeIncomplitedHabits(incomplitedHabits);
@@ -63,6 +86,5 @@ public class IncomplitedHabitsMenu {
             waiter.waitSecond();
             showIncomplitedHabits(user, incomplitedHabits);
         }
-
     }
 }

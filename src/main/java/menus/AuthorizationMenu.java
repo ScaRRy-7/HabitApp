@@ -9,7 +9,18 @@ import wait.Waiter;
 import enums.MenuCommand;
 import org.slf4j.*;
 
-public final class AuthorizationMenu implements Commander {
+/**
+ * Отвечает за отображение меню авторизованного пользователя и обработку выбранных им команд.
+ * Это меню предоставляет пользователю следующие возможности:
+ * 1. Редактирование профиля
+ * 2. Управление привычками
+ * 3. Просмотр статистики привычек
+ * 4. Выход из системы
+ *
+ * @author ScaRRy-7
+ * @version 1.0
+ */
+public class AuthorizationMenu implements Commander {
 
     private final AuthorizationWriter writer = new AuthorizationWriter();
     private final Reader reader = new Reader();
@@ -21,6 +32,12 @@ public final class AuthorizationMenu implements Commander {
     private User currentUser;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Запускает меню авторизованного пользователя.
+     * Отображает приветствие для пользователя и предлагает ему выбрать команду из списка.
+     *
+     * @param user авторизованный пользователь
+     */
     public void start(User user) {
         logger.info("меню авторизации запущено");
         currentUser = user;
@@ -28,6 +45,11 @@ public final class AuthorizationMenu implements Commander {
         selectCommand();
     }
 
+    /**
+     * Отображает список команд меню авторизованного пользователя и обрабатывает выбранную пользователем команду.
+     * Если пользователь выбрал корректную команду, выполняется соответствующая функциональность.
+     * Если пользователь выбрал некорректную команду, пользователю предлагается ввести команду еще раз.
+     */
     public void selectCommand() {
         logger.info("выведен список команд");
         writer.getCommands();
@@ -64,6 +86,13 @@ public final class AuthorizationMenu implements Commander {
         selectCommand();
     }
 
+/**
+ * Преобразует число, введенное пользователем, в соответствующую команду меню авторизованного пользователя.
+ *
+ * @param commandNumber номер команды, введенный пользователем
+ * @return соответствующая команда меню
+ * @throws IllegalArgumentException если введен неверный номер команды
+ */
     private MenuCommand getMenuCommandByNumber(int commandNumber) {
         return switch (commandNumber) {
             case 1 -> MenuCommand.REDACTPROFILE;
@@ -73,6 +102,4 @@ public final class AuthorizationMenu implements Commander {
             default -> throw new IllegalArgumentException("Invalid command number");
         };
     }
-
-
 }
