@@ -1,6 +1,8 @@
 package entities;
 
 import enums.HabitFrequency;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,39 +16,37 @@ import java.util.List;
  * @version 1.0
  */
 public class Habit implements Comparable<Habit> {
-    /**
-     * Название привычки.
-     */
+
+    @Getter
+    @Setter
     private String name;
 
-    /**
-     * Описание привычки.
-     */
+
+    @Getter
+    @Setter
     private String description;
 
-    /**
-     * Частота привычки.
-     */
+
+    @Setter
     private HabitFrequency frequenсy;
 
+
     /**
-     * Дата и время создания привычки.
+     * -- GETTER --
+     *  Возвращает дату и время создания привычки.
+     *
+     * @return дата и время создания привычки
      */
+    @Getter
     private LocalDateTime createdDateTime;
 
-    /**
-     * Форматтер для даты и времени.
-     */
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    /**
-     * Флаг, показывающий, была ли привычка выполнена.
-     */
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+
     private boolean isComplited;
 
-    /**
-     * Список дат, когда привычка была выполнена.
-     */
+    @Getter
     private final List<LocalDateTime> daysHabitComplited = new ArrayList<>();
 
     /**
@@ -64,23 +64,6 @@ public class Habit implements Comparable<Habit> {
         this.isComplited = false;
     }
 
-    /**
-     * Возвращает название привычки.
-     *
-     * @return название привычки
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Возвращает описание привычки.
-     *
-     * @return описание привычки
-     */
-    public String getDescription() {
-        return description;
-    }
 
     /**
      * Возвращает частоту привычки.
@@ -89,24 +72,6 @@ public class Habit implements Comparable<Habit> {
      */
     public HabitFrequency getFrequency() {
         return frequenсy;
-    }
-
-    /**
-     * Возвращает дату и время создания привычки.
-     *
-     * @return дата и время создания привычки
-     */
-    public LocalDateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    /**
-     * Возвращает список дат, когда привычка была выполнена.
-     *
-     * @return список дат выполнения привычки
-     */
-    public List<LocalDateTime> getDaysHabitComplited() {
-        return daysHabitComplited;
     }
 
     /**
@@ -132,32 +97,6 @@ public class Habit implements Comparable<Habit> {
         isComplited = false;
     }
 
-    /**
-     * Устанавливает новое название привычки.
-     *
-     * @param name новое название привычки
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Устанавливает новое описание привычки.
-     *
-     * @param description новое описание привычки
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * Устанавливает новую частоту привычки.
-     *
-     * @param frequenсy новая частота привычки
-     */
-    public void setFrequenсy(HabitFrequency frequenсy) {
-        this.frequenсy = frequenсy;
-    }
 
     /**
      * Возвращает строковое представление объекта Habit.

@@ -44,12 +44,10 @@ public class Identification {
         }
 
         if (emailValidator.isValid(email)) {
-            // емэйл валиден, можно пробовать идентифицировать
             logger.info("Эмейл валиден");
             identificate(email);
 
         } else {
-            // емэйл не валиден, необходимо сообщить об этом пользователю и запросить емэйл повторно
             logger.info("Эмейл не валиден, повторный запрос емэйла");
             writer.reportInvalidEmail();
             waiter.waitSecond();

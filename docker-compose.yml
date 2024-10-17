@@ -1,0 +1,10 @@
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: habitappdb
+      POSTGRES_USER: habitapp
+      POSTGRES_PASSWORD: habitapppassword
+    ports:
+      - "5432:5432"

@@ -1,5 +1,6 @@
 package entrypoint;
 
+import liquibase.LiquibaseManager;
 import org.slf4j.*;
 
 /**
@@ -20,7 +21,7 @@ public class Start {
      * @param args аргументы командной строки (не используются)
      */
     public static void main(String[] args) {
-
+        LiquibaseManager.runMigrations();
         Identification identification = new Identification();
         logger.info("создан обьект идентификации из метода main");
         identification.start();

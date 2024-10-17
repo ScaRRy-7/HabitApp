@@ -69,7 +69,7 @@ public final class UsersStorage {
      * @return true, если пользователь существует, иначе false
      */
     public boolean hasUser(String email) {
-        return users.get(email) != null;
+        return users.containsKey(email);
     }
 
     /**
@@ -89,8 +89,10 @@ public final class UsersStorage {
      * @param email email пользователя
      */
     public void removeUser(String email) {
-        users.remove(email);
-        logger.info("Пользователь с почтой {} удален", email);
+        if (users.containsKey(email)) {
+            users.remove(email);
+            logger.info("Пользователь с почтой {} удален", email);
+        }
     }
 
     /**

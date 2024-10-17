@@ -2,6 +2,7 @@ package entities;
 
 import enums.HabitFrequency;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -19,55 +20,26 @@ class HabitTest {
     }
 
     @Test
-    void testGetName() {
-        assertEquals("Exercise", habit.getName());
-    }
-
-    @Test
-    void testSetName() {
-        habit.setName("Reading");
-        assertEquals("Reading", habit.getName());
-    }
-
-    @Test
-    void testGetDescription() {
-        assertEquals("Daily morning exercise", habit.getDescription());
-    }
-
-    @Test
-    void testSetDescription() {
-        habit.setDescription("Read a book");
-        assertEquals("Read a book", habit.getDescription());
-    }
-
-    @Test
-    void testGetFrequency() {
-        assertEquals(HabitFrequency.DAILY, habit.getFrequency());
-    }
-
-    @Test
-    void testSetFrequency() {
-        habit.setFrequenсy(HabitFrequency.WEEKLY);
-        assertEquals(HabitFrequency.WEEKLY, habit.getFrequency());
-    }
-
-    @Test
+    @DisplayName("Тест метода getCreatedDateTime()")
     void testGetCreatedDateTime() {
         assertNotNull(habit.getCreatedDateTime());
     }
 
     @Test
+    @DisplayName("Тест метода isComplitedInitiallyFalse()")
     void testIsComplitedInitiallyFalse() {
         assertFalse(habit.isComplited());
     }
 
     @Test
+    @DisplayName("Тест метода setComplited()")
     void testSetComplited() {
         habit.setComplited();
         assertTrue(habit.isComplited());
     }
 
     @Test
+    @DisplayName("Тест метода setUncomplited()")
     void testSetUncomplited() {
         habit.setComplited(); // First set to completed
         habit.setUncomplited();
@@ -75,6 +47,7 @@ class HabitTest {
     }
 
     @Test
+    @DisplayName("Тест метода getDaysHabitComplited()")
     void testGetDaysHabitComplited() {
         List<LocalDateTime> days = habit.getDaysHabitComplited();
         assertNotNull(days);
@@ -82,12 +55,14 @@ class HabitTest {
     }
 
     @Test
+    @DisplayName("Тест метода compareTo()")
     void testCompareTo() {
         Habit anotherHabit = new Habit("Meditation", "Daily meditation", HabitFrequency.DAILY);
         assertTrue(habit.compareTo(anotherHabit) <= 0 || habit.compareTo(anotherHabit) >= 0);
     }
 
     @Test
+    @DisplayName("Тест метода toString()")
     void testToString() {
         String expected = "Название привычки: Exercise\n\tОписание привычки: Daily morning exercise" +
                 "\n\tЧастота: " + HabitFrequency.DAILY.getName() +

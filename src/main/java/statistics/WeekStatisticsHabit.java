@@ -46,7 +46,8 @@ public class WeekStatisticsHabit implements StatisticsCreator {
         LocalDate endOfWeek = today;
 
         // Заполнение списка статистики за неделю
-        for (int day = 0; day <= 6; day++) {
+        final int daysInWeek = 7;
+        for (int day = 0; day <= daysInWeek-1; day++) {
             LocalDate date  = startOfWeek.plusDays(day); // дата которую проверяем
             String dateStr = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
