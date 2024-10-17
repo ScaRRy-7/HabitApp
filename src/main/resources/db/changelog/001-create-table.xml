@@ -5,10 +5,21 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
         logicalFilePath="db/changelog/changelog.xml">
+
+
+
     <changeSet id="001-create-table" author="ScaRRy-7">
 
-        <createTable tableName="users">
-            <column name="id" type="BIGINT">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS habitschema;
+            CREATE SEQUENCE users_sequence START 1;
+            CREATE SEQUENCE habits_sequence START 1;
+            CREATE SEQUENCE complited_days_sequence START 1;
+        </sql>
+
+        <createSequence sequenceName="users_sequence" schemaName="habitschema"/>
+        <createTable tableName="users" schemaName="habitschema" >
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('users_sequence')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="VARCHAR(255)">
@@ -23,8 +34,9 @@
             <column name="is_blocked" type="BOOLEAN" defaultValue="false"/>
         </createTable>
 
-        <createTable tableName="habits">
-            <column name="id" type="BIGINT">
+        <createSequence sequenceName="habits_sequence" schemaName="habitschema"/>
+        <createTable tableName="habits" schemaName="habitschema">
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('habits_sequence')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)">
@@ -40,7 +52,19 @@
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="BIGINT">
-            <constraints nullable="false" foreignKeyName="fk_habits_users" referencedTableName="users" referencedColumnNames="id"/>
+            <constraints nullable="false" foreignKeyName="fk_habits_users" referencedTableSchemaName="habitschema" referencedTableName="users" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="complited_days" schemaName="habitschema">
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('complited_days_sequence')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="complited_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="habit_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_complited_days_habits" referencedTableSchemaName="habitschema" referencedTableName="habits" referencedColumnNames="id"/>
             </column>
         </createTable>
     </changeSet>
