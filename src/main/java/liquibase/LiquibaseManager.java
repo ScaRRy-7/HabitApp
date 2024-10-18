@@ -1,9 +1,11 @@
 package liquibase;
 
+import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
+import liquibase.logging.LogService;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,6 +19,7 @@ public class LiquibaseManager {
     private static final String PASSWORD = ConfigurationManager.getProperty("DB_PASSWORD");
 
     public static void runMigrations() {
+
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
             Liquibase liquibase = new Liquibase("db/changelog/changelog.xml", new ClassLoaderResourceAccessor(), database);

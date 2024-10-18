@@ -27,21 +27,21 @@
         <insert tableName="habits" schemaName="habitschema">
             <column name="name" value="Read a book"/>
             <column name="description" value="Read a book for 30 minutes every day"/>
-            <column name="frequency" value="DAILY"/>
+            <column name="frequency" value="ежедневно"/>
             <column name="created_date_time" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="user_id" value="1"/>
         </insert>
         <insert tableName="habits" schemaName="habitschema">
             <column name="name" value="Exercise"/>
             <column name="description" value="Do 30 minutes of exercise every day"/>
-            <column name="frequency" value="DAILY"/>
+            <column name="frequency" value="ежедневно"/>
             <column name="created_date_time" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="user_id" value="2"/>
         </insert>
         <insert tableName="habits" schemaName="habitschema">
             <column name="name" value="Meditate"/>
             <column name="description" value="Meditate for 10 minutes every day"/>
-            <column name="frequency" value="DAILY"/>
+            <column name="frequency" value="ежедневно"/>
             <column name="created_date_time" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="user_id" value="3"/>
         </insert>

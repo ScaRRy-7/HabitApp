@@ -26,6 +26,7 @@ public class HabitUnmarker {
      */
     private final Logger logger = LoggerFactory.getLogger(HabitUnmarker.class);
 
+
     /**
      * Проверяет и размаркирует выполненные привычки пользователя, если прошел необходимый срок.
      *
@@ -33,7 +34,7 @@ public class HabitUnmarker {
      */
     public void checkHabits(User user) {
         logger.info("Запущена размаркировка выполненных привычек если уже прошло время");
-        for (Habit habit : user.getHabits()) {
+        for (Habit habit : usersController.getAllHabits(user)) {
             if (!habit.isComplited()) continue;
 
             long daysPassed = ChronoUnit.DAYS.between(habit.getDaysHabitComplited().get(habit.getDaysHabitComplited().size() - 1), LocalDateTime.now());
@@ -42,6 +43,5 @@ public class HabitUnmarker {
                 habit.setUncomplited();
             }
         }
-        usersController.updateRedactedUser(user, user.getEmail());
     }
 }

@@ -6,6 +6,8 @@ import entities.User;
 import habitchangers.HabitUnmarker;
 import out.ProgressReportWriter;
 import org.slf4j.*;
+import storage.UsersController;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,6 +20,9 @@ import java.util.List;
  * @version 1.0
  */
 public class ProgressReport {
+
+    private final UsersController usersController = new UsersController();
+
     /**
      * Объект класса HabitUnmarker для проверки и размаркировки привычек.
      */
@@ -53,7 +58,7 @@ public class ProgressReport {
         habitUnmarker.checkHabits(user);
         System.out.println("Отчет о прогрессе выполнения привычек для пользователя: " + user.getName());
 
-        for (Habit habit : user.getHabits()) {
+        for (Habit habit : usersController.getAllHabits(user)) {
             int streak = streakCalculator.calculateStreak(habit);
             double successRate = successCalculator.calculateSuccessRate(habit);
             writer.write(habit, streak, successRate);

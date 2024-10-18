@@ -43,7 +43,7 @@ public class IncomplitedHabitsMenu {
         logger.info("Запущен отбор неотмеченных привычек из всех привычек у пользователя");
         habitUnmarker.checkHabits(user);
         List<Habit> incomplitedHabits = new ArrayList<>();
-        for (Habit habit : user.getHabits()) {
+        for (Habit habit : usersController.getAllHabits(user)) {
             if (!habit.isComplited()) {
                 incomplitedHabits.add(habit);
             }

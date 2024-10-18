@@ -64,6 +64,14 @@ public class Habit implements Comparable<Habit> {
         this.isComplited = false;
     }
 
+    public Habit(String name, String description, HabitFrequency frequency, LocalDateTime createdDateTime, boolean isComplited) {
+        this.name = name;
+        this.description = description;
+        this.frequenсy = frequency;
+        this.createdDateTime = createdDateTime;
+        this.isComplited = isComplited;
+    }
+
 
     /**
      * Возвращает частоту привычки.

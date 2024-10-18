@@ -3,12 +3,14 @@ package out;
 import entities.Habit;
 import entities.User;
 import habitchangers.HabitUnmarker;
+import storage.UsersController;
 
 import java.util.List;
 
 public class HabitsRedactorWriter {
 
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
+    private final UsersController usersController = new UsersController();
 
 
     public void writeCommands() {
@@ -72,7 +74,7 @@ public class HabitsRedactorWriter {
 
     public void writeHabits(User user) {
         int num = 1;
-        for (Habit habit : user.getHabits()) {
+        for (Habit habit : usersController.getAllHabits(user)) {
             System.out.println(num + " - " + habit + "\n");
             num++;
         }

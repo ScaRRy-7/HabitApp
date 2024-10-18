@@ -4,6 +4,7 @@ import entities.Habit;
 import entities.User;
 import in.Reader;
 import out.HabitChooserWriter;
+import storage.UsersController;
 import validate.HabitChooserValidator;
 import wait.Waiter;
 
@@ -25,6 +26,7 @@ public class HabitChooser {
     private final Reader reader;
     private final HabitChooserValidator validator;
     private final Waiter waiter;
+    private final UsersController usersController = new UsersController();
 
     /**
      * Конструктор для создания объекта HabitChooser с заданными зависимостями.
@@ -72,7 +74,7 @@ public class HabitChooser {
 
         if (validator.isValidHabitNumber(user, habitNumber)) {
             int habitIndex = Integer.parseInt(habitNumber) - 1;
-            choosedHabit = user.getHabits().get(habitIndex);
+            choosedHabit = usersController.getAllHabits(user).get(habitIndex);
         } else {
             writer.reportIncorrectHabitNumber();
             waiter.waitSecond();

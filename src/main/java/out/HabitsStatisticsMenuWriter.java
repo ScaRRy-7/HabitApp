@@ -4,15 +4,17 @@ import entities.Habit;
 import entities.User;
 import enums.StatisticsCommand;
 import habitchangers.HabitUnmarker;
+import storage.UsersController;
 
 public class HabitsStatisticsMenuWriter {
 
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
+    private final UsersController usersController = new UsersController();
 
     public void writeHabits(User user) {
         habitUnmarker.checkHabits(user);
         int num = 1;
-        for (Habit habit : user.getHabits()) {
+        for (Habit habit : usersController.getAllHabits(user)) {
             System.out.println(num + " - " + habit + "\n");
             num++;
         }

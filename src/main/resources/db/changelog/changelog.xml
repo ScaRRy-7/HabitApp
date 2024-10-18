@@ -7,4 +7,5 @@
         logicalFilePath="db/changelog/changelog.xml">
     <include file="db/changelog/001-create-table.xml"/>
     <include file="db/changelog/002-insert-data.xml"/>
+    <include file="db/changelog/003-add-foreign-keys.xml"/>
 </databaseChangeLog>

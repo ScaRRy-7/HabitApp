@@ -4,6 +4,9 @@ import entities.Habit;
 import entities.User;
 import org.slf4j.*;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Класс UsersController отвечает за управление пользователями в базе данных.
  *
@@ -84,9 +87,8 @@ public final class UsersController {
      */
     public void changeHabit(User user, Habit habit, int habitNumber) {
         logger.info("Привычка у юзера обновляется");
-        int habitIndex = habitNumber - 1;
-        user.getHabits().set(habitIndex, habit);
-        usersStorage.addUser(user);
+        //user.getHabits().set(habitIndex, habit);
+        usersStorage.changeHabit(user, habit, habitNumber);
     }
 
     /**
@@ -97,8 +99,7 @@ public final class UsersController {
      */
     public void removeHabit(User user, int habitNumber) {
         logger.info("Привычка у юзера удаляется");
-        user.getHabits().remove(habitNumber - 1);
-        usersStorage.addUser(user);
+        usersStorage.removeHabitFromUser(user, habitNumber);
     }
 
     /**
@@ -109,5 +110,13 @@ public final class UsersController {
     public void blockUser(String email) {
         logger.info("Пользователь блокируется");
         usersStorage.getUser(email).setBlocked();
+    }
+
+    public Habit getHabitFromUser(User user, int habitNumber) {
+        return usersStorage.getHabitFromUser(user,habitNumber);
+    }
+
+    public List<Habit> getAllHabits(User user) {
+        return usersStorage.getAllHabits(user);
     }
 }

@@ -57,7 +57,7 @@ public class HabitRemover {
      */
     public void removeHabit(User currentUser) {
         logger.info("Запущен выбор привычки которую пользователь хочет удалить");
-        if (currentUser.getHabits().isEmpty()) {
+        if (usersController.getAllHabits(currentUser).isEmpty()) {
             logger.info("Выбор привычки невозможен, у пользователя нет привычек");
             writer.infoNoHabits();
             waiter.waitSecond();
