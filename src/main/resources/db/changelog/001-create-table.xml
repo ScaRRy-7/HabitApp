@@ -12,6 +12,7 @@
 
         <sql>
             CREATE SCHEMA IF NOT EXISTS habitschema;
+            CREATE SCHEMA IF NOT EXISTS service;
             CREATE SEQUENCE users_sequence START 1;
             CREATE SEQUENCE habits_sequence START 1;
             CREATE SEQUENCE complited_days_sequence START 1;

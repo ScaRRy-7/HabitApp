@@ -270,7 +270,7 @@ public final class UsersStorage {
             if (resultSet.next()) {
                 String habitName = resultSet.getString("name");
                 String habitDescription = resultSet.getString("description");
-                HabitFrequency habitFrequency = HabitFrequency.valueOf(resultSet.getString("frequency"));
+                HabitFrequency habitFrequency = HabitFrequency.getFrequencyByName(resultSet.getString("frequency"));
                 Timestamp created_date_time = resultSet.getTimestamp("created_date_time");
                 boolean isComplited = resultSet.getBoolean("is_complited");
                 habit = new Habit(habitName, habitDescription, habitFrequency, created_date_time.toLocalDateTime(), isComplited);
