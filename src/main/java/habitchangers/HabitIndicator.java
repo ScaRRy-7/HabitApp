@@ -5,6 +5,7 @@ import entities.User;
 import enums.Sorting;
 import in.Reader;
 import out.HabitsRedactorWriter;
+import storage.UsersController;
 import validate.HabitIndicatorValidator;
 import wait.Waiter;
 import org.slf4j.*;
@@ -19,6 +20,8 @@ import java.util.List;
  * @version 1.0
  */
 public class HabitIndicator {
+
+    private final UsersController usersController = new UsersController();
     /**
      * Объект класса HabitsRedactorWriter для записи информации о привычках.
      */
@@ -56,7 +59,7 @@ public class HabitIndicator {
      */
     public void showHabits(User currentUser) {
         habitUnmarker.checkHabits(currentUser); // Предварительно размаркировка привычек, если прошел срок (день или месяц)
-        if (currentUser.getHabits().isEmpty()) {
+        if (usersController.getAllHabits(currentUser).isEmpty()) {
             logger.debug("У пользователя нет привычек");
             writer.infoNoHabits();
         } else {
@@ -95,7 +98,7 @@ public class HabitIndicator {
         logger.debug("Запущен выбор сортировки привычек");
         habitUnmarker.checkHabits(currentUser);
 
-        if (currentUser.getHabits().isEmpty()) {
+        if (usersController.getAllHabits(currentUser).isEmpty()) {
             logger.debug("У пользователя отсутствуют привычки, выбор сортировки невозможен");
             writer.infoNoHabits();
             waiter.waitSecond();
@@ -112,11 +115,11 @@ public class HabitIndicator {
             switch (sorting) {
                 case DATE:
                     logger.info("Пользователь выбрал сортировку по дате");
-                    showHabits(currentUser.getHabits(), Sorting.DATE);
+                    showHabits(usersController.getAllHabits(currentUser), Sorting.DATE);
                     break;
                 case FREQUENCY:
                     logger.info("Пользователь выбрал сортировку по частоте");
-                    showHabits(currentUser.getHabits(), Sorting.FREQUENCY);
+                    showHabits(usersController.getAllHabits(currentUser), Sorting.FREQUENCY);
                     break;
             }
         } else {

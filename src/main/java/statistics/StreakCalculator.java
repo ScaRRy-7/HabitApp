@@ -5,6 +5,7 @@ import entities.User;
 import enums.HabitFrequency;
 import habitchangers.HabitUnmarker;
 import out.StreakCalculatorWriter;
+import storage.UsersController;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +19,9 @@ import java.util.List;
  * @version 1.0
  */
 public class StreakCalculator {
+
+    private final UsersController usersController = new UsersController();
+
     /**
      * Объект класса HabitUnmarker для проверки и размаркировки привычек.
      */
@@ -54,7 +58,7 @@ public class StreakCalculator {
      */
     public void start(User user) {
         habitUnmarker.checkHabits(user);
-        for (Habit habit : user.getHabits()) {
+        for (Habit habit : usersController.getAllHabits(user)) {
             int streak = calculateStreak(habit);
             writer.write(habit.getName(), streak);
         }

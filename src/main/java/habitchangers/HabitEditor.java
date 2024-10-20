@@ -25,7 +25,7 @@ public class HabitEditor {
 
     public void redactHabit(User currentUser) {
         logger.info("Запущен выбор привычки которую пользователь будет редактировать");
-        if (currentUser.getHabits().isEmpty()) {
+        if (usersController.getAllHabits(currentUser).isEmpty()) {
             logger.debug("У пользователя отсутствуют привычки, выбор невозможен");
             writer.infoNoHabits();
             waiter.waitSecond();
@@ -83,7 +83,7 @@ public class HabitEditor {
 
         if (validator.isValidHabitName(habitName)) {
             logger.info("Пользователь ввел валидное новое имя привычки");
-            Habit newHabit = user.getHabits().get(habitNumber-1);
+            Habit newHabit = usersController.getHabitFromUser(user, habitNumber);
             newHabit.setName(habitName);
             usersController.changeHabit(user, newHabit, habitNumber);
         } else {
@@ -101,7 +101,7 @@ public class HabitEditor {
 
         if (validator.isValidHabitDescription(habitDescription)) {
             logger.info("Пользователь ввел валидное новое описание привычки");
-            Habit newHabit = user.getHabits().get(habitNumber-1);
+            Habit newHabit = usersController.getHabitFromUser(user, habitNumber);
             newHabit.setDescription(habitDescription);
             usersController.changeHabit(user, newHabit, habitNumber);
         } else {
@@ -120,7 +120,7 @@ public class HabitEditor {
         if (validator.isValidHabitFrequencyNumber(habitFrequencyNumber)) {
             logger.info("Пользователь ввел валидный номер частоты");
             HabitFrequency newHabitFrequency = getFrequencyByNumber(habitFrequencyNumber);
-            Habit newHabit = user.getHabits().get(habitNumber-1);
+            Habit newHabit = usersController.getHabitFromUser(user, habitNumber);
             newHabit.setFrequenсy(newHabitFrequency);
             usersController.changeHabit(user, newHabit, habitNumber);
         } else {
@@ -147,4 +147,6 @@ public class HabitEditor {
             default -> throw new IllegalArgumentException("Invalid number");
         };
     }
+
+
 }

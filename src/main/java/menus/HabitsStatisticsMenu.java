@@ -7,6 +7,7 @@ import out.HabitsStatisticsMenuWriter;
 import statistics.ProgressReport;
 import statistics.StreakCalculator;
 import statistics.SuccessCalculator;
+import storage.UsersController;
 import validate.StatisticsValidator;
 import wait.Waiter;
 import org.slf4j.*;
@@ -35,6 +36,8 @@ public class HabitsStatisticsMenu implements Commander {
     private final SuccessCalculator successCalculator = new SuccessCalculator();
     private final ProgressReport progressReport = new ProgressReport();
     private final Logger logger = LoggerFactory.getLogger(HabitsStatisticsMenu.class);
+    private final UsersController usersController = new UsersController();
+
 
     /**
      * Запускает меню статистики привычек для авторизованного пользователя.
@@ -46,7 +49,7 @@ public class HabitsStatisticsMenu implements Commander {
     public void start(User user) {
         logger.info("Запущено меню статистики");
         this.currentUser = user;
-        if (!user.getHabits().isEmpty()) {
+        if (!usersController.getAllHabits(user).isEmpty()) {
             logger.debug("У пользователя есть привычки, запускается выбор команды");
             selectCommand();
         } else {

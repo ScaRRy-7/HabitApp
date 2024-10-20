@@ -2,6 +2,7 @@ package entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import storage.UsersController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
  * @version 1.0
  */
 public final class User {
+
+    UsersController usersController = new UsersController();
 
     @Setter
     @Getter
@@ -26,11 +29,10 @@ public final class User {
     @Getter
     private String password;
 
-    @Getter
-    private List<Habit> habits = new ArrayList<>();
+
+   //private List<Habit> habits = new ArrayList<>();
 
     private boolean isBlocked = false;
-
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
@@ -38,7 +40,7 @@ public final class User {
     }
 
     public void addHabit(Habit habit) {
-        habits.add(habit);
+        usersController.addNewHabit(this, habit);
     }
 
     public void setBlocked() {

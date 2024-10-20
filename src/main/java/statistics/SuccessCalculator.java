@@ -6,6 +6,8 @@ import enums.HabitFrequency;
 import habitchangers.HabitUnmarker;
 import out.SuccessCalculatorWriter;
 import org.slf4j.*;
+import storage.UsersController;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -17,6 +19,9 @@ import java.time.temporal.ChronoUnit;
  * @version 1.0
  */
 public class SuccessCalculator {
+
+    private final UsersController usersController = new UsersController();
+
     /**
      * Объект класса HabitUnmarker для проверки и размаркировки привычек.
      */
@@ -40,7 +45,7 @@ public class SuccessCalculator {
     public void start(User user) {
         logger.debug("Запущен калькулятор выполняемости привычек в %");
         habitUnmarker.checkHabits(user);
-        for (Habit habit : user.getHabits()) {
+        for (Habit habit : usersController.getAllHabits(user)) {
             double successRate = calculateSuccessRate(habit);
             writer.write(habit, successRate);
         }

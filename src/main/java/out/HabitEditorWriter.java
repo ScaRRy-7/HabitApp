@@ -3,10 +3,12 @@ package out;
 import entities.Habit;
 import entities.User;
 import habitchangers.HabitUnmarker;
+import storage.UsersController;
 
 public class HabitEditorWriter {
 
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
+    private final UsersController usersController = new UsersController();
 
     public void askNewHabitName() {
         System.out.println("Напиши новое имя привычки (5-30 символов):");
@@ -47,7 +49,7 @@ public class HabitEditorWriter {
 
     public void writeHabits(User user) {
         int num = 1;
-        for (Habit habit : user.getHabits()) {
+        for (Habit habit : usersController.getAllHabits(user)) {
             System.out.println(num + " - " + habit + "\n");
             num++;
         }
