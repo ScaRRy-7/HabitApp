@@ -7,8 +7,10 @@
     <groupId>example.com</groupId>
     <artifactId>HabitApp</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <build>
+        <finalName>habitapp</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -23,7 +25,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>entrypoint.Start</mainClass>
+                                    <mainClass>habitapp.services.entrypoint.Start</mainClass>
                                 </transformer>
                             </transformers>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
@@ -31,7 +33,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.15.0</version>
+                <configuration>
+                    <propertyFile>liquibase.properties</propertyFile>
+                </configuration>
+            </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
     </build>
 
     <properties>
@@ -48,6 +63,12 @@
         <liquibase.version>4.17.0</liquibase.version>
         <postgresql.version>42.7.3</postgresql.version>
         <lombok.version>1.18.24</lombok.version>
+        <testcontainers.version>1.17.3</testcontainers.version>
+        <postgresqlcontainer.version>1.15.1</postgresqlcontainer.version>
+        <servlet.version>6.0.0</servlet.version>
+        <mapstruct.version>1.5.3.Final</mapstruct.version>
+        <jackson.version>2.17.2</jackson.version>
+        <jackson.datatype.version>2.15.0</jackson.datatype.version>
     </properties>
 
     <dependencies>
@@ -107,6 +128,45 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresqlcontainer.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.datatype.version}</version>
         </dependency>
 
     </dependencies>

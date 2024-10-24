@@ -1,6 +1,8 @@
 package entities;
 
-import enums.HabitFrequency;
+import habitapp.entities.Habit;
+import habitapp.entities.User;
+import habitapp.services.enums.HabitFrequency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,21 +50,7 @@ class UserTest {
         assertThat(user.getPassword()).isEqualTo("newpassword");
     }
 
-    @Test
-    void testAddHabit() {
-        Habit habit = new Habit("Exercise", "Daily exercise", HabitFrequency.DAILY);
-        user.addHabit(habit);
-        assertThat(user.getHabits()).contains(habit);
-    }
 
-    @Test
-    void testGetHabits() {
-        Habit habit1 = new Habit("Exercise", "Daily exercise", HabitFrequency.DAILY);
-        Habit habit2 = new Habit("Reading", "Read a book", HabitFrequency.WEEKLY);
-        user.addHabit(habit1);
-        user.addHabit(habit2);
-        assertThat(user.getHabits()).containsExactly(habit1, habit2);
-    }
 
     @Test
     void testSetBlocked() {

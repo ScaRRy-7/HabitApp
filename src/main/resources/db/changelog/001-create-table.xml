@@ -5,10 +5,22 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
         logicalFilePath="db/changelog/changelog.xml">
+
+
+
     <changeSet id="001-create-table" author="ScaRRy-7">
 
-        <createTable tableName="users">
-            <column name="id" type="BIGINT">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS habitschema;
+            CREATE SCHEMA IF NOT EXISTS services;
+            CREATE SEQUENCE users_sequence START 1;
+            CREATE SEQUENCE habits_sequence START 1;
+            CREATE SEQUENCE complited_days_sequence START 1;
+        </sql>
+
+        <createSequence sequenceName="users_sequence" schemaName="habitschema"/>
+        <createTable tableName="users" schemaName="habitschema" >
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('users_sequence')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="VARCHAR(255)">
@@ -23,8 +35,9 @@
             <column name="is_blocked" type="BOOLEAN" defaultValue="false"/>
         </createTable>
 
-        <createTable tableName="habits">
-            <column name="id" type="BIGINT">
+        <createSequence sequenceName="habits_sequence" schemaName="habitschema"/>
+        <createTable tableName="habits" schemaName="habitschema">
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('habits_sequence')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)">
@@ -39,8 +52,20 @@
             <column name="created_date_time" type="TIMESTAMP WITH TIME ZONE">
                 <constraints nullable="false"/>
             </column>
+            <column name="is_complited" type="BOOLEAN" defaultValue="false"/>
             <column name="user_id" type="BIGINT">
-            <constraints nullable="false" foreignKeyName="fk_habits_users" referencedTableName="users" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="complited_days_sequence" schemaName="habitschema"/>
+        <createTable tableName="complited_days" schemaName="habitschema">
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('complited_days_sequence')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="complited_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="habit_id" type="BIGINT">
             </column>
         </createTable>
     </changeSet>
