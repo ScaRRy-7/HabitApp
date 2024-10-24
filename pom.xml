@@ -69,6 +69,7 @@
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <jackson.version>2.17.2</jackson.version>
         <jackson.datatype.version>2.15.0</jackson.datatype.version>
+        <aspectj.version>1.9.20.1</aspectj.version>
     </properties>
 
     <dependencies>
@@ -168,7 +169,16 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.datatype.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import habitapp.annotaions.Loggable;
 import habitapp.dto.HabitDTO;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.services.HabitService;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Loggable
 @WebServlet("/showstatistics")
 public class GetComplitedDaysController extends HttpServlet {
 

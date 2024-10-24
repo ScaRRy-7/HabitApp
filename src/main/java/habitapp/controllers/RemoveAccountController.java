@@ -1,5 +1,6 @@
 package habitapp.controllers;
 
+import habitapp.annotaions.Loggable;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.services.UserService;
 import jakarta.servlet.ServletException;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@Loggable
 @WebServlet("/removeaccount")
 public class RemoveAccountController extends HttpServlet {
 

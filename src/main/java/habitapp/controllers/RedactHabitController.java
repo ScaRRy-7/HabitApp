@@ -3,6 +3,7 @@ package habitapp.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import habitapp.annotaions.Loggable;
 import habitapp.dto.HabitDTO;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.services.HabitService;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@Loggable
 @WebServlet("/redacthabit")
 public class RedactHabitController extends HttpServlet {
 

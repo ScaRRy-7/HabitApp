@@ -1,5 +1,6 @@
 package habitapp.services;
 
+import habitapp.annotaions.Loggable;
 import habitapp.dto.HabitDTO;
 import habitapp.dto.UserDTO;
 import habitapp.entities.Habit;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Loggable
 public class HabitService implements UserMapper, HabitMapper {
 
     private final HabitappRepository habitappRepository;

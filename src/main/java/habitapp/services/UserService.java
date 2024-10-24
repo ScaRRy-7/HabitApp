@@ -1,5 +1,6 @@
 package habitapp.services;
 
+import habitapp.annotaions.Loggable;
 import habitapp.dto.UserDTO;
 import habitapp.entities.User;
 import habitapp.exceptions.UserIllegalRequestException;
@@ -9,6 +10,7 @@ import habitapp.validators.UserValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Loggable
 public class UserService implements UserMapper {
 
     private static final UserService INSTANCE = new UserService();

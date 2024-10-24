@@ -1,6 +1,7 @@
 package habitapp.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import habitapp.annotaions.Loggable;
 import habitapp.dto.UserDTO;
 import habitapp.entities.User;
 import habitapp.services.UserService;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@Loggable
 @WebServlet("/checksession")
 public class SessionCheckController extends HttpServlet {
 

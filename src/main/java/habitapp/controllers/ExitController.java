@@ -1,6 +1,7 @@
 package habitapp.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import habitapp.annotaions.Loggable;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@Loggable
 @WebServlet("/exit")
 public class ExitController extends HttpServlet {
 
