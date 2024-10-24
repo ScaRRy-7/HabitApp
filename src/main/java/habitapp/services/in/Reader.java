@@ -1,4 +1,4 @@
-package services.in;
+package habitapp.services.in;
 
 import java.util.Scanner;
 

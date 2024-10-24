@@ -1,11 +1,11 @@
-package services.adminstration;
+package habitapp.services.adminstration;
 
-import services.entrypoint.Start;
-import services.enums.AdminCommand;
-import services.in.Reader;
-import services.out.AdministationPanelWriter;
-import services.validate.AdminPanelValidator;
-import services.wait.Waiter;
+import habitapp.services.entrypoint.Start;
+import habitapp.services.enums.AdminCommand;
+import habitapp.services.in.Reader;
+import habitapp.services.out.AdministationPanelWriter;
+import habitapp.services.validate.AdminPanelValidator;
+import habitapp.services.wait.Waiter;
 import org.slf4j.*;
 import java.util.ResourceBundle;
 

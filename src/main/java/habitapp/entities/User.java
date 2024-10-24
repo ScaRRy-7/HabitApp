@@ -1,8 +1,8 @@
-package services.entities;
+package habitapp.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-import repositories.UsersRepository;
+import habitapp.repositories.HabitappRepository;
 
 /**
  * Класс User представляет пользователя системы.
@@ -12,7 +12,7 @@ import repositories.UsersRepository;
  */
 public final class User {
 
-    UsersRepository usersRepository = new UsersRepository();
+    HabitappRepository habitappRepository = new HabitappRepository();
 
     @Setter
     @Getter
@@ -26,19 +26,14 @@ public final class User {
     @Getter
     private String password;
 
-
-   //private List<Habit> habits = new ArrayList<>();
-
     private boolean isBlocked = false;
+
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public void addHabit(Habit habit) {
-        usersRepository.addNewHabit(this, habit);
-    }
 
     public void setBlocked() {
         isBlocked = true;

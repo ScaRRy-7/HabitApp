@@ -1,4 +1,4 @@
-package services.wait;
+package habitapp.services.wait;
 
 public class Waiter {
 

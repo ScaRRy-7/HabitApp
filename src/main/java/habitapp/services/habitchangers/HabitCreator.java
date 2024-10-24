@@ -1,13 +1,13 @@
-package services.habitchangers;
+package habitapp.services.habitchangers;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.enums.HabitFrequency;
-import services.in.Reader;
-import services.out.HabitsRedactorWriter;
-import repositories.UsersRepository;
-import services.validate.CommandHabitValidator;
-import services.wait.Waiter;
+import habitapp.entities.Habit;
+import habitapp.entities.User;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.enums.HabitFrequency;
+import habitapp.services.in.Reader;
+import habitapp.services.out.HabitsRedactorWriter;
+import habitapp.services.validate.CommandHabitValidator;
+import habitapp.services.wait.Waiter;
 
 /**
  * Отвечает за создание новой привычки пользователем.
@@ -15,7 +15,7 @@ import services.wait.Waiter;
  * {@link CommandHabitValidator} для проверки корректности введенных данных,
  * {@link Reader} для чтения ввода пользователя,
  * {@link Waiter} для временной задержки,
- * и {@link UsersRepository} для добавления новой привычки в базу данных пользователя.
+ * и {@link HabitappRepository} для добавления новой привычки в базу данных пользователя.
  *
  * @author ScaRRy-7
  * @version 1.0
@@ -26,7 +26,7 @@ public class HabitCreator {
     private final CommandHabitValidator habitValidator = new CommandHabitValidator();
     private final Reader reader = new Reader();
     private final Waiter waiter = new Waiter();
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     /**
      * Позволяет пользователю создать новую привычку.
@@ -50,7 +50,7 @@ public class HabitCreator {
         writer.infoHabitWasCreated();
         waiter.waitSecond();
 
-        usersRepository.addNewHabit(user, newHabit);
+        //usersRepository.addNewHabit(user, newHabit);
     }
 
     /**

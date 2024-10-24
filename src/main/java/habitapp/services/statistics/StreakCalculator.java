@@ -1,11 +1,10 @@
-package services.statistics;
+package habitapp.services.statistics;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.enums.HabitFrequency;
-import services.habitchangers.HabitUnmarker;
-import services.out.StreakCalculatorWriter;
-import repositories.UsersRepository;
+import habitapp.entities.Habit;
+import habitapp.services.habitchangers.HabitUnmarker;
+import habitapp.services.enums.HabitFrequency;
+import habitapp.services.out.StreakCalculatorWriter;
+import habitapp.repositories.HabitappRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public class StreakCalculator {
 
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     /**
      * Объект класса HabitUnmarker для проверки и размаркировки привычек.
@@ -56,13 +55,13 @@ public class StreakCalculator {
      *
      * @param user текущий пользователь
      */
-    public void start(User user) {
-        habitUnmarker.checkHabits(user);
-        for (Habit habit : usersRepository.getAllHabits(user)) {
-            int streak = calculateStreak(habit);
-            writer.write(habit.getName(), streak);
-        }
-    }
+//    public void start(User user) {
+//        habitUnmarker.checkHabits(user);
+//        for (Habit habit : usersRepository.getAllHabits(user)) {
+//            int streak = calculateStreak(habit);
+//            writer.write(habit.getName(), streak);
+//        }
+//    }
 
     /**
      * Рассчитывает серию выполнений для указанной привычки.

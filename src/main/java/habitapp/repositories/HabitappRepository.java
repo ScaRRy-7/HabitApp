@@ -1,11 +1,11 @@
 package habitapp.repositories;
 
-import habitapp.dto.HabitDTO;
-import habitapp.dto.UserDTO;
 import habitapp.entities.Habit;
+import habitapp.entities.User;
 import habitapp.exceptions.UserIllegalRequestException;
 import org.slf4j.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -14,25 +14,25 @@ import java.util.List;
  * @author ScaRRy-7
  * @version 1.0
  */
-public final class UsersRepository {
+public final class HabitappRepository {
     /**
      * Объект класса UsersStorage для доступа к базе данных пользователей.
      */
-    private final UsersDAO usersDAO = UsersDAO.getInstance();
+    private final HabitappDAO habitappDAO = HabitappDAO.getInstance();
 
     /**
      * Объект класса Logger для логирования событий.
      */
-    private final Logger logger = LoggerFactory.getLogger(UsersRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(HabitappRepository.class);
 
     /**
      * Добавляет нового пользователя в базу данных.
      *
-     * @param userDTO новый пользователь
+     * @param user новый пользователь
      */
-    public void addUserToDatabase(UserDTO userDTO) throws UserIllegalRequestException {
+    public void addUserToDatabase(User user) throws UserIllegalRequestException {
         logger.info("Юзер добавляется с помощью UsersController в БД");
-        usersDAO.addUser(userDTO);
+        habitappDAO.addUser(user);
     }
 
     /**
@@ -41,19 +41,19 @@ public final class UsersRepository {
      * @param email email пользователя
      * @return пользователь, найденный по email
      */
-    public UserDTO getUserFromDatabase(String email) {
+    public User getUserFromDatabase(String email) {
         logger.info("Юзер возвращается с помощью запроса UsersController к UsersStorage");
-        return usersDAO.getUser(email);
+        return habitappDAO.getUser(email);
     }
 
     /**
      * Обновляет информацию о пользователе в базе данных.
      *
-     * @param userDTO  обновленный пользователь
+     * @param user  обновленный пользователь
      * @param email email пользователя
      */
-    public void updateRedactedUser(String email, UserDTO userDTO)  {
-        usersDAO.updateRedactedUser(email, userDTO);
+    public void updateRedactedUser(String email, User user)  {
+        habitappDAO.updateRedactedUser(email, user);
     }
 
     /**
@@ -63,7 +63,7 @@ public final class UsersRepository {
      */
     public void removeUserFromDatabase(String email) {
         logger.info("UsersController делает запрос на удаление юзера к UsersStorage");
-        usersDAO.removeUser(email);
+        habitappDAO.removeUser(email);
     }
 
     /**
@@ -72,9 +72,9 @@ public final class UsersRepository {
      * @param user  пользователь
      * @param habit новая привычка
      */
-    public void addNewHabit(UserDTO user, Habit habit) {
+    public void addNewHabit(User user, Habit habit) {
         logger.info("UsersController делает запрос на добавление привычки юзеру в UsersStorage");
-        usersDAO.addHabitToUser(user, habit);
+        habitappDAO.addHabitToUser(user, habit);
     }
 
     /**
@@ -84,19 +84,19 @@ public final class UsersRepository {
      * @param oldHabit    старая привычка
      * @param newHabit    Обновленная привычка
      */
-    public void changeHabit(UserDTO user, HabitDTO oldHabit, HabitDTO newHabit) {
-        usersDAO.changeHabit(user, oldHabit, newHabit);
+    public void changeHabit(User user, Habit oldHabit, Habit newHabit) {
+        habitappDAO.changeHabit(user, oldHabit, newHabit);
     }
 
     /**
      * Удаляет привычку пользователя из базы данных.
      *
-     * @param userDTO       пользователь
-     * @param habitDTO привычка которую нужно удалить
+     * @param user      пользователь
+     * @param habit привычка которую нужно удалить
      */
-    public void removeHabit(UserDTO userDTO, HabitDTO habitDTO) {
+    public void removeHabit(User user, Habit habit) {
         logger.info("Привычка у юзера удаляется");
-        usersDAO.removeHabitFromUser(userDTO, habitDTO);
+        habitappDAO.removeHabitFromUser(user, habit);
     }
 
     /**
@@ -109,20 +109,32 @@ public final class UsersRepository {
         //usersDAO.getUser(email).setBlocked();
     }
 
-    public Habit getHabitFromUser(UserDTO user, int habitNumber) {
-        return usersDAO.getHabitFromUser(user, habitNumber);
+    public Habit getHabitFromUser(User user, int habitNumber) {
+        return habitappDAO.getHabitFromUser(user, habitNumber);
     }
 
-    public List<Habit> getAllHabits(UserDTO userDTO) {
-        return usersDAO.getAllHabits(userDTO);
+    public List<Habit> getAllHabits(User user) {
+        return habitappDAO.getAllHabits(user);
     }
 
-    public boolean hasHabit(UserDTO userDTO, HabitDTO habitDTO) {
-        return usersDAO.hasHabit(userDTO, habitDTO);
+    public boolean hasHabit(User user, Habit habit) {
+        return habitappDAO.hasHabit(user, habit);
     }
 
     public boolean hasUser(String email) {
-        return usersDAO.getUserIdFromDB(email) != 0;
+        return habitappDAO.getUserIdFromDB(email) != 0;
+    }
+
+    public boolean habitAlreadyMarked(User user, Habit habit) {
+        return habitappDAO.habitIsMarked(user, habit);
+    }
+
+    public void markHabit(User user, Habit habit) {
+        habitappDAO.markHabit(user,habit);
+    }
+
+    public List<LocalDateTime> getComplitedDays(User user, Habit habit) {
+        return habitappDAO.getAllComplitedDays(user,habit);
     }
 
 }

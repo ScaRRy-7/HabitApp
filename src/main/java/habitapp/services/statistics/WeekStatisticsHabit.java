@@ -1,10 +1,10 @@
-package services.statistics;
+package habitapp.services.statistics;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.enums.HabitFrequency;
-import services.habitchangers.HabitUnmarker;
-import services.out.WeekStatisticsHabitWriter;
+import habitapp.entities.Habit;
+import habitapp.entities.User;
+import habitapp.services.habitchangers.HabitUnmarker;
+import habitapp.services.enums.HabitFrequency;
+import habitapp.services.out.WeekStatisticsHabitWriter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -37,36 +37,36 @@ public class WeekStatisticsHabit implements StatisticsCreator {
      */
     @Override
     public void getStatistics(User user, Habit habit) {
-        habitUnmarker.checkHabits(user);
-        LocalDate today = LocalDate.now();
-        List<String> statisticsWeek = new ArrayList<>();
-
-        // Определение границ отчетного периода (последние 7 дней)
-        LocalDate startOfWeek = today.minusDays(6);
-        LocalDate endOfWeek = today;
-
-        // Заполнение списка статистики за неделю
-        final int daysInWeek = 7;
-        for (int day = 0; day <= daysInWeek-1; day++) {
-            LocalDate date  = startOfWeek.plusDays(day); // дата которую проверяем
-            String dateStr = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-
-            boolean isHabitCreated = habit.getCreatedDateTime().toLocalDate().isBefore(date) ||
-                    habit.getCreatedDateTime().toLocalDate().isEqual(date);
-
-            boolean isHabitCompleted = false;
-            if (habit.getFrequency() == HabitFrequency.DAILY) {
-                isHabitCompleted = habit.getDaysHabitComplited().stream()
-                        .anyMatch(dateTime -> dateTime.toLocalDate().equals(date));
-            } else if (habit.getFrequency() == HabitFrequency.WEEKLY) {
-                LocalDate lastCompletedDate = habit.getDaysHabitComplited().get(habit.getDaysHabitComplited().size()-1).toLocalDate();
-                isHabitCompleted = ChronoUnit.DAYS.between(lastCompletedDate, date) % 7 == 0;
-            }
-
-            String status = isHabitCreated ? (isHabitCompleted ? "выполнена" : "не выполнена") : "ещё не была создана";
-            statisticsWeek.add(dateStr + " - " + status);
-        }
-
-        writer.writeWeekStatistics(statisticsWeek);
+//        habitUnmarker.checkHabits(user);
+//        LocalDate today = LocalDate.now();
+//        List<String> statisticsWeek = new ArrayList<>();
+//
+//        // Определение границ отчетного периода (последние 7 дней)
+//        LocalDate startOfWeek = today.minusDays(6);
+//        LocalDate endOfWeek = today;
+//
+//        // Заполнение списка статистики за неделю
+//        final int daysInWeek = 7;
+//        for (int day = 0; day <= daysInWeek-1; day++) {
+//            LocalDate date  = startOfWeek.plusDays(day); // дата которую проверяем
+//            String dateStr = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+//
+//            boolean isHabitCreated = habit.getCreatedDateTime().toLocalDate().isBefore(date) ||
+//                    habit.getCreatedDateTime().toLocalDate().isEqual(date);
+//
+//            boolean isHabitCompleted = false;
+//            if (habit.getFrequency() == HabitFrequency.DAILY) {
+//                isHabitCompleted = habit.getDaysHabitComplited().stream()
+//                        .anyMatch(dateTime -> dateTime.toLocalDate().equals(date));
+//            } else if (habit.getFrequency() == HabitFrequency.WEEKLY) {
+//                LocalDate lastCompletedDate = habit.getDaysHabitComplited().get(habit.getDaysHabitComplited().size()-1).toLocalDate();
+//                isHabitCompleted = ChronoUnit.DAYS.between(lastCompletedDate, date) % 7 == 0;
+//            }
+//
+//            String status = isHabitCreated ? (isHabitCompleted ? "выполнена" : "не выполнена") : "ещё не была создана";
+//            statisticsWeek.add(dateStr + " - " + status);
+//        }
+//
+//        writer.writeWeekStatistics(statisticsWeek);
     }
 }

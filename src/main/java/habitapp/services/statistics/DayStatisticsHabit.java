@@ -1,9 +1,9 @@
-package services.statistics;
+package habitapp.services.statistics;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.habitchangers.HabitUnmarker;
-import services.out.DayStatisticsHabitWriter;
+import habitapp.entities.Habit;
+import habitapp.entities.User;
+import habitapp.services.habitchangers.HabitUnmarker;
+import habitapp.services.out.DayStatisticsHabitWriter;
 
 /**
  * Отвечает за создание и отображение ежедневной статистики по выбранной привычке пользователя.
@@ -28,7 +28,7 @@ public class DayStatisticsHabit implements StatisticsCreator {
      */
     @Override
     public void getStatistics(User user, Habit habit) {
-        habitUnmarker.checkHabits(user);
-        writer.writeTodayStatistics(habit);
+//        habitUnmarker.checkHabits(user);
+//        writer.writeTodayStatistics(habit);
     }
 }

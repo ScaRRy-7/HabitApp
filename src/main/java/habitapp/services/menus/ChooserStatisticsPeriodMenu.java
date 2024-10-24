@@ -1,16 +1,16 @@
-package services.menus;
+package habitapp.services.menus;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.enums.Period;
-import services.habitchangers.HabitChooser;
-import services.in.Reader;
-import services.out.ChooserStatisticsPeriodMenuWriter;
-import services.statistics.DayStatisticsHabit;
-import services.statistics.MonthStatisticsHabit;
-import services.statistics.WeekStatisticsHabit;
-import services.validate.StatisticsPeriodMenuValidator;
-import services.wait.Waiter;
+import habitapp.entities.Habit;
+import habitapp.entities.User;
+import habitapp.services.statistics.DayStatisticsHabit;
+import habitapp.services.statistics.MonthStatisticsHabit;
+import habitapp.services.statistics.WeekStatisticsHabit;
+import habitapp.services.validate.StatisticsPeriodMenuValidator;
+import habitapp.services.enums.Period;
+import habitapp.services.habitchangers.HabitChooser;
+import habitapp.services.in.Reader;
+import habitapp.services.out.ChooserStatisticsPeriodMenuWriter;
+import habitapp.services.wait.Waiter;
 
 /**
  * Отвечает за предоставление пользователю возможности выбрать период для просмотра статистики по его привычкам.
@@ -57,16 +57,16 @@ public class ChooserStatisticsPeriodMenu {
 
         if (validator.isValidPeriod(periodString)) {
             period = getPeriodByNumber(Integer.parseInt(periodString));
-            Habit habit = habitChooser.chooseHabit(currentUser);
+            //Habit habit = habitChooser.chooseHabit(currentUser);
             switch (period) {
                 case DAY:
-                    dayStatisticsHabit.getStatistics(currentUser, habit);
+                    //dayStatisticsHabit.getStatistics(currentUser, habit);
                     return;
                 case WEEK:
-                    weekStatisticsHabit.getStatistics(currentUser, habit);
+                  //  weekStatisticsHabit.getStatistics(currentUser, habit);
                     return;
                 case MONTH:
-                    monthStatisticsHabit.getStatistics(currentUser, habit);
+                   // monthStatisticsHabit.getStatistics(currentUser, habit);
                     return;
 
             }

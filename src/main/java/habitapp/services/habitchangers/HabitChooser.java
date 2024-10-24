@@ -1,12 +1,10 @@
-package services.habitchangers;
+package habitapp.services.habitchangers;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.in.Reader;
-import services.out.HabitChooserWriter;
-import repositories.UsersRepository;
-import services.validate.HabitChooserValidator;
-import services.wait.Waiter;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.in.Reader;
+import habitapp.services.out.HabitChooserWriter;
+import habitapp.services.validate.HabitChooserValidator;
+import habitapp.services.wait.Waiter;
 
 /**
  * Отвечает за выбор пользователем одной из его существующих привычек.
@@ -26,7 +24,7 @@ public class HabitChooser {
     private final Reader reader;
     private final HabitChooserValidator validator;
     private final Waiter waiter;
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     /**
      * Конструктор для создания объекта HabitChooser с заданными зависимостями.
@@ -66,20 +64,20 @@ public class HabitChooser {
      * @param user пользователь, привычки которого доступны для выбора
      * @return выбранная пользователем привычка
      */
-    public Habit chooseHabit(User user) {
-        Habit choosedHabit = null;
-        habitIndicator.showHabits(user);
-        writer.askHabitNumber();
-        String habitNumber = reader.read();
-
-        if (validator.isValidHabitNumber(user, habitNumber)) {
-            int habitIndex = Integer.parseInt(habitNumber) - 1;
-            choosedHabit = usersRepository.getAllHabits(user).get(habitIndex);
-        } else {
-            writer.reportIncorrectHabitNumber();
-            waiter.waitSecond();
-            choosedHabit = chooseHabit(user);
-        }
-        return choosedHabit;
-    }
+//    public Habit chooseHabit(User user) {
+//        Habit choosedHabit = null;
+//        habitIndicator.showHabits(user);
+//        writer.askHabitNumber();
+//        String habitNumber = reader.read();
+//
+//        if (validator.isValidHabitNumber(user, habitNumber)) {
+//            int habitIndex = Integer.parseInt(habitNumber) - 1;
+//            choosedHabit = usersRepository.getAllHabits(user).get(habitIndex);
+//        } else {
+//            writer.reportIncorrectHabitNumber();
+//            waiter.waitSecond();
+//            choosedHabit = chooseHabit(user);
+//        }
+//        return choosedHabit;
+//    }
 }

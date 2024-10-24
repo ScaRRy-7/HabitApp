@@ -1,15 +1,14 @@
-package services.menus;
+package habitapp.services.menus;
 
-import entities.*;
-import services.enums.HabitCommand;
-import habitchangers.*;
-import services.habitchangers.*;
-import services.in.Reader;
-import services.out.HabitsRedactorWriter;
-import repositories.UsersRepository;
-import services.entities.User;
-import services.validate.CommandHabitValidator;
-import services.wait.Waiter;
+import habitapp.entities.User;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.habitchangers.*;
+import habitapp.services.validate.CommandHabitValidator;
+import habitapp.services.enums.HabitCommand;
+
+import habitapp.services.in.Reader;
+import habitapp.services.out.HabitsRedactorWriter;
+import habitapp.services.wait.Waiter;
 import org.slf4j.*;
 
 /**
@@ -31,7 +30,7 @@ public class HabitsRedactorMenu implements Commander {
     private final CommandHabitValidator habitValidator = new CommandHabitValidator();
     private final Reader reader = new Reader();
     private final Waiter waiter = new Waiter();
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
     private User currentUser;
     private final HabitEditor habitEditor = new HabitEditor();
     private final HabitCreator habitCreator = new HabitCreator();
@@ -72,19 +71,19 @@ public class HabitsRedactorMenu implements Commander {
                     break;
                 case REDACTHABIT:
                     logger.info("Пользователь выбрал редактирование существующей привычки");
-                    habitEditor.redactHabit(currentUser);
+                    //habitEditor.redactHabit(currentUser);
                     break;
                 case MARKHABIT:
                     logger.info("Пользователь выбрал отметить привычку выполненной");
-                    incomplitedHabitsMenu.start(currentUser);
+                   // incomplitedHabitsMenu.start(currentUser);
                     break;
                 case DELETEHABIT:
                     logger.info("Пользователь выбрал удалить привычку");
-                    habitRemover.removeHabit(currentUser);
+                   // habitRemover.removeHabit(currentUser);
                     break;
                 case SHOWHMYHABITS:
                     logger.info("Пользователь выбрал показать свои привычки");
-                    habitIndicator.chooseSorting(currentUser);
+                   // habitIndicator.chooseSorting(currentUser);
                     break;
                 case RETURNTOMENU:
                     return;

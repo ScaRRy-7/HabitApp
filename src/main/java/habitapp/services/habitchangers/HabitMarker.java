@@ -1,8 +1,8 @@
-package services.habitchangers;
+package habitapp.services.habitchangers;
 
-import services.entities.Habit;
-import services.entities.User;
-import repositories.UsersRepository;
+import habitapp.entities.Habit;
+import habitapp.entities.User;
+import habitapp.repositories.HabitappRepository;
 import org.slf4j.*;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class HabitMarker {
     /**
      * Объект класса UsersController для обновления информации о пользователе.
      */
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     /**
      * Объект класса Logger для логирования событий.

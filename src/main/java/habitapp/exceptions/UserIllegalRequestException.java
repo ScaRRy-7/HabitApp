@@ -1,9 +1,9 @@
 package habitapp.exceptions;
 
-public class UserException extends RuntimeException {
+public class UserIllegalRequestException extends RuntimeException {
     private final int errorCode;
 
-    public UserException(int errorCode, String message) {
+    public UserIllegalRequestException(int errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
     }

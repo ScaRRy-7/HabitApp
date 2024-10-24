@@ -1,13 +1,7 @@
-package services.habitchangers;
+package habitapp.services.habitchangers;
 
-import services.entities.Habit;
-import services.entities.User;
-import repositories.UsersRepository;
+import habitapp.repositories.HabitappRepository;
 import org.slf4j.*;
-import java.time.temporal.ChronoUnit;
-import java.time.LocalDateTime;
-import static services.enums.HabitFrequency.DAILY;
-import static services.enums.HabitFrequency.WEEKLY;
 
 /**
  * Класс HabitUnmarker отвечает за размаркировку выполненных привычек пользователя.
@@ -19,7 +13,7 @@ public class HabitUnmarker {
     /**
      * Объект класса UsersController для обновления информации о пользователе.
      */
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     /**
      * Объект класса Logger для логирования событий.
@@ -32,16 +26,16 @@ public class HabitUnmarker {
      *
      * @param user текущий пользователь
      */
-    public void checkHabits(User user) {
-        logger.info("Запущена размаркировка выполненных привычек если уже прошло время");
-        for (Habit habit : usersRepository.getAllHabits(user)) {
-            if (!habit.isComplited()) continue;
-
-            long daysPassed = ChronoUnit.DAYS.between(habit.getDaysHabitComplited().get(habit.getDaysHabitComplited().size() - 1), LocalDateTime.now());
-
-            if ((daysPassed >= 1 && habit.getFrequency() == DAILY) || (daysPassed >= 7 && habit.getFrequency() == WEEKLY)) {
-                habit.setUncomplited();
-            }
-        }
-    }
+//    public void checkHabits(User user) {
+//        logger.info("Запущена размаркировка выполненных привычек если уже прошло время");
+//        for (Habit habit : usersRepository.getAllHabits(user)) {
+//            if (!habit.isComplited()) continue;
+//
+//            long daysPassed = ChronoUnit.DAYS.between(habit.getDaysHabitComplited().get(habit.getDaysHabitComplited().size() - 1), LocalDateTime.now());
+//
+//            if ((daysPassed >= 1 && habit.getFrequency() == DAILY) || (daysPassed >= 7 && habit.getFrequency() == WEEKLY)) {
+//                habit.setUncomplited();
+//            }
+//        }
+//    }
 }

@@ -12,7 +12,7 @@
 
         <sql>
             CREATE SCHEMA IF NOT EXISTS habitschema;
-            CREATE SCHEMA IF NOT EXISTS service;
+            CREATE SCHEMA IF NOT EXISTS services;
             CREATE SEQUENCE users_sequence START 1;
             CREATE SEQUENCE habits_sequence START 1;
             CREATE SEQUENCE complited_days_sequence START 1;
@@ -57,11 +57,12 @@
             </column>
         </createTable>
 
+        <createSequence sequenceName="complited_days_sequence" schemaName="habitschema"/>
         <createTable tableName="complited_days" schemaName="habitschema">
             <column name="id" type="BIGINT" defaultValue="NEXTVAL('complited_days_sequence')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="complited_date" type="TIMESTAMP">
+            <column name="complited_date" type="TIMESTAMP WITH TIME ZONE">
                 <constraints nullable="false"/>
             </column>
             <column name="habit_id" type="BIGINT">

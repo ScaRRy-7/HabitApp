@@ -1,4 +1,4 @@
-package services.entrypoint;
+package habitapp.services.entrypoint;
 
 /**
  * Перечисление `Commands` представляет доступные команды в приложении.

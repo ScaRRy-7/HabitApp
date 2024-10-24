@@ -1,11 +1,10 @@
-package services.entrypoint;
+package habitapp.services.entrypoint;
 
-import services.adminstration.AdminPanel;
-import services.in.Reader;
-import services.out.IdentificationWriter;
-import repositories.UsersDAO;
-import services.validate.EmailValidator;
-import services.wait.Waiter;
+import habitapp.services.adminstration.AdminPanel;
+import habitapp.services.in.Reader;
+import habitapp.services.out.IdentificationWriter;
+import habitapp.repositories.HabitappDAO;
+import habitapp.services.wait.Waiter;
 import org.slf4j.*;
 import java.util.ResourceBundle;
 
@@ -20,8 +19,8 @@ public class Identification {
 
     private final IdentificationWriter writer = new IdentificationWriter();
     private final Reader reader = new Reader();
-    private final EmailValidator emailValidator = new EmailValidator();
-    private final UsersDAO usersDAO = UsersDAO.getInstance();
+    //private final EmailValidator emailValidator = new EmailValidator();
+    private final HabitappDAO habitappDAO = HabitappDAO.getInstance();
     private final Authentication authentication = new Authentication();
     private final Registration registration = new Registration();
     private final Waiter waiter = new Waiter();
@@ -43,7 +42,7 @@ public class Identification {
             adminPanel.authentication();
         }
 
-        if (emailValidator.isValid(email)) {
+        /*if (emailValidator.isValid(email)) {
             logger.info("Эмейл валиден");
             identificate(email);
 
@@ -53,6 +52,8 @@ public class Identification {
             waiter.waitSecond();
             start();
         }
+
+         */
     }
 
     /**
@@ -62,25 +63,26 @@ public class Identification {
      *
      * @param email email пользователя
      */
-    public void identificate(String email) {
-        if (usersDAO.hasUser(email)) {
-            if (usersDAO.getUser(email).isBlocked()) {
-                logger.info("Пользователю отказано в доступе так как он заблокирован");
-                writer.infoUserBlocked();
-                waiter.waitSecond();
-                Start.main(null);
-            }
-            //  пользователь с таким емэйлом существует - направляем на аутентификацию
-            logger.info("Пользователь с такой почтой уже существует, направляем на аутентификацию");
-            writer.infoRedirectAuthentication();
-            waiter.waitSecond();
-            authentication.login(email);
-        } else {
-            // пользователя с таким емэйлом не существует - направляем на регистрацию
-            logger.info("Пользователь с таким емэйлом не существует - направляем на регистрацию");
-            writer.infoRedirectRegistration();
-            waiter.waitSecond();
-            registration.registrate(email);
-        }
-    }
+//    public void identificate(String email) {
+//        if (usersDAO.hasUser(email)) {
+//            if (usersDAO.getUser(email).isBlocked()) {
+//                logger.info("Пользователю отказано в доступе так как он заблокирован");
+//                writer.infoUserBlocked();
+//                waiter.waitSecond();
+//                Start.main(null);
+//            }
+//            //  пользователь с таким емэйлом существует - направляем на аутентификацию
+//            logger.info("Пользователь с такой почтой уже существует, направляем на аутентификацию");
+//            writer.infoRedirectAuthentication();
+//            waiter.waitSecond();
+//            authentication.login(email);
+//        } else {
+//            // пользователя с таким емэйлом не существует - направляем на регистрацию
+//            logger.info("Пользователь с таким емэйлом не существует - направляем на регистрацию");
+//            writer.infoRedirectRegistration();
+//            waiter.waitSecond();
+//            registration.registrate(email);
+//        }
+//    }
+
 }

@@ -1,6 +1,6 @@
-package services.entities;
+package habitapp.entities;
 
-import services.enums.HabitFrequency;
+import habitapp.services.enums.HabitFrequency;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +28,7 @@ public class Habit implements Comparable<Habit> {
 
 
     @Setter
+    @Getter
     private HabitFrequency frequenсy;
 
 
@@ -38,12 +39,14 @@ public class Habit implements Comparable<Habit> {
      * @return дата и время создания привычки
      */
     @Getter
+    @Setter
     private LocalDateTime createdDateTime;
 
 
     final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-
+    @Getter
+    @Setter
     private boolean isComplited;
 
     @Getter
@@ -71,6 +74,8 @@ public class Habit implements Comparable<Habit> {
         this.createdDateTime = createdDateTime;
         this.isComplited = isComplited;
     }
+
+    public Habit() {}
 
 
     /**

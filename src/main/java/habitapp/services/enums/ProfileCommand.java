@@ -1,4 +1,4 @@
-package services.enums;
+package habitapp.services.enums;
 
 public enum ProfileCommand {
     CHANGENAME,

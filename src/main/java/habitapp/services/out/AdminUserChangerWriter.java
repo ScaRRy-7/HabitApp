@@ -1,17 +1,17 @@
-package services.out;
+package habitapp.services.out;
 
-import services.entities.User;
-import repositories.UsersDAO;
+import habitapp.entities.User;
+import habitapp.repositories.HabitappDAO;
 
 import java.util.Collection;
 
 public class AdminUserChangerWriter {
 
-    private final UsersDAO usersDAO = UsersDAO.getInstance();
+    private final HabitappDAO habitappDAO = HabitappDAO.getInstance();
 
     public void writeUsersToChoose() {
         System.out.println("Список пользователей:");
-        Collection<User> users =  usersDAO.getUsers();
+        Collection<User> users =  habitappDAO.getUsers();
         for (User user : users) {
             System.out.println("почта: " + user.getEmail() + " ник: " + user.getName() + "\n");
         }

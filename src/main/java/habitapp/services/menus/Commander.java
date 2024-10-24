@@ -1,4 +1,4 @@
-package services.menus;
+package habitapp.services.menus;
 
 public interface Commander {
     void selectCommand();

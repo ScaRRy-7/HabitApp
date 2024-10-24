@@ -1,11 +1,11 @@
-package services.adminstration;
+package habitapp.services.adminstration;
 
-import services.in.Reader;
-import services.out.AdminUserChangerWriter;
-import repositories.UsersRepository;
-import repositories.UsersDAO;
-import services.validate.AdminRemoverValidator;
-import services.wait.Waiter;
+import habitapp.services.in.Reader;
+import habitapp.services.out.AdminUserChangerWriter;
+import habitapp.repositories.HabitappRepository;
+import habitapp.repositories.HabitappDAO;
+import habitapp.services.validate.AdminRemoverValidator;
+import habitapp.services.wait.Waiter;
 
 /**
  * Класс AdminBlocator отвечает за блокировку пользователей администратором.
@@ -17,7 +17,7 @@ public class AdminBlocator {
     /**
      * Объект класса UsersStorage для хранения пользователей.
      */
-    private final UsersDAO usersDAO;
+    private final HabitappDAO habitappDAO;
 
     /**
      * Объект класса Reader для чтения ввода пользователя.
@@ -42,42 +42,42 @@ public class AdminBlocator {
     /**
      * Объект класса UsersController для взаимодействия с пользователями.
      */
-    private final UsersRepository usersRepository;
+    private final HabitappRepository habitappRepository;
 
     /**
      * Создает новый экземпляр класса AdminBlocator с использованием реальных объектов зависимостей.
      */
     public AdminBlocator() {
-        usersDAO = UsersDAO.getInstance();
+        habitappDAO = HabitappDAO.getInstance();
         reader = new Reader();
         writer = new AdminUserChangerWriter();
         validator = new AdminRemoverValidator();
-        usersRepository = new UsersRepository();
+        habitappRepository = new HabitappRepository();
     }
 
     /**
      * Создает новый экземпляр класса AdminBlocator с использованием mock-объектов зависимостей.
      *
-     * @param usersDAOMock       mock-объект класса UsersStorage
+     * @param habitappDAOMock       mock-объект класса UsersStorage
      * @param readerMock             mock-объект класса Reader
      * @param writerMock             mock-объект класса AdminUserChangerWriter
      * @param waiterMock             mock-объект класса Waiter
      * @param validatorMock          mock-объект класса AdminRemoverValidator
-     * @param usersRepositoryMock    mock-объект класса UsersController
+     * @param habitappRepositoryMock    mock-объект класса UsersController
      */
-    public AdminBlocator(UsersDAO usersDAOMock, Reader readerMock, AdminUserChangerWriter writerMock, Waiter waiterMock, AdminRemoverValidator validatorMock, UsersRepository usersRepositoryMock) {
-        this.usersDAO = usersDAOMock;
+    public AdminBlocator(HabitappDAO habitappDAOMock, Reader readerMock, AdminUserChangerWriter writerMock, Waiter waiterMock, AdminRemoverValidator validatorMock, HabitappRepository habitappRepositoryMock) {
+        this.habitappDAO = habitappDAOMock;
         this.reader = readerMock;
         this.writer = writerMock;
         this.validator = validatorMock;
-        this.usersRepository = usersRepositoryMock;
+        this.habitappRepository = habitappRepositoryMock;
     }
 
     /**
      * Блокирует указанного пользователя.
      */
     public void blockUser() {
-        if (usersDAO.getUsers().isEmpty()) {
+        if (habitappDAO.getUsers().isEmpty()) {
             writer.writeNoUsers();
             waiter.waitSecond();
             return;
@@ -86,7 +86,7 @@ public class AdminBlocator {
         writer.writeUsersToChoose();
         String userEmail = reader.read();
         if (validator.isValid(userEmail)) {
-            usersRepository.blockUser(userEmail);
+            habitappRepository.blockUser(userEmail);
             writer.writeUserBlocked();
         } else {
             writer.reportUserNotFound();

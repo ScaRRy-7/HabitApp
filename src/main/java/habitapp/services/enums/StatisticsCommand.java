@@ -1,4 +1,4 @@
-package services.enums;
+package habitapp.services.enums;
 
 public enum StatisticsCommand {
     STATISTICS_FOR_PERIOD("Статистика выполнения привычки за указанный период (день/неделя/месяц"),

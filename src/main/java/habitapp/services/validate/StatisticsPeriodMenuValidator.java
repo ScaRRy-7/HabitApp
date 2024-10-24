@@ -1,4 +1,4 @@
-package services.validate;
+package habitapp.services.validate;
 
 public class StatisticsPeriodMenuValidator {
 

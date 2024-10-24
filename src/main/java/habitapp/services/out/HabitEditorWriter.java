@@ -1,14 +1,12 @@
-package services.out;
+package habitapp.services.out;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.habitchangers.HabitUnmarker;
-import repositories.UsersRepository;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.habitchangers.HabitUnmarker;
 
 public class HabitEditorWriter {
 
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     public void askNewHabitName() {
         System.out.println("Напиши новое имя привычки (5-30 символов):");
@@ -40,20 +38,20 @@ public class HabitEditorWriter {
         System.out.println("Привычки отсутствуют!");
     }
 
-    public void askNumberOfHabitRedact(User user) {
-        habitUnmarker.checkHabits(user);
-        writeHabits(user);
-        System.out.println("Введи номер привычки, которую хочешь отредактировать:");
+//    public void askNumberOfHabitRedact(User user) {
+//        habitUnmarker.checkHabits(user);
+//        writeHabits(user);
+//        System.out.println("Введи номер привычки, которую хочешь отредактировать:");
+//
+//    }
 
-    }
-
-    public void writeHabits(User user) {
-        int num = 1;
-        for (Habit habit : usersRepository.getAllHabits(user)) {
-            System.out.println(num + " - " + habit + "\n");
-            num++;
-        }
-    }
+//    public void writeHabits(User user) {
+//        int num = 1;
+//        for (Habit habit : usersRepository.getAllHabits(user)) {
+//            System.out.println(num + " - " + habit + "\n");
+//            num++;
+//        }
+//    }
 
     public void infoHabitRedacted() {
         System.out.println("Привычка отредактирована!");

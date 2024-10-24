@@ -1,16 +1,16 @@
-package services.menus;
+package habitapp.services.menus;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.habitchangers.HabitMarker;
-import services.habitchangers.HabitUnmarker;
-import services.in.Reader;
-import services.out.IncomplitedHabitsMenuWriter;
-import repositories.UsersRepository;
-import services.validate.IncomplitedHabitsMenuValidator;
-import services.wait.Waiter;
+import habitapp.entities.Habit;
+import habitapp.entities.User;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.habitchangers.HabitUnmarker;
+import habitapp.services.validate.IncomplitedHabitsMenuValidator;
+import habitapp.services.habitchangers.HabitMarker;
+import habitapp.services.in.Reader;
+import habitapp.services.out.IncomplitedHabitsMenuWriter;
+import habitapp.services.wait.Waiter;
 import org.slf4j.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
 /**
@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class IncomplitedHabitsMenu {
 
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
     private final IncomplitedHabitsMenuWriter writer = new IncomplitedHabitsMenuWriter();
     private final IncomplitedHabitsMenuValidator validator = new IncomplitedHabitsMenuValidator();
     private final HabitMarker habitMarker = new HabitMarker();
@@ -39,25 +39,25 @@ public class IncomplitedHabitsMenu {
      *
      * @param user авторизованный пользователь
      */
-    public void start(User user) {
-        logger.info("Запущен отбор неотмеченных привычек из всех привычек у пользователя");
-        habitUnmarker.checkHabits(user);
-        List<Habit> incomplitedHabits = new ArrayList<>();
-        for (Habit habit : usersRepository.getAllHabits(user)) {
-            if (!habit.isComplited()) {
-                incomplitedHabits.add(habit);
-            }
-        }
-
-        if (incomplitedHabits.isEmpty()) {
-            logger.info("Неотмеченные привычки отсутствуют");
-            writer.infoNoIncomplitedHabits();
-            waiter.waitSecond();
-            return;
-        } else {
-            showIncomplitedHabits(user, incomplitedHabits);
-        }
-    }
+//    public void start(User user) {
+//        logger.info("Запущен отбор неотмеченных привычек из всех привычек у пользователя");
+//        habitUnmarker.checkHabits(user);
+//        List<Habit> incomplitedHabits = new ArrayList<>();
+//        for (Habit habit : usersRepository.getAllHabits(user)) {
+//            if (!habit.isComplited()) {
+//                incomplitedHabits.add(habit);
+//            }
+//        }
+//
+//        if (incomplitedHabits.isEmpty()) {
+//            logger.info("Неотмеченные привычки отсутствуют");
+//            writer.infoNoIncomplitedHabits();
+//            waiter.waitSecond();
+//            return;
+//        } else {
+//            showIncomplitedHabits(user, incomplitedHabits);
+//        }
+//    }
 
     /**
      * Отображает список неотмеченных привычек пользователя и позволяет ему выбрать одну из них для отметки.
@@ -77,7 +77,7 @@ public class IncomplitedHabitsMenu {
         if (validator.isValidNumberOfIncHabit(numberOfIncomplitedHabitStr, incomplitedHabits.size())) {
             logger.info("Пользователь ввел корректный номер привычки");
             habitMarker.markHabit(user, Integer.parseInt(numberOfIncomplitedHabitStr), incomplitedHabits);
-            usersRepository.updateRedactedUser(user, user.getEmail());
+            //usersRepository.updateRedactedUser(user, user.getEmail());
             writer.infoHabitMarked();
             waiter.waitSecond();
         } else {

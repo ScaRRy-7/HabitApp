@@ -3,10 +3,7 @@ package habitapp.services.entrypoint;
 import habitapp.services.in.Reader;
 import habitapp.services.menus.AuthorizationMenu;
 import habitapp.services.out.RegistrationWriter;
-import habitapp.entities.User;
-import habitapp.repositories.UsersRepository;
-import habitapp.services.validate.NameValidator;
-import habitapp.services.validate.PasswordValidator;
+import habitapp.repositories.HabitappRepository;
 import habitapp.services.wait.Waiter;
 import org.slf4j.*;
 
@@ -22,10 +19,10 @@ public class Registration {
 
     private final RegistrationWriter writer = new RegistrationWriter();
     private final Reader reader = new Reader();
-    private final NameValidator nameValidator = new NameValidator();
+    //private final NameValidator nameValidator = new NameValidator();
     private final Waiter waiter = new Waiter();
-    private final PasswordValidator passwordValidator = new PasswordValidator();
-    private final UsersRepository usersRepository = new UsersRepository();
+    //private final PasswordValidator passwordValidator = new PasswordValidator();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
     private final AuthorizationMenu authorizationMenu = new AuthorizationMenu();
     private final Logger logger = LoggerFactory.getLogger(Registration.class);
 
@@ -37,7 +34,7 @@ public class Registration {
     public void registrate(String email) {
         writer.askName();
         String name = reader.read();
-
+        /*
         if (nameValidator.isValid(name)) {
             logger.info("Пользователь указаал валидное имя, запускается создание пароля");
             // имя указано корректно, можно переходить к созданию пароля
@@ -53,13 +50,7 @@ public class Registration {
         }
     }
 
-    /**
-     * Создает новый пароль для нового пользователя.
-     * Валидирует введенный пользователем пароль и создает нового пользователя в базе данных.
-     *
-     * @param email email нового пользователя
-     * @param name  имя нового пользователя
-     */
+
     public void createPassword(String email, String name) {
         writer.askPassword();
         String password = reader.read();
@@ -78,6 +69,6 @@ public class Registration {
             writer.reportInvalidPassword();
             waiter.waitSecond();
             createPassword(email, name);
-        }
+        }*/
     }
 }

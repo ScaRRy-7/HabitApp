@@ -2,6 +2,8 @@ package validate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import habitapp.services.validate.HabitEditorValidator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HabitEditorValidatorTest {

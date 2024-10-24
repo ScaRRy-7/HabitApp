@@ -1,4 +1,4 @@
-package services.entrypoint;
+package habitapp.services.entrypoint;
 
 import org.slf4j.*;
 

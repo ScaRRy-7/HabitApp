@@ -1,6 +1,6 @@
-package services.out;
+package habitapp.services.out;
 
-import services.entities.Habit;
+import habitapp.entities.Habit;
 
 public class SuccessCalculatorWriter {
 

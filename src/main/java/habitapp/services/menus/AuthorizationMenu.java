@@ -1,12 +1,12 @@
-package services.menus;
+package habitapp.services.menus;
 
-import services.entrypoint.Start;
-import services.in.Reader;
-import services.out.AuthorizationWriter;
-import services.entities.User;
-import services.validate.CommandAuthorizationValidator;
-import services.wait.Waiter;
-import services.enums.MenuCommand;
+import habitapp.entities.User;
+import habitapp.services.entrypoint.Start;
+import habitapp.services.validate.CommandAuthorizationValidator;
+import habitapp.services.in.Reader;
+import habitapp.services.out.AuthorizationWriter;
+import habitapp.services.wait.Waiter;
+import habitapp.services.enums.MenuCommand;
 import org.slf4j.*;
 
 /**
@@ -26,7 +26,7 @@ public class AuthorizationMenu implements Commander {
     private final Reader reader = new Reader();
     private final HabitsRedactorMenu habitsRedactorMenu = new HabitsRedactorMenu();
     private final HabitsStatisticsMenu habitsStatisticsMenu = new HabitsStatisticsMenu();
-    private final ProfileMenu profileMenu = new ProfileMenu();
+    //private final ProfileMenu profileMenu = new ProfileMenu();
     private final CommandAuthorizationValidator commandValidator = new CommandAuthorizationValidator();
     private final Waiter waiter = new Waiter();
     private User currentUser;
@@ -62,15 +62,15 @@ public class AuthorizationMenu implements Commander {
             switch (command) {
                 case REDACTPROFILE:
                     logger.info("Пользователь выбрал редактирование профиля, запускается меню профиля");
-                    profileMenu.start(currentUser);
+                    //profileMenu.start(currentUser);
                     break;
                 case MANAGEHABITS:
                     logger.info("Пользователь выбрал редактирование привычек, запускается меню привычек");
-                    habitsRedactorMenu.start(currentUser);
+                   // habitsRedactorMenu.start(currentUser);
                     break;
                 case HABITSTATISTICS:
                     logger.info("ПОльзователь выбрал статистику, запускается меню статистики привычек");
-                    habitsStatisticsMenu.start(currentUser);
+                   // habitsStatisticsMenu.start(currentUser);
                     break;
                 case EXIT:
                     logger.info("Пользователь вышел из аккаунта");

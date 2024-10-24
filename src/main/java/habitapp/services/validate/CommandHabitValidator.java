@@ -1,11 +1,10 @@
-package services.validate;
+package habitapp.services.validate;
 
-import services.entities.User;
-import repositories.UsersRepository;
+import habitapp.repositories.HabitappRepository;
 
 public class CommandHabitValidator {
 
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     public boolean isValidCommand(String command) {
         return switch (command) {
@@ -29,7 +28,7 @@ public class CommandHabitValidator {
         };
     }
 
-    public boolean isValidHabitNumber(User user, String habitNumberStr) {
-        return habitNumberStr.matches("^[0-9]{1,10000}$") && Integer.parseInt(habitNumberStr) != 0 && Integer.parseInt(habitNumberStr) <= usersRepository.getAllHabits(user).size();
-    }
+//    public boolean isValidHabitNumber(User user, String habitNumberStr) {
+//        return habitNumberStr.matches("^[0-9]{1,10000}$") && Integer.parseInt(habitNumberStr) != 0 && Integer.parseInt(habitNumberStr) <= usersRepository.getAllHabits(user).size();
+//    }
 }

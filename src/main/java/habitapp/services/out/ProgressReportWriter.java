@@ -1,7 +1,7 @@
-package services.out;
+package habitapp.services.out;
 
-import services.entities.Habit;
-import services.enums.HabitFrequency;
+import habitapp.entities.Habit;
+import habitapp.services.enums.HabitFrequency;
 
 
 public class ProgressReportWriter {

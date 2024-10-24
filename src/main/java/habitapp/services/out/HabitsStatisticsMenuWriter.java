@@ -1,24 +1,22 @@
-package services.out;
+package habitapp.services.out;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.enums.StatisticsCommand;
-import services.habitchangers.HabitUnmarker;
-import repositories.UsersRepository;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.enums.StatisticsCommand;
+import habitapp.services.habitchangers.HabitUnmarker;
 
 public class HabitsStatisticsMenuWriter {
 
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
-    public void writeHabits(User user) {
-        habitUnmarker.checkHabits(user);
-        int num = 1;
-        for (Habit habit : usersRepository.getAllHabits(user)) {
-            System.out.println(num + " - " + habit + "\n");
-            num++;
-        }
-    }
+//    public void writeHabits(User user) {
+//        habitUnmarker.checkHabits(user);
+//        int num = 1;
+//        for (Habit habit : usersRepository.getAllHabits(user)) {
+//            System.out.println(num + " - " + habit + "\n");
+//            num++;
+//        }
+//    }
 
     public void writeCommands() {
         System.out.println("Список доступных  команд, введи соотвествующую цифру для выбора команды:" +

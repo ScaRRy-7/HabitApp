@@ -1,12 +1,14 @@
-package services.enums;
+package habitapp.services.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
+@Getter
 public enum HabitFrequency {
     DAILY("ежедневно"),
     WEEKLY("еженедельно");
 
-    @Getter
+    @JsonValue
     private final String name;
 
     HabitFrequency(String name) {
@@ -14,12 +16,11 @@ public enum HabitFrequency {
     }
 
     public static HabitFrequency getFrequencyByName(String name) {
-        HabitFrequency returnFrequency = null;
         for (HabitFrequency frequency : HabitFrequency.values()) {
             if (frequency.getName().equals(name)) {
-                returnFrequency = frequency;
+                return frequency;
             }
         }
-        return returnFrequency;
+        throw new IllegalArgumentException("Нет такого частота привычки: " + name);
     }
 }

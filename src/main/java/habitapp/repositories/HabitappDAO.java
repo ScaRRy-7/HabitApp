@@ -1,7 +1,5 @@
 package habitapp.repositories;
 
-import habitapp.dto.HabitDTO;
-import habitapp.dto.UserDTO;
 import habitapp.entities.Habit;
 import habitapp.entities.User;
 import habitapp.exceptions.UserIllegalRequestException;
@@ -11,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.*;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -19,18 +19,18 @@ import java.util.*;
  * @author ScaRRy-7
  * @version 1.0
  */
-public final class UsersDAO {
+public final class HabitappDAO {
     /**
      * Статический экземпляр класса UsersStorage, реализующий паттерн Singleton.
      */
-    private static final UsersDAO USERS_DAO = new UsersDAO();
+    private static final HabitappDAO USERS_DAO = new HabitappDAO();
 
     /**
      * Возвращает статический экземпляр класса UsersStorage.
      *
      * @return статический экземпляр класса UsersStorage
      */
-    public static UsersDAO getInstance() {
+    public static HabitappDAO getInstance() {
         return USERS_DAO;
     }
 
@@ -42,21 +42,21 @@ public final class UsersDAO {
     /**
      * Объект класса Logger для логирования событий.
      */
-    private Logger logger = LoggerFactory.getLogger(UsersDAO.class);
+    private Logger logger = LoggerFactory.getLogger(HabitappDAO.class);
 
     /**
      * Приватный конструктор для реализации паттерна Singleton.
      */
-    private UsersDAO() {
+    private HabitappDAO() {
 
     }
 
     /**
      * Добавляет пользователя в базу данных.
      *
-     * @param userDTO новый пользователь
+     * @param user новый пользователь
      */
-    public void addUser(UserDTO userDTO) throws UserIllegalRequestException {
+    public void addUser(User user) throws UserIllegalRequestException {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
@@ -66,21 +66,21 @@ public final class UsersDAO {
                 ConfigurationManager.getProperty("DB_USER"),
                 ConfigurationManager.getProperty("DB_PASSWORD"))) {
 
-            if (hasUser(userDTO.getEmail())) {
+            if (hasUser(user.getEmail())) {
                 String sqlDeleteOldUser = "DELETE FROM habitschema.users WHERE email = ?";
                 PreparedStatement statement = connection.prepareStatement(sqlDeleteOldUser);
-                statement.setString(1, userDTO.getEmail());
+                statement.setString(1, user.getEmail());
                 statement.executeUpdate();
-                logger.info("Пользователь с email '{}' был удален.", userDTO.getEmail());
+                logger.info("Пользователь с email '{}' был удален.", user.getEmail());
             }
 
             String sqlInsertUser = "INSERT INTO habitschema.users (username, email, password) VALUES (?, ?, ?);";
             PreparedStatement statement = connection.prepareStatement(sqlInsertUser);
-            statement.setString(1, userDTO.getName());
-            statement.setString(2, userDTO.getEmail());
-            statement.setString(3, userDTO.getPassword());
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getEmail());
+            statement.setString(3, user.getPassword());
             statement.executeUpdate();
-            logger.info("Добавлен новый пользователь: {}", userDTO.getName());
+            logger.info("Добавлен новый пользователь: {}", user.getName());
 
         } catch (SQLException e) {
             logger.error(e.getMessage());
@@ -154,9 +154,8 @@ public final class UsersDAO {
      * @param email email пользователя
      * @return пользователь, найденный по email
      */
-    public UserDTO getUser(String email) {
-        UserDTO userDTO = new UserDTO();
-
+    public User getUser(String email) {
+        User user = null;
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
@@ -175,19 +174,17 @@ public final class UsersDAO {
                 String nameDB = resultSet.getString("username");
                 String emailDB = resultSet.getString("email");
                 String passwordDB = resultSet.getString("password");
-                userDTO.setName(nameDB);
-                userDTO.setEmail(emailDB);
-                userDTO.setPassword(passwordDB);
+                user = new User(nameDB, emailDB, passwordDB);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        if (userDTO.getName() != null) {
+        if (user != null) {
             logger.info("возвращен пользователь с почтой {}", email);
         } else {
             logger.error("Пользователь с почтой {} не найден", email);
         }
-        return userDTO;
+        return user;
     }
 
     /**
@@ -216,16 +213,18 @@ public final class UsersDAO {
      * @param user  пользователь
      * @param habit новая привычка
      */
-    public void addHabitToUser(UserDTO user, Habit habit) {
+    public void addHabitToUser(User user, Habit habit) {
         try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
                 ConfigurationManager.getProperty("DB_USER"),
                 ConfigurationManager.getProperty("DB_PASSWORD"))) {
 
-            String sqlInsertHabit = "INSERT INTO habitschema.habits (name, description, frequency, created_date_time, user_id) VALUES (?, ?, ?, ?, ?)";
+            String sqlInsertHabit = "INSERT INTO habitschema.habits (name, description, frequency," +
+                    " created_date_time, user_id) VALUES (?, ?, ?, ?, ?)";
+
             PreparedStatement statement = connection.prepareStatement(sqlInsertHabit);
             statement.setString(1, habit.getName());
             statement.setString(2, habit.getDescription());
-            statement.setString(3, habit.getFrequency().getName());
+            statement.setString(3, habit.getFrequenсy().getName());
             statement.setTimestamp(4, Timestamp.valueOf(habit.getCreatedDateTime()));
             statement.setInt(5, getUserIdFromDB(user.getEmail()));
             statement.executeUpdate();
@@ -235,29 +234,35 @@ public final class UsersDAO {
         }
     }
 
-    public void removeHabitFromUser(UserDTO userDTO, HabitDTO habitDTO) {
-        String sql = "DELETE FROM habitschema.habits WHERE name = ? AND description = ? AND frequency = ?";
-
+    public void removeHabitFromUser(User user, Habit habit) {
         try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
                 ConfigurationManager.getProperty("DB_USER"),
                 ConfigurationManager.getProperty("DB_PASSWORD"))) {
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, habitDTO.getName());
-            statement.setString(2, habitDTO.getDescription());
-            statement.setString(3, habitDTO.getFrequenсy().getName());
+
+            String removeHabitFromUserSql = "DELETE FROM habitschema.habits WHERE name = ? AND description = ? AND" +
+                    " frequency = ? AND user_id = ?";
+
+            PreparedStatement statement = connection.prepareStatement(removeHabitFromUserSql);
+            statement.setString(1, habit.getName());
+            statement.setString(2, habit.getDescription());
+            statement.setString(3, habit.getFrequenсy().getName());
+            statement.setInt(4, getUserIdFromDB(user.getEmail()));
             statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void changeHabit(UserDTO user, HabitDTO oldHabit, HabitDTO newHabit) {
-        String sql = "SELECT habits.id FROM habitschema.habits WHERE user_id = ? AND habits.name = ? AND habits.description = ? AND habits.frequency = ? ORDER BY habits.id LIMIT 1";
+    public void changeHabit(User user, Habit oldHabit, Habit newHabit) {
 
         try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
                 ConfigurationManager.getProperty("DB_USER"),
                 ConfigurationManager.getProperty("DB_PASSWORD"))) {
-            PreparedStatement statement = connection.prepareStatement(sql);
+
+            String changeHabitSql = "SELECT habits.id FROM habitschema.habits WHERE user_id = ? AND " +
+                    "habits.name = ? AND habits.description = ? AND habits.frequency = ? ORDER BY habits.id LIMIT 1";
+
+            PreparedStatement statement = connection.prepareStatement(changeHabitSql);
             statement.setInt(1, getUserIdFromDB(user.getEmail()));
             statement.setString(2, oldHabit.getName());
             statement.setString(3, oldHabit.getDescription());
@@ -267,7 +272,9 @@ public final class UsersDAO {
             if (resultSet.next()) {
                 int habitId = resultSet.getInt("id");
 
-                String SqlChangeHabit = "UPDATE habitschema.habits SET name = ?, description = ?, frequency = ? WHERE id = ?";
+                String SqlChangeHabit = "UPDATE habitschema.habits SET name = ?, description = ?, " +
+                        "frequency = ? WHERE id = ?";
+
                 PreparedStatement updateStatement = connection.prepareStatement(SqlChangeHabit);
                 updateStatement.setString(1, newHabit.getName());
                 updateStatement.setString(2, newHabit.getDescription());
@@ -281,7 +288,8 @@ public final class UsersDAO {
         }
     }
 
-    public Habit getHabitFromUser(UserDTO user, int habitNumber) {
+    public Habit getHabitFromUser(User user, int habitNumber) {
+        unmarkHabits(user);
         Habit habit = null;
 
         try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
@@ -290,6 +298,7 @@ public final class UsersDAO {
 
             String sqlGetHabitByNumber = "SELECT name, description, frequency, created_date_time, is_complited FROM habitschema.habits WHERE user_id = ? " +
                     "ORDER BY id LIMIT 1 OFFSET ?";
+
             PreparedStatement statement = connection.prepareStatement(sqlGetHabitByNumber);
             statement.setInt(1, getUserIdFromDB(user.getEmail()));
             statement.setInt(2, habitNumber-1);
@@ -314,7 +323,8 @@ public final class UsersDAO {
         return habit;
     }
 
-    public List<Habit> getAllHabits(UserDTO user) {
+    public List<Habit> getAllHabits(User user) {
+        unmarkHabits(user);
         List<Habit> habits = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
@@ -333,7 +343,6 @@ public final class UsersDAO {
                 Timestamp created_date_time = resultSet.getTimestamp("habit_created_date_time");
                 boolean isComplited = resultSet.getBoolean("habit_is_complited");
                 Habit habit = new Habit(name, description, frequency, created_date_time.toLocalDateTime(), isComplited);
-                HabitDTO habitDTO = new HabitDTO();
                 habits.add(habit);
             }
         } catch (SQLException | IllegalArgumentException e) {
@@ -349,6 +358,7 @@ public final class UsersDAO {
                 ConfigurationManager.getProperty("DB_PASSWORD"))) {
 
             String sqlGetUserId = "SELECT id FROM habitschema.users WHERE email = ?";
+
             PreparedStatement statement = connection.prepareStatement(sqlGetUserId);
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
@@ -361,17 +371,19 @@ public final class UsersDAO {
         return id;
     }
 
-    public boolean hasHabit(UserDTO userDTO, HabitDTO habitDTO) {
+    public boolean hasHabit(User user, Habit habit) {
         try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
                 ConfigurationManager.getProperty("DB_USER"),
                 ConfigurationManager.getProperty("DB_PASSWORD"))) {
 
-            String sqlGetHabit = "SELECT habits.name, habits.description, habits.frequency FROM habitschema.habits WHERE user_id = ? AND habits.name = ? AND habits.description = ? AND habits.frequency = ?;";
+            String sqlGetHabit = "SELECT habits.name, habits.description, habits.frequency FROM habitschema.habits " +
+                    "WHERE user_id = ? AND habits.name = ? AND habits.description = ? AND habits.frequency = ?;";
+
             PreparedStatement statement = connection.prepareStatement(sqlGetHabit);
-            statement.setInt(1, getUserIdFromDB(userDTO.getEmail()));
-            statement.setString(2, habitDTO.getName());
-            statement.setString(3, habitDTO.getDescription());
-            statement.setString(4, habitDTO.getFrequenсy().getName());
+            statement.setInt(1, getUserIdFromDB(user.getEmail()));
+            statement.setString(2, habit.getName());
+            statement.setString(3, habit.getDescription());
+            statement.setString(4, habit.getFrequenсy().getName());
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
@@ -383,22 +395,177 @@ public final class UsersDAO {
         return false;
     }
 
-    public void updateRedactedUser(String email, UserDTO userDTO) {
-        int userId = getUserIdFromDB(email);
-        String sqlRedactUser = "UPDATE habitschema.users SET username = ?, email = ?, password = ? WHERE id = ?";
-
+    public void updateRedactedUser(String email, User user) {
         try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
                 ConfigurationManager.getProperty("DB_USER"),
                 ConfigurationManager.getProperty("DB_PASSWORD"))) {
+
+            String sqlRedactUser = "UPDATE habitschema.users SET username = ?, email = ?, password = ? WHERE id = ?";
+
             PreparedStatement statement = connection.prepareStatement(sqlRedactUser);
-            statement.setString(1, userDTO.getName());
-            statement.setString(2, userDTO.getEmail());
-            statement.setString(3, userDTO.getPassword());
-            statement.setInt(4, userId);
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getEmail());
+            statement.setString(3, user.getPassword());
+            statement.setInt(4, getUserIdFromDB(email));
             statement.executeUpdate();
         } catch (SQLException e) {
             logger.error(e.getMessage());
             System.out.println(e.getMessage());
         }
+    }
+
+    public boolean habitIsMarked(User user, Habit habit) {
+        unmarkHabits(user);
+        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
+                ConfigurationManager.getProperty("DB_USER"),
+                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+
+            String sqlGetHabit = "SELECT habits.name, habits.description, habits.frequency, habits.is_complited FROM habitschema.habits " +
+                    "WHERE user_id = ? AND habits.name = ? AND habits.description = ? AND habits.frequency = ?;";
+
+            PreparedStatement statement = connection.prepareStatement(sqlGetHabit);
+            statement.setInt(1, getUserIdFromDB(user.getEmail()));
+            statement.setString(2, habit.getName());
+            statement.setString(3, habit.getDescription());
+            statement.setString(4, habit.getFrequenсy().getName());
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getBoolean("is_complited");
+            }
+        } catch (SQLException | IllegalArgumentException e) {
+            logger.error(e.getMessage());
+        }
+        return false;
+    }
+
+    public void markHabit(User user, Habit habit) {
+        unmarkHabits(user);
+        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
+                ConfigurationManager.getProperty("DB_USER"),
+                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+
+            String sqlChangeHabitSql = "SELECT habits.id FROM habitschema.habits WHERE habits.user_id = ? AND " +
+                    "habits.name = ? AND habits.description = ? AND habits.frequency = ? ORDER BY habits.id LIMIT 1";
+
+            PreparedStatement findHabitStatement = connection.prepareStatement(sqlChangeHabitSql);
+            findHabitStatement.setInt(1, getUserIdFromDB(user.getEmail()));
+            findHabitStatement.setString(2, habit.getName());
+            findHabitStatement.setString(3, habit.getDescription());
+            findHabitStatement.setString(4, habit.getFrequenсy().getName());
+
+            ResultSet resultSet = findHabitStatement.executeQuery();
+            if (resultSet.next()) {
+                int habitId = resultSet.getInt("id");
+                String sqlChangeHabit = "UPDATE habitschema.habits SET is_complited = true WHERE id = ?";
+                PreparedStatement markHabitStatement = connection.prepareStatement(sqlChangeHabit);
+                markHabitStatement.setInt(1, habitId);
+                markHabitStatement.executeUpdate();
+
+                String sqlAddComplitedDay = "INSERT INTO habitschema.complited_days (complited_date, habit_id) VALUES (?, ?)";
+                PreparedStatement addComplitedDayStatement = connection.prepareStatement(sqlAddComplitedDay);
+                final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                addComplitedDayStatement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now().format(formatter)));
+                addComplitedDayStatement.setInt(2, habitId);
+                addComplitedDayStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("полная пизда " + e);
+            logger.error(e.getMessage());
+            System.out.println(e.getMessage());
+            System.out.println("полная пизда " + e);
+        }
+    }
+
+    public void unmarkHabits(User user) {
+        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
+                ConfigurationManager.getProperty("DB_USER"),
+                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+
+            // Получаем все привычки юзера
+            String sqlGetAllHabits = "SELECT id, frequency FROM habitschema.habits WHERE user_id = ?";
+            PreparedStatement getHabitsStatement = connection.prepareStatement(sqlGetAllHabits);
+            getHabitsStatement.setInt(1, getUserIdFromDB(user.getEmail()));
+            ResultSet habitsResultSet = getHabitsStatement.executeQuery();
+
+            while (habitsResultSet.next()) {
+                int habitId = habitsResultSet.getInt("id");
+                String frequency = habitsResultSet.getString("frequency");
+
+                // Получаем последнюю запись в complited_days для этой привычки
+                String sqlGetLastCompletedDay = "SELECT complited_date FROM habitschema.complited_days WHERE habit_id = ? ORDER BY complited_date DESC LIMIT 1";
+                PreparedStatement getLastCompletedDayStatement = connection.prepareStatement(sqlGetLastCompletedDay);
+                getLastCompletedDayStatement.setInt(1, habitId);
+                ResultSet lastCompletedDayResultSet = getLastCompletedDayStatement.executeQuery();
+
+                if (lastCompletedDayResultSet.next()) {
+                    Timestamp lastCompletedDate = lastCompletedDayResultSet.getTimestamp("complited_date");
+                    LocalDateTime lastCompletedDateTime = lastCompletedDate.toLocalDateTime();
+                    LocalDateTime now = LocalDateTime.now();
+
+                    // Проверяем, сколько времени прошло с последней записи
+                    long daysBetween = java.time.Duration.between(lastCompletedDateTime, now).toDays();
+
+                    // Условие для обновления поля is_complited
+                    boolean shouldUnmark = false;
+                    if ("ежедневно".equals(frequency) && daysBetween > 1) {
+                        shouldUnmark = true;
+                    } else if ("еженедельно".equals(frequency) && daysBetween > 7) {
+                        shouldUnmark = true;
+                    }
+
+                    // Если нужно пометить как не завершенное
+                    if (shouldUnmark) {
+                        String sqlUpdateHabit = "UPDATE habitschema.habits SET is_complited = false WHERE id = ?";
+                        PreparedStatement updateHabitStatement = connection.prepareStatement(sqlUpdateHabit);
+                        updateHabitStatement.setInt(1, habitId);
+                        updateHabitStatement.executeUpdate();
+                        logger.info("Привычка с ID {} помечена как не завершенная", habitId);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Ошибка при unmarkHabits: {}", e.getMessage());
+        }
+    }
+
+    public List<LocalDateTime> getAllComplitedDays(User user, Habit habit) {
+        List<LocalDateTime> completedDays = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
+                ConfigurationManager.getProperty("DB_USER"),
+                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+
+                int userId = getUserIdFromDB(user.getEmail());
+
+                // Получаем ID привычки
+                String sqlGetHabitId = "SELECT id FROM habitschema.habits WHERE user_id = ? AND name = ? AND description = ? AND frequency = ?";
+                PreparedStatement getHabitIdStatement = connection.prepareStatement(sqlGetHabitId);
+                getHabitIdStatement.setInt(1, userId);
+                getHabitIdStatement.setString(2, habit.getName());
+                getHabitIdStatement.setString(3, habit.getDescription());
+                getHabitIdStatement.setString(4, habit.getFrequenсy().getName());
+                ResultSet habitIdResultSet = getHabitIdStatement.executeQuery();
+
+                if (habitIdResultSet.next()) {
+                    int habitId = habitIdResultSet.getInt("id");
+
+                    // Получаем все даты выполнения привычки
+                    String sqlGetCompletedDays = "SELECT complited_date FROM habitschema.complited_days WHERE habit_id = ?";
+                    PreparedStatement getCompletedDaysStatement = connection.prepareStatement(sqlGetCompletedDays);
+                    getCompletedDaysStatement.setInt(1, habitId);
+                    ResultSet completedDaysResultSet = getCompletedDaysStatement.executeQuery();
+
+                    while (completedDaysResultSet.next()) {
+                        Timestamp complitedDate = completedDaysResultSet.getTimestamp("complited_date");
+                        completedDays.add(complitedDate.toLocalDateTime());
+                    }
+                }
+
+        } catch (SQLException e) {
+            logger.error("Ошибка при получении выполненных дней: {}", e.getMessage());
+        }
+
+        return completedDays;
     }
 }

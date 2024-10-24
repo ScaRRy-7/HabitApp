@@ -1,15 +1,15 @@
-package services.menus;
+package habitapp.services.menus;
 
-import services.entities.User;
-import services.enums.StatisticsCommand;
-import services.in.Reader;
-import services.out.HabitsStatisticsMenuWriter;
-import services.statistics.ProgressReport;
-import services.statistics.StreakCalculator;
-import services.statistics.SuccessCalculator;
-import repositories.UsersRepository;
-import services.validate.StatisticsValidator;
-import services.wait.Waiter;
+import habitapp.entities.User;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.enums.StatisticsCommand;
+import habitapp.services.statistics.ProgressReport;
+import habitapp.services.statistics.StreakCalculator;
+import habitapp.services.statistics.SuccessCalculator;
+import habitapp.services.validate.StatisticsValidator;
+import habitapp.services.in.Reader;
+import habitapp.services.out.HabitsStatisticsMenuWriter;
+import habitapp.services.wait.Waiter;
 import org.slf4j.*;
 
 /**
@@ -36,7 +36,7 @@ public class HabitsStatisticsMenu implements Commander {
     private final SuccessCalculator successCalculator = new SuccessCalculator();
     private final ProgressReport progressReport = new ProgressReport();
     private final Logger logger = LoggerFactory.getLogger(HabitsStatisticsMenu.class);
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
 
     /**
@@ -46,19 +46,19 @@ public class HabitsStatisticsMenu implements Commander {
      *
      * @param user авторизованный пользователь
      */
-    public void start(User user) {
-        logger.info("Запущено меню статистики");
-        this.currentUser = user;
-        if (!usersRepository.getAllHabits(user).isEmpty()) {
-            logger.debug("У пользователя есть привычки, запускается выбор команды");
-            selectCommand();
-        } else {
-            logger.debug("У Пользователя отсутствуют привычки, просмотр статистики невозможен");
-            writer.writeNoHabitsForStatistics();
-            waiter.waitSecond();
-            return;
-        }
-    }
+//    public void start(User user) {
+//        logger.info("Запущено меню статистики");
+//        this.currentUser = user;
+//        if (!usersRepository.getAllHabits(user).isEmpty()) {
+//            logger.debug("У пользователя есть привычки, запускается выбор команды");
+//            selectCommand();
+//        } else {
+//            logger.debug("У Пользователя отсутствуют привычки, просмотр статистики невозможен");
+//            writer.writeNoHabitsForStatistics();
+//            waiter.waitSecond();
+//            return;
+//        }
+//    }
 
     /**
      * Отображает список команд меню статистики привычек и обрабатывает выбранную пользователем команду.
@@ -81,16 +81,16 @@ public class HabitsStatisticsMenu implements Commander {
                     break;
                 case CALCULATE_STREAKS:
                     logger.debug("Пользователь выбрал подсчет стриков для привычек");
-                    streakCalculator.start(currentUser);
+                   // streakCalculator.start(currentUser);
                     break;
                 case CALCULATE_SUCCESS_COMPLETION_FOR_PERIOD:
                     logger.debug("Пользователь выбрал посчитать процент выполняемости привычек");
-                    successCalculator.start(currentUser);
+                   // successCalculator.start(currentUser);
                     break;
                 case GENERATE_COMPLETION_REPORT:
 
                     logger.debug("Пользователь выбрал генерацию отчета по привычкам");
-                    progressReport.generateReport(currentUser);
+                    //progressReport.generateReport(currentUser);
                     break;
                 case RETURN_TO_MENU:
                     logger.debug("Пользователь выбрал возврат");

@@ -1,14 +1,12 @@
-package services.entrypoint;
+package habitapp.services.entrypoint;
 
-import services.checkers.ExitChecker;
-import services.checkers.PasswordChecker;
-import services.in.Reader;
-import services.menus.AuthorizationMenu;
-import services.out.AuthenticationWriter;
-import services.entities.User;
-import repositories.UsersRepository;
-import services.validate.PasswordValidator;
-import services.wait.Waiter;
+import habitapp.services.checkers.ExitChecker;
+import habitapp.services.checkers.PasswordChecker;
+import habitapp.services.in.Reader;
+import habitapp.services.menus.AuthorizationMenu;
+import habitapp.services.out.AuthenticationWriter;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.wait.Waiter;
 import org.slf4j.*;
 
 /**
@@ -22,11 +20,11 @@ public class Authentication {
 
     private final AuthenticationWriter writer = new AuthenticationWriter();
     private final Reader reader = new Reader();
-    private final PasswordValidator passwordValidator = new PasswordValidator();
+    //private final PasswordValidator passwordValidator = new PasswordValidator();
     private final Waiter waiter = new Waiter();
     private final PasswordChecker passwordChecker = new PasswordChecker();
     private final AuthorizationMenu authorizationMenu = new AuthorizationMenu();
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
     private final Logger logger = LoggerFactory.getLogger(Authentication.class);
 
     /**
@@ -40,7 +38,7 @@ public class Authentication {
 
         // Если пользователь решил выйти
         ExitChecker.check(password);
-
+        /*
         if (passwordValidator.isValid(password)) {
             if (passwordChecker.checkPassword(email, password)) {
                 User user = usersRepository.getUserFromDatabase(email);
@@ -55,5 +53,7 @@ public class Authentication {
             waiter.waitSecond();
             login(email);
         }
+
+         */
     }
 }

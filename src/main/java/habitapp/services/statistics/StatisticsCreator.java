@@ -1,7 +1,7 @@
-package services.statistics;
+package habitapp.services.statistics;
 
-import services.entities.Habit;
-import services.entities.User;
+import habitapp.entities.Habit;
+import habitapp.entities.User;
 
 public interface StatisticsCreator {
     void getStatistics(User user, Habit habit);

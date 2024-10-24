@@ -1,11 +1,9 @@
-package services.statistics;
+package habitapp.services.statistics;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.habitchangers.HabitUnmarker;
-import services.out.ProgressReportWriter;
+import habitapp.services.habitchangers.HabitUnmarker;
+import habitapp.services.out.ProgressReportWriter;
 import org.slf4j.*;
-import repositories.UsersRepository;
+import habitapp.repositories.HabitappRepository;
 
 /**
  * Класс ProgressReport отвечает за генерацию отчета о прогрессе выполнения привычек пользователя.
@@ -15,7 +13,7 @@ import repositories.UsersRepository;
  */
 public class ProgressReport {
 
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     /**
      * Объект класса HabitUnmarker для проверки и размаркировки привычек.
@@ -46,16 +44,16 @@ public class ProgressReport {
      * Генерирует отчет о прогрессе выполнения привычек для текущего пользователя.
      *
      * @param user текущий пользователь
-     */
-    public void generateReport(User user) {
-        logger.debug("Генерируется прогресс по привычкам");
-        habitUnmarker.checkHabits(user);
-        System.out.println("Отчет о прогрессе выполнения привычек для пользователя: " + user.getName());
-
-        for (Habit habit : usersRepository.getAllHabits(user)) {
-            int streak = streakCalculator.calculateStreak(habit);
-            double successRate = successCalculator.calculateSuccessRate(habit);
-            writer.write(habit, streak, successRate);
-        }
-    }
+//     */
+//    public void generateReport(User user) {
+//        logger.debug("Генерируется прогресс по привычкам");
+//        habitUnmarker.checkHabits(user);
+//        System.out.println("Отчет о прогрессе выполнения привычек для пользователя: " + user.getName());
+////
+////        for (Habit habit : usersRepository.getAllHabits(user)) {
+////            int streak = streakCalculator.calculateStreak(habit);
+////            double successRate = successCalculator.calculateSuccessRate(habit);
+////            writer.write(habit, streak, successRate);
+////        }
+////    }
 }

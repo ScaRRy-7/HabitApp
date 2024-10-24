@@ -1,6 +1,6 @@
-package services.checkers;
+package habitapp.services.checkers;
 
-import services.entrypoint.Identification;
+import habitapp.services.entrypoint.Identification;
 
 /**
  * Класс ExitChecker отвечает за проверку команды на выход из приложения.

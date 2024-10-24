@@ -1,10 +1,10 @@
-package services.adminstration;
+package habitapp.services.adminstration;
 
-import services.in.Reader;
-import services.out.AdminUserChangerWriter;
-import repositories.UsersDAO;
-import services.validate.AdminRemoverValidator;
-import services.wait.Waiter;
+import habitapp.services.in.Reader;
+import habitapp.services.out.AdminUserChangerWriter;
+import habitapp.repositories.HabitappDAO;
+import habitapp.services.validate.AdminRemoverValidator;
+import habitapp.services.wait.Waiter;
 
 /**
  * Класс AdminRemover отвечает за удаление пользователей администратором.
@@ -16,7 +16,7 @@ public class AdminRemover {
     /**
      * Объект класса UsersStorage для хранения пользователей.
      */
-    private final UsersDAO usersDAO = UsersDAO.getInstance();
+    private final HabitappDAO habitappDAO = HabitappDAO.getInstance();
 
     /**
      * Объект класса Reader для чтения ввода пользователя.
@@ -42,7 +42,7 @@ public class AdminRemover {
      * Удаляет пользователя, указанного администратором.
      */
     public void removeUser() {
-        if (usersDAO.getUsers().isEmpty()) {
+        if (habitappDAO.getUsers().isEmpty()) {
             writer.writeNoUsers();
             waiter.waitSecond();
             return;
@@ -51,7 +51,7 @@ public class AdminRemover {
         writer.writeUsersToChoose();
         String userEmail = reader.read();
         if (validator.isValid(userEmail)) {
-            usersDAO.removeUser(userEmail);
+            habitappDAO.removeUser(userEmail);
             writer.writeUserRemoved();
         } else {
             writer.reportUserNotFound();

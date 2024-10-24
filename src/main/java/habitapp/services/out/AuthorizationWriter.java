@@ -1,6 +1,6 @@
-package services.out;
+package habitapp.services.out;
 
-import services.entities.User;
+import habitapp.entities.User;
 
 public class AuthorizationWriter {
 

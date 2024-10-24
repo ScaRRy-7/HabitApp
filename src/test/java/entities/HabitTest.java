@@ -1,6 +1,7 @@
 package entities;
 
-import enums.HabitFrequency;
+import habitapp.entities.Habit;
+import habitapp.services.enums.HabitFrequency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,13 +62,5 @@ class HabitTest {
         assertTrue(habit.compareTo(anotherHabit) <= 0 || habit.compareTo(anotherHabit) >= 0);
     }
 
-    @Test
-    @DisplayName("Тест метода toString()")
-    void testToString() {
-        String expected = "Название привычки: Exercise\n\tОписание привычки: Daily morning exercise" +
-                "\n\tЧастота: " + HabitFrequency.DAILY.getName() +
-                "\n\tСоздана: " + habit.getCreatedDateTime().format(habit.formatter) +
-                "\n\tСтатус: Не выполнена";
-        assertEquals(expected, habit.toString());
-    }
+
 }

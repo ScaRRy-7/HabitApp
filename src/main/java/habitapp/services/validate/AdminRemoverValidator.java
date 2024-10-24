@@ -1,12 +1,12 @@
-package services.validate;
+package habitapp.services.validate;
 
-import repositories.UsersDAO;
+import habitapp.repositories.HabitappDAO;
 
 public class AdminRemoverValidator {
 
-    private final UsersDAO usersDAO = UsersDAO.getInstance();
+    private final HabitappDAO habitappDAO = HabitappDAO.getInstance();
 
     public boolean isValid(String email) {
-        return usersDAO.hasUser(email);
+        return habitappDAO.hasUser(email);
     }
 }

@@ -1,13 +1,12 @@
-package services.habitchangers;
+package habitapp.services.habitchangers;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.enums.Sorting;
-import services.in.Reader;
-import services.out.HabitsRedactorWriter;
-import repositories.UsersRepository;
-import services.validate.HabitIndicatorValidator;
-import services.wait.Waiter;
+import habitapp.entities.Habit;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.enums.Sorting;
+import habitapp.services.in.Reader;
+import habitapp.services.out.HabitsRedactorWriter;
+import habitapp.services.validate.HabitIndicatorValidator;
+import habitapp.services.wait.Waiter;
 import org.slf4j.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public class HabitIndicator {
 
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
     /**
      * Объект класса HabitsRedactorWriter для записи информации о привычках.
      */
@@ -56,17 +55,17 @@ public class HabitIndicator {
      *
      * @param currentUser текущий пользователь
      */
-    public void showHabits(User currentUser) {
-        habitUnmarker.checkHabits(currentUser); // Предварительно размаркировка привычек, если прошел срок (день или месяц)
-        if (usersRepository.getAllHabits(currentUser).isEmpty()) {
-            logger.debug("У пользователя нет привычек");
-            writer.infoNoHabits();
-        } else {
-            logger.debug("У пользователя есть привычки, запускается вывод привычек");
-            writer.writeHabits(currentUser);
-        }
-        waiter.waitSecond();
-    }
+//    public void showHabits(User currentUser) {
+//        habitUnmarker.checkHabits(currentUser); // Предварительно размаркировка привычек, если прошел срок (день или месяц)
+//        if (usersRepository.getAllHabits(currentUser).isEmpty()) {
+//            logger.debug("У пользователя нет привычек");
+//            writer.infoNoHabits();
+//        } else {
+//            logger.debug("У пользователя есть привычки, запускается вывод привычек");
+//            writer.writeHabits(currentUser);
+//        }
+//        waiter.waitSecond();
+//    }
 
     /**
      * Отображает список привычек в отсортированном виде по дате или частоте выполнения.
@@ -93,52 +92,52 @@ public class HabitIndicator {
      *
      * @param currentUser текущий пользователь
      */
-    public void chooseSorting(User currentUser) {
-        logger.debug("Запущен выбор сортировки привычек");
-        habitUnmarker.checkHabits(currentUser);
-
-        if (usersRepository.getAllHabits(currentUser).isEmpty()) {
-            logger.debug("У пользователя отсутствуют привычки, выбор сортировки невозможен");
-            writer.infoNoHabits();
-            waiter.waitSecond();
-            return;
-        }
-
-        writer.askSorting();
-        String commandString = reader.read();
-
-        if (validator.isValidCommandString(commandString)) {
-
-            logger.debug("Пользователь выбрал валидную команду сортировки");
-            Sorting sorting = getSortingByNum(Integer.parseInt(commandString));
-            switch (sorting) {
-                case DATE:
-                    logger.info("Пользователь выбрал сортировку по дате");
-                    showHabits(usersRepository.getAllHabits(currentUser), Sorting.DATE);
-                    break;
-                case FREQUENCY:
-                    logger.info("Пользователь выбрал сортировку по частоте");
-                    showHabits(usersRepository.getAllHabits(currentUser), Sorting.FREQUENCY);
-                    break;
-            }
-        } else {
-            logger.debug("Пользователь выбрал не валидную команду сортировки, команда запрашивается снова");
-            writer.reportInvalidSorting();
-            waiter.waitSecond();
-            chooseSorting(currentUser);
-        }
-    }
-
-    /**
-     * Получает значение Sorting по номеру команды.
-     *
-     * @param num номер команды
-     * @return значение Sorting
-     */
-    private Sorting getSortingByNum(int num) {
-        return switch (num) {
-            case 1 -> Sorting.DATE;
-            default -> Sorting.FREQUENCY;
-        };
-    }
+//    public void chooseSorting(User currentUser) {
+//        logger.debug("Запущен выбор сортировки привычек");
+//        habitUnmarker.checkHabits(currentUser);
+//
+//        if (usersRepository.getAllHabits(currentUser).isEmpty()) {
+//            logger.debug("У пользователя отсутствуют привычки, выбор сортировки невозможен");
+//            writer.infoNoHabits();
+//            waiter.waitSecond();
+//            return;
+//        }
+//
+//        writer.askSorting();
+//        String commandString = reader.read();
+//
+//        if (validator.isValidCommandString(commandString)) {
+//
+//            logger.debug("Пользователь выбрал валидную команду сортировки");
+//            Sorting sorting = getSortingByNum(Integer.parseInt(commandString));
+//            switch (sorting) {
+//                case DATE:
+//                    logger.info("Пользователь выбрал сортировку по дате");
+//                    showHabits(usersRepository.getAllHabits(currentUser), Sorting.DATE);
+//                    break;
+//                case FREQUENCY:
+//                    logger.info("Пользователь выбрал сортировку по частоте");
+//                    showHabits(usersRepository.getAllHabits(currentUser), Sorting.FREQUENCY);
+//                    break;
+//            }
+//        } else {
+//            logger.debug("Пользователь выбрал не валидную команду сортировки, команда запрашивается снова");
+//            writer.reportInvalidSorting();
+//            waiter.waitSecond();
+//            chooseSorting(currentUser);
+//        }
+//    }
+//
+//    /**
+//     * Получает значение Sorting по номеру команды.
+//     *
+//     * @param num номер команды
+//     * @return значение Sorting
+//     */
+//    private Sorting getSortingByNum(int num) {
+//        return switch (num) {
+//            case 1 -> Sorting.DATE;
+//            default -> Sorting.FREQUENCY;
+//        };
+//    }
 }

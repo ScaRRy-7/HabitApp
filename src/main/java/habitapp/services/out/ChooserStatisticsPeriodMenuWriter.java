@@ -1,5 +1,5 @@
-package services.out;
-import services.enums.Period;
+package habitapp.services.out;
+import habitapp.services.enums.Period;
 
 public class ChooserStatisticsPeriodMenuWriter {
 

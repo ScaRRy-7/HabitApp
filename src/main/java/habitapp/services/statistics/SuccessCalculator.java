@@ -1,12 +1,11 @@
-package services.statistics;
+package habitapp.services.statistics;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.enums.HabitFrequency;
-import services.habitchangers.HabitUnmarker;
-import services.out.SuccessCalculatorWriter;
+import habitapp.entities.Habit;
+import habitapp.services.habitchangers.HabitUnmarker;
+import habitapp.services.enums.HabitFrequency;
+import habitapp.services.out.SuccessCalculatorWriter;
 import org.slf4j.*;
-import repositories.UsersRepository;
+import habitapp.repositories.HabitappRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +19,7 @@ import java.time.temporal.ChronoUnit;
  */
 public class SuccessCalculator {
 
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     /**
      * Объект класса HabitUnmarker для проверки и размаркировки привычек.
@@ -42,14 +41,14 @@ public class SuccessCalculator {
      *
      * @param user текущий пользователь
      */
-    public void start(User user) {
-        logger.debug("Запущен калькулятор выполняемости привычек в %");
-        habitUnmarker.checkHabits(user);
-        for (Habit habit : usersRepository.getAllHabits(user)) {
-            double successRate = calculateSuccessRate(habit);
-            writer.write(habit, successRate);
-        }
-    }
+//    public void start(User user) {
+//        logger.debug("Запущен калькулятор выполняемости привычек в %");
+//        habitUnmarker.checkHabits(user);
+//        for (Habit habit : usersRepository.getAllHabits(user)) {
+//            double successRate = calculateSuccessRate(habit);
+//            writer.write(habit, successRate);
+//        }
+//    }
 
     /**
      * Рассчитывает процент успешного выполнения указанной привычки.

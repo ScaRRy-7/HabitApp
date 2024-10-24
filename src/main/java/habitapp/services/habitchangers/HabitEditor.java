@@ -1,15 +1,14 @@
-package services.habitchangers;
+package habitapp.services.habitchangers;
 
-import services.entities.Habit;
-import services.entities.User;
-import services.enums.HabitFrequency;
-import services.enums.PartOfHabit;
-import services.in.Reader;
-import services.out.HabitEditorWriter;
-import repositories.UsersRepository;
-import services.validate.CommandHabitValidator;
-import services.validate.HabitEditorValidator;
-import services.wait.Waiter;
+import habitapp.entities.User;
+import habitapp.services.enums.HabitFrequency;
+import habitapp.services.enums.PartOfHabit;
+import habitapp.services.in.Reader;
+import habitapp.services.out.HabitEditorWriter;
+import habitapp.repositories.HabitappRepository;
+import habitapp.services.validate.CommandHabitValidator;
+import habitapp.services.validate.HabitEditorValidator;
+import habitapp.services.wait.Waiter;
 import org.slf4j.*;
 
 public class HabitEditor {
@@ -18,34 +17,34 @@ public class HabitEditor {
     private final HabitEditorWriter writer = new HabitEditorWriter();
     private final CommandHabitValidator habitValidator = new CommandHabitValidator();
     private final HabitEditorValidator validator = new HabitEditorValidator();
-    private final UsersRepository usersRepository = new UsersRepository();
+    private final HabitappRepository habitappRepository = new HabitappRepository();
     private final Waiter waiter = new Waiter();
     private final HabitUnmarker habitUnmarker = new HabitUnmarker();
     private final Logger logger = LoggerFactory.getLogger(HabitEditor.class);
 
-    public void redactHabit(User currentUser) {
-        logger.info("Запущен выбор привычки которую пользователь будет редактировать");
-        if (usersRepository.getAllHabits(currentUser).isEmpty()) {
-            logger.debug("У пользователя отсутствуют привычки, выбор невозможен");
-            writer.infoNoHabits();
-            waiter.waitSecond();
-        } else {
-            writer.askNumberOfHabitRedact(currentUser);
-            String habitNumberStr = reader.read();
-            if (habitValidator.isValidHabitNumber(currentUser, habitNumberStr)) {
-                logger.info("Пользователь ввел корректный номер привычки для редактирования");
-                int habitNumber = Integer.parseInt(habitNumberStr);
-                startRedact(currentUser, habitNumber);
-                writer.infoHabitRedacted();
-                waiter.waitSecond();
-            } else {
-                logger.info("Пользователь ввел некорректный номери привычки для редактирования, выбор будет запущен снова");
-                writer.reportInvalidHabitNumberRedact();
-                waiter.waitSecond();
-                redactHabit(currentUser);
-            }
-        }
-    }
+//    public void redactHabit(User currentUser) {
+//        logger.info("Запущен выбор привычки которую пользователь будет редактировать");
+//        if (usersRepository.getAllHabits(currentUser).isEmpty()) {
+//            logger.debug("У пользователя отсутствуют привычки, выбор невозможен");
+//            writer.infoNoHabits();
+//            waiter.waitSecond();
+//        } else {
+//            writer.askNumberOfHabitRedact(currentUser);
+//            String habitNumberStr = reader.read();
+//            if (habitValidator.isValidHabitNumber(currentUser, habitNumberStr)) {
+//                logger.info("Пользователь ввел корректный номер привычки для редактирования");
+//                int habitNumber = Integer.parseInt(habitNumberStr);
+//                startRedact(currentUser, habitNumber);
+//                writer.infoHabitRedacted();
+//                waiter.waitSecond();
+//            } else {
+//                logger.info("Пользователь ввел некорректный номери привычки для редактирования, выбор будет запущен снова");
+//                writer.reportInvalidHabitNumberRedact();
+//                waiter.waitSecond();
+//                redactHabit(currentUser);
+//            }
+//        }
+//    }
 
     private void startRedact(User user, int habitNumber) {
         logger.info("Запущено редактирование, пользователь выбирает что именно изменить в привычке");
@@ -83,9 +82,9 @@ public class HabitEditor {
 
         if (validator.isValidHabitName(habitName)) {
             logger.info("Пользователь ввел валидное новое имя привычки");
-            Habit newHabit = usersRepository.getHabitFromUser(user, habitNumber);
-            newHabit.setName(habitName);
-            usersRepository.changeHabit(user, newHabit, habitNumber);
+           // Habit newHabit = usersRepository.getHabitFromUser(user, habitNumber);
+           // newHabit.setName(habitName);
+           // usersRepository.changeHabit(user, newHabit, habitNumber);
         } else {
             logger.info("Пользователь ввел невалидное новое имя привычки, имя будет запрошено снова");
             writer.reportIncorrectHabitName();
@@ -101,9 +100,9 @@ public class HabitEditor {
 
         if (validator.isValidHabitDescription(habitDescription)) {
             logger.info("Пользователь ввел валидное новое описание привычки");
-            Habit newHabit = usersRepository.getHabitFromUser(user, habitNumber);
-            newHabit.setDescription(habitDescription);
-            usersRepository.changeHabit(user, newHabit, habitNumber);
+          //  Habit newHabit = usersRepository.getHabitFromUser(user, habitNumber);
+           // newHabit.setDescription(habitDescription);
+            //usersRepository.changeHabit(user, newHabit, habitNumber);
         } else {
             logger.info("Пользователь ввел невалидное новое описание привычки, описание будет запрошено снова");
             writer.reportIncorrectHabitDescription();
@@ -120,9 +119,9 @@ public class HabitEditor {
         if (validator.isValidHabitFrequencyNumber(habitFrequencyNumber)) {
             logger.info("Пользователь ввел валидный номер частоты");
             HabitFrequency newHabitFrequency = getFrequencyByNumber(habitFrequencyNumber);
-            Habit newHabit = usersRepository.getHabitFromUser(user, habitNumber);
-            newHabit.setFrequenсy(newHabitFrequency);
-            usersRepository.changeHabit(user, newHabit, habitNumber);
+            //Habit newHabit = usersRepository.getHabitFromUser(user, habitNumber);
+           // newHabit.setFrequenсy(newHabitFrequency);
+            //usersRepository.changeHabit(user, newHabit, habitNumber);
         } else {
             logger.info("Пользователь ввел невалидный номер новой частоты, номер будет снова");
             writer.reportIncorrectFrequencyNumber();
