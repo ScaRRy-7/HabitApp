@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import habitapp.annotaions.Loggable;
 import habitapp.dto.UserDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.UserService;
+import habitapp.services.controller.UserControllerService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,11 +18,11 @@ import java.io.IOException;
 @WebServlet("/login")
 public class AuthorizationController extends HttpServlet {
 
-    private final UserService userService;
+    private final UserControllerService userControllerService;
     private final ObjectMapper objectMapper;
 
     public AuthorizationController() {
-        this.userService = UserService.getInstance();
+        this.userControllerService = UserControllerService.getInstance();
         this.objectMapper = new ObjectMapper();
     }
 
@@ -33,7 +33,7 @@ public class AuthorizationController extends HttpServlet {
 
         try {
             UserDTO userDTO = objectMapper.readValue(req.getReader(), UserDTO.class);
-            userService.loginUser(userDTO, req);
+            userControllerService.loginUser(userDTO, req);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write("{\"message\": \"authorized\"}");
         } catch (UserIllegalRequestException e) {

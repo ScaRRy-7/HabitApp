@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import habitapp.annotaions.Loggable;
 import habitapp.dto.UserDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.UserService;
+import habitapp.services.controller.UserControllerService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,11 +19,11 @@ import java.io.IOException;
 public class AccountController extends HttpServlet {
 
     private final ObjectMapper objectMapper;
-    private final UserService userService;
+    private final UserControllerService userControllerService;
 
     public AccountController() {
         objectMapper = new ObjectMapper();
-        userService = UserService.getInstance();
+        userControllerService = UserControllerService.getInstance();
     }
 
     @Override
@@ -32,7 +32,7 @@ public class AccountController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         try {
-            userService.redactUser(req, objectMapper.readValue(req.getReader(), UserDTO.class));
+            userControllerService.redactUser(req, objectMapper.readValue(req.getReader(), UserDTO.class));
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write("{\"message\": \"Account was redacted: \"" +
                     objectMapper.writeValueAsString(req.getSession().getAttribute("user")) + "}");
@@ -51,7 +51,7 @@ public class AccountController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         try {
-            userService.removeAccount(req);
+            userControllerService.removeAccount(req);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write("{\"message\": \"Account removed\"}");
         } catch (UserIllegalRequestException e) {

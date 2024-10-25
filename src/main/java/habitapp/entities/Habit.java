@@ -62,13 +62,13 @@ public class Habit implements Comparable<Habit> {
      */
     @Getter
     @Setter
-    private boolean isComplited;
+    private boolean isCompleted;
 
     /**
      * Список дат, когда привычка была выполнена.
      */
     @Getter
-    private final List<LocalDateTime> daysHabitComplited = new ArrayList<>();
+    private final List<LocalDateTime> daysHabitCompleted = new ArrayList<>();
 
     /**
      * Создает новую привычку с заданными параметрами.
@@ -82,7 +82,7 @@ public class Habit implements Comparable<Habit> {
         this.description = description;
         this.frequenсy = frequency;
         this.createdDateTime = LocalDateTime.now();
-        this.isComplited = false;
+        this.isCompleted = false;
     }
 
     /**
@@ -92,14 +92,14 @@ public class Habit implements Comparable<Habit> {
      * @param description     описание привычки
      * @param frequency       частота привычки
      * @param createdDateTime дата и время создания привычки
-     * @param isComplited     статус выполнения привычки
+     * @param isCompleted     статус выполнения привычки
      */
-    public Habit(String name, String description, HabitFrequency frequency, LocalDateTime createdDateTime, boolean isComplited) {
+    public Habit(String name, String description, HabitFrequency frequency, LocalDateTime createdDateTime, boolean isCompleted) {
         this.name = name;
         this.description = description;
         this.frequenсy = frequency;
         this.createdDateTime = createdDateTime;
-        this.isComplited = isComplited;
+        this.isCompleted = isCompleted;
     }
 
     /**
@@ -121,22 +121,22 @@ public class Habit implements Comparable<Habit> {
      *
      * @return true, если привычка выполнена, иначе false
      */
-    public boolean isComplited() {
-        return isComplited;
+    public boolean isCompleted() {
+        return isCompleted;
     }
 
     /**
      * Устанавливает статус привычки как "выполнена".
      */
-    public void setComplited() {
-        isComplited = true;
+    public void setcompleted() {
+        isCompleted = true;
     }
 
     /**
      * Устанавливает статус привычки как "не выполнена".
      */
-    public void setUncomplited() {
-        isComplited = false;
+    public void setUncompleted() {
+        isCompleted = false;
     }
 
     /**
@@ -148,7 +148,7 @@ public class Habit implements Comparable<Habit> {
     public String toString() {
         return "Название привычки: " + getName() + "\n\tОписание привычки: " + getDescription() +
                 "\n\tЧастота: " + getFrequency().getName() + "\n\tСоздана: " +
-                getCreatedDateTime().format(formatter) + "\n\tСтатус: " + (isComplited ? "Выполнена" : "Не выполнена");
+                getCreatedDateTime().format(formatter) + "\n\tСтатус: " + (isCompleted ? "Выполнена" : "Не выполнена");
     }
 
     /**

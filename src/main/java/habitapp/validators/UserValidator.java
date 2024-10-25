@@ -2,7 +2,6 @@ package habitapp.validators;
 
 import habitapp.dto.UserDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.repositories.HabitappRepository;
 
 public class UserValidator {
 

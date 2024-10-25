@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
         logicalFilePath="db/changelog/changelog.xml">
-    <changeSet id="002-insert-data" author="ScaRRy-7">
+    <changeSet id="002-insert-data-users" author="ScaRRy-7">
         <!-- Insert test users -->
         <insert tableName="users" schemaName="habitschema">
             <column name="username" value="user1"/>
@@ -22,7 +22,8 @@
             <column name="email" value="user3@example.com"/>
             <column name="password" value="password3"/>
         </insert>
-
+    </changeSet>
+    <changeSet id="002-insert-data-habits" author="">
         <!-- Insert test habits -->
         <insert tableName="habits" schemaName="habitschema">
             <column name="name" value="Read a book"/>
@@ -45,30 +46,31 @@
             <column name="created_date_time" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="user_id" value="3"/>
         </insert>
-
+    </changeSet>
+    <changeSet id="001-insert-data-completed-days" author="">
         <!-- Insert test completed days -->
-        <insert tableName="complited_days" schemaName="habitschema">
-            <column name="complited_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 3 DAY"/>
+        <insert tableName="completed_days" schemaName="habitschema">
+            <column name="completed_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 3 DAY"/>
             <column name="habit_id" value="1"/>
         </insert>
-        <insert tableName="complited_days" schemaName="habitschema">
-            <column name="complited_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 2 DAY"/>
+        <insert tableName="completed_days" schemaName="habitschema">
+            <column name="completed_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 2 DAY"/>
             <column name="habit_id" value="1"/>
         </insert>
-        <insert tableName="complited_days" schemaName="habitschema">
-            <column name="complited_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 1 DAY"/>
+        <insert tableName="completed_days" schemaName="habitschema">
+            <column name="completed_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 1 DAY"/>
             <column name="habit_id" value="1"/>
         </insert>
-        <insert tableName="complited_days" schemaName="habitschema">
-            <column name="complited_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 3 DAY"/>
+        <insert tableName="completed_days" schemaName="habitschema">
+            <column name="completed_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 3 DAY"/>
             <column name="habit_id" value="2"/>
         </insert>
-        <insert tableName="complited_days" schemaName="habitschema">
-            <column name="complited_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 2 DAY"/>
+        <insert tableName="completed_days" schemaName="habitschema">
+            <column name="completed_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 2 DAY"/>
             <column name="habit_id" value="2"/>
         </insert>
-        <insert tableName="complited_days" schemaName="habitschema">
-            <column name="complited_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 1 DAY"/>
+        <insert tableName="completed_days" schemaName="habitschema">
+            <column name="completed_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 1 DAY"/>
             <column name="habit_id" value="3"/>
         </insert>
     </changeSet>

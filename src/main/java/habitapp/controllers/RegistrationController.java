@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import habitapp.annotaions.Loggable;
 import habitapp.dto.UserDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.UserService;
+import habitapp.services.controller.UserControllerService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,11 +18,11 @@ import java.io.IOException;
 @WebServlet("/register")
 public class RegistrationController extends HttpServlet {
 
-    private final UserService userService;
+    private final UserControllerService userControllerService;
     private final ObjectMapper objectMapper;
 
     public RegistrationController() {
-        this.userService = UserService.getInstance();
+        this.userControllerService = UserControllerService.getInstance();
         this.objectMapper = new ObjectMapper();
     }
 
@@ -33,7 +33,7 @@ public class RegistrationController extends HttpServlet {
 
         try {
             UserDTO userDTO = objectMapper.readValue(req.getReader(), UserDTO.class);
-            userService.registerUser(userDTO, req);
+            userControllerService.registerUser(userDTO, req);
             resp.setStatus(HttpServletResponse.SC_CREATED);
             resp.getWriter().write("{\"message\": \"User registered successfully\"}");
         } catch (UserIllegalRequestException e) {

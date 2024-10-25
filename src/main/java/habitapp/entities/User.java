@@ -2,7 +2,6 @@ package habitapp.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-import habitapp.repositories.HabitappRepository;
 
 /**
  * Класс User представляет пользователя системы.

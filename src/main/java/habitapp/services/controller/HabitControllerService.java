@@ -1,4 +1,4 @@
-package habitapp.services;
+package habitapp.services.controller;
 
 import habitapp.annotaions.Loggable;
 import habitapp.dto.HabitDTO;
@@ -8,7 +8,6 @@ import habitapp.entities.User;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.mappers.HabitMapper;
 import habitapp.mappers.UserMapper;
-import habitapp.repositories.HabitappRepository;
 import habitapp.validators.UserValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,18 +17,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Loggable
-public class HabitService implements UserMapper, HabitMapper {
+public class HabitControllerService implements UserMapper, HabitMapper {
 
     private final HabitappRepository habitappRepository;
     private final UserValidator userValidator;
 
-    private static final HabitService INSTANCE = new HabitService();
+    private static final HabitControllerService INSTANCE = new HabitControllerService();
 
-    public static HabitService getInstance() {
+    public static HabitControllerService getInstance() {
         return INSTANCE;
     }
 
-    private HabitService() {
+    private HabitControllerService() {
         this.habitappRepository = new HabitappRepository();
         this.userValidator = UserValidator.INSTANCE;
     }

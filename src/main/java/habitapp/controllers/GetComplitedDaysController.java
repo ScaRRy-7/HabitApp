@@ -7,7 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import habitapp.annotaions.Loggable;
 import habitapp.dto.HabitDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.HabitService;
+import habitapp.services.controller.HabitControllerService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,11 +22,11 @@ import java.util.List;
 @WebServlet("/showstatistics")
 public class GetComplitedDaysController extends HttpServlet {
 
-    private final HabitService habitService;
+    private final HabitControllerService habitControllerService;
     private final ObjectMapper objectMapper;
 
     public GetComplitedDaysController() {
-        this.habitService = HabitService.getInstance();
+        this.habitControllerService = HabitControllerService.getInstance();
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -40,7 +40,7 @@ public class GetComplitedDaysController extends HttpServlet {
         try {
             HabitDTO postedHabit = objectMapper.readValue(req.getReader(), HabitDTO.class);
 
-            List<LocalDateTime> habitDTOList = habitService.getComplitedDays(req, postedHabit);
+            List<LocalDateTime> habitDTOList = habitControllerService.getComplitedDays(req, postedHabit);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(objectMapper.writeValueAsString(habitDTOList));
         } catch (UserIllegalRequestException e) {
