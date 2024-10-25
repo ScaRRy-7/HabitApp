@@ -1,6 +1,6 @@
 package habitapp.entities;
 
-import habitapp.services.enums.HabitFrequency;
+import habitapp.enums.HabitFrequency;
 import lombok.Getter;
 import lombok.Setter;
 

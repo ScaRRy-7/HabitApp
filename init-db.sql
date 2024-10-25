@@ -1,1 +1,1 @@
-CREATE SCHEMA service;
+CREATE SCHEMA IF NOT EXISTS service;

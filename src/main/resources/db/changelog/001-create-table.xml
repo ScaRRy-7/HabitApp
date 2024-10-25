@@ -18,6 +18,15 @@
             CREATE SEQUENCE complited_days_sequence START 1;
         </sql>
 
+        <addForeignKeyConstraint baseTableSchemaName="habitschema" baseTableName="habits" baseColumnNames="user_id"
+                                 constraintName="fk_habits_users"
+                                 referencedTableSchemaName="habitschema" referencedTableName="users" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableSchemaName="habitschema" baseTableName="complited_days" baseColumnNames="habit_id"
+                                 constraintName="fk_complited_days_habits"
+                                 referencedTableSchemaName="habitschema" referencedTableName="habits" referencedColumnNames="id"   onDelete="CASCADE"/>
+
         <createSequence sequenceName="users_sequence" schemaName="habitschema"/>
         <createTable tableName="users" schemaName="habitschema" >
             <column name="id" type="BIGINT" defaultValue="NEXTVAL('users_sequence')">

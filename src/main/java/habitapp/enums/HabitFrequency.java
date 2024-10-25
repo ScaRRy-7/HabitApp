@@ -1,4 +1,4 @@
-package habitapp.services.enums;
+package habitapp.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;

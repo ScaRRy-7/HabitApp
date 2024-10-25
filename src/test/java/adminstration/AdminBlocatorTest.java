@@ -1,12 +1,10 @@
 package adminstration;
 
-import habitapp.services.adminstration.AdminBlocator;
 import habitapp.entities.User;
 import habitapp.services.in.Reader;
 import habitapp.services.out.AdminUserChangerWriter;
 import habitapp.repositories.HabitappRepository;
 import habitapp.repositories.HabitappDAO;
-import habitapp.services.validate.AdminRemoverValidator;
 import habitapp.services.wait.Waiter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

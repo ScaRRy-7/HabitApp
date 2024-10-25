@@ -3,8 +3,8 @@ package habitapp.repositories;
 import habitapp.entities.Habit;
 import habitapp.entities.User;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.configuration.ConfigurationManager;
-import habitapp.services.enums.HabitFrequency;
+import habitapp.configuration.ConfigurationManager;
+import habitapp.enums.HabitFrequency;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.*;
 
@@ -62,9 +62,7 @@ public final class HabitappDAO {
         } catch (ClassNotFoundException e) {
             logger.error(e.getMessage());
         }
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             if (hasUser(user.getEmail())) {
                 String sqlDeleteOldUser = "DELETE FROM habitschema.users WHERE email = ?";
@@ -96,9 +94,7 @@ public final class HabitappDAO {
     public Collection<User> getUsers() {
         Collection<User> users = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlGetUsers = "SELECT * FROM habitschema.users";
             Statement statement = connection.createStatement();
@@ -129,9 +125,7 @@ public final class HabitappDAO {
 
          */
         boolean userExists = false;
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
         String sqlHasUser = "SELECT COUNT(*) FROM habitschema.users WHERE email = ?";
         PreparedStatement statement = connection.prepareStatement(sqlHasUser);
         statement.setString(1, email);
@@ -162,9 +156,7 @@ public final class HabitappDAO {
             throw new RuntimeException(e);
         }
 
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlGetUser = "SELECT * FROM habitschema.users WHERE email = ?";
             PreparedStatement statement = connection.prepareStatement(sqlGetUser);
@@ -193,9 +185,7 @@ public final class HabitappDAO {
      * @param email email пользователя
      */
     public void removeUser(String email) {
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlDeleteUser = "DELETE FROM habitschema.users WHERE email = ?";
             PreparedStatement statement = connection.prepareStatement(sqlDeleteUser);
@@ -214,9 +204,7 @@ public final class HabitappDAO {
      * @param habit новая привычка
      */
     public void addHabitToUser(User user, Habit habit) {
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlInsertHabit = "INSERT INTO habitschema.habits (name, description, frequency," +
                     " created_date_time, user_id) VALUES (?, ?, ?, ?, ?)";
@@ -235,9 +223,7 @@ public final class HabitappDAO {
     }
 
     public void removeHabitFromUser(User user, Habit habit) {
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String removeHabitFromUserSql = "DELETE FROM habitschema.habits WHERE name = ? AND description = ? AND" +
                     " frequency = ? AND user_id = ?";
@@ -255,9 +241,7 @@ public final class HabitappDAO {
 
     public void changeHabit(User user, Habit oldHabit, Habit newHabit) {
 
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String changeHabitSql = "SELECT habits.id FROM habitschema.habits WHERE user_id = ? AND " +
                     "habits.name = ? AND habits.description = ? AND habits.frequency = ? ORDER BY habits.id LIMIT 1";
@@ -292,9 +276,7 @@ public final class HabitappDAO {
         unmarkHabits(user);
         Habit habit = null;
 
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlGetHabitByNumber = "SELECT name, description, frequency, created_date_time, is_complited FROM habitschema.habits WHERE user_id = ? " +
                     "ORDER BY id LIMIT 1 OFFSET ?";
@@ -327,9 +309,7 @@ public final class HabitappDAO {
         unmarkHabits(user);
         List<Habit> habits = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlGetHabits = "SELECT habits.name AS habit_name, habits.description AS habit_description, habits.frequency as habit_frequency, habits.created_date_time AS habit_created_date_time, habits.is_complited AS habit_is_complited FROM habitschema.habits WHERE user_id = ?;";
             PreparedStatement statement = connection.prepareStatement(sqlGetHabits);
@@ -353,9 +333,7 @@ public final class HabitappDAO {
 
     public int getUserIdFromDB(String email) {
         int id = 0;
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlGetUserId = "SELECT id FROM habitschema.users WHERE email = ?";
 
@@ -372,9 +350,7 @@ public final class HabitappDAO {
     }
 
     public boolean hasHabit(User user, Habit habit) {
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlGetHabit = "SELECT habits.name, habits.description, habits.frequency FROM habitschema.habits " +
                     "WHERE user_id = ? AND habits.name = ? AND habits.description = ? AND habits.frequency = ?;";
@@ -396,9 +372,7 @@ public final class HabitappDAO {
     }
 
     public void updateRedactedUser(String email, User user) {
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlRedactUser = "UPDATE habitschema.users SET username = ?, email = ?, password = ? WHERE id = ?";
 
@@ -416,9 +390,7 @@ public final class HabitappDAO {
 
     public boolean habitIsMarked(User user, Habit habit) {
         unmarkHabits(user);
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlGetHabit = "SELECT habits.name, habits.description, habits.frequency, habits.is_complited FROM habitschema.habits " +
                     "WHERE user_id = ? AND habits.name = ? AND habits.description = ? AND habits.frequency = ?;";
@@ -441,9 +413,7 @@ public final class HabitappDAO {
 
     public void markHabit(User user, Habit habit) {
         unmarkHabits(user);
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             String sqlChangeHabitSql = "SELECT habits.id FROM habitschema.habits WHERE habits.user_id = ? AND " +
                     "habits.name = ? AND habits.description = ? AND habits.frequency = ? ORDER BY habits.id LIMIT 1";
@@ -478,9 +448,7 @@ public final class HabitappDAO {
     }
 
     public void unmarkHabits(User user) {
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
             // Получаем все привычки юзера
             String sqlGetAllHabits = "SELECT id, frequency FROM habitschema.habits WHERE user_id = ?";
@@ -532,9 +500,7 @@ public final class HabitappDAO {
     public List<LocalDateTime> getAllComplitedDays(User user, Habit habit) {
         List<LocalDateTime> completedDays = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"))) {
+        try (Connection connection = getConnection()) {
 
                 int userId = getUserIdFromDB(user.getEmail());
 
@@ -567,5 +533,11 @@ public final class HabitappDAO {
         }
 
         return completedDays;
+    }
+
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
+                ConfigurationManager.getProperty("DB_USER"),
+                ConfigurationManager.getProperty("DB_PASSWORD"));
     }
 }

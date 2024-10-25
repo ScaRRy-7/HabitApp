@@ -1,4 +1,4 @@
-package habitapp.services.configuration;
+package habitapp.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
