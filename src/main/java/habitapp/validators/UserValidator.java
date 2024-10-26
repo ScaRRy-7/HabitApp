@@ -5,13 +5,12 @@ import habitapp.exceptions.UserIllegalRequestException;
 
 public class UserValidator {
 
-    public static final UserValidator INSTANCE = new UserValidator();
-
-    private UserValidator() {
-
+    private static final UserValidator userValidator = new UserValidator();
+    public static UserValidator getInstance() {
+        return userValidator;
     }
+    private UserValidator() {}
 
-    private final HabitappRepository habitappRepository = new HabitappRepository();
 
     public boolean validateUserData(UserDTO userDTO) throws UserIllegalRequestException {
         return isValidEmail(userDTO.getEmail()) && isValidPassword(userDTO.getPassword()) && isValidName(userDTO.getName());
@@ -29,8 +28,6 @@ public class UserValidator {
         return email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     }
 
-    public boolean userExists(UserDTO userDTO) throws UserIllegalRequestException {
-        return userDTO != null && habitappRepository.hasUser(userDTO.getEmail());
-    }
+
 
 }

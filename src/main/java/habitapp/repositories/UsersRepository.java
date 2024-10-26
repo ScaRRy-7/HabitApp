@@ -1,6 +1,7 @@
 package habitapp.repositories;
 
 import habitapp.configuration.ConfigurationManager;
+import habitapp.dbconnection.ConnectionManager;
 import habitapp.entities.User;
 import habitapp.exceptions.UserIllegalRequestException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,172 +14,116 @@ import java.util.Collection;
 
 public class UsersRepository {
 
-    private static final UsersRepository USERS_REPOSITORY = new UsersRepository();
-
+    private static final UsersRepository usersRepository = new UsersRepository();
     public static UsersRepository getInstance() {
-        return USERS_REPOSITORY;
+        return usersRepository;
+    }
+    private UsersRepository() {
+        connectionManager = ConnectionManager.getInstance();
+        logger = LoggerFactory.getLogger(UsersRepository.class);
     }
 
-    private UsersRepository() {}
+    private ConnectionManager connectionManager;
+    private final Logger logger;
 
-    private Logger logger = LoggerFactory.getLogger(UsersRepository.class);
-
-
-
-    public void addUser(User user) throws UserIllegalRequestException {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage());
-        }
-        try (Connection connection = getConnection()) {
-
-            if (hasUser(user.getEmail())) {
-                String sqlDeleteOldUser = "DELETE FROM habitschema.users WHERE email = ?";
-                PreparedStatement statement = connection.prepareStatement(sqlDeleteOldUser);
-                statement.setString(1, user.getEmail());
-                statement.executeUpdate();
-                logger.info("Пользователь с email '{}' был удален.", user.getEmail());
-            }
-
-            String sqlInsertUser = "INSERT INTO habitschema.users (username, email, password) VALUES (?, ?, ?);";
-            PreparedStatement statement = connection.prepareStatement(sqlInsertUser);
-            statement.setString(1, user.getName());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, user.getPassword());
-            statement.executeUpdate();
-            logger.info("Добавлен новый пользователь: {}", user.getName());
-
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-            throw new UserIllegalRequestException(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());
-        }
-    }
-
-    public Collection<User> getUsers() {
-        Collection<User> users = new ArrayList<>();
-
-        try (Connection connection = getConnection()) {
-
-            String sqlGetUsers = "SELECT * FROM habitschema.users";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sqlGetUsers);
-            while (resultSet.next()) {
-                String name = resultSet.getString("username");
-                String email = resultSet.getString("email");
-                String password = resultSet.getString("password");
-
-                User user = new User(name, email, password);
-                users.add(user);
+    public void addUser(User user) {
+        try (Connection connection = connectionManager.getConnection()) {
+            String sql = "INSERT INTO habitschema.users (username, email, password) VALUES (?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, user.getName());
+                preparedStatement.setString(2, user.getEmail());
+                preparedStatement.setString(3, user.getPassword());
+                preparedStatement.executeUpdate();
+                logger.info("User added successfully");
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        return users;
     }
 
-    public boolean hasUser(String email) {
-        boolean userExists = false;
-        try (Connection connection = getConnection()) {
-            String sqlHasUser = "SELECT COUNT(*) FROM habitschema.users WHERE email = ?";
-            PreparedStatement statement = connection.prepareStatement(sqlHasUser);
-            statement.setString(1, email);
+    public void redactUser(User oldUser, User newUser) {
+        try (Connection connection = connectionManager.getConnection()) {
+            String sql = "UPDATE habitschema.users SET username = ?, email = ?, password = ? WHERE email = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, newUser.getName());
+                preparedStatement.setString(2, newUser.getEmail());
+                preparedStatement.setString(3, newUser.getPassword());
 
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                int count = resultSet.getInt(1);
-                userExists = count > 0;
+                preparedStatement.setString(4, oldUser.getEmail());
+                preparedStatement.executeUpdate();
+                logger.info("User updated successfully");
             }
-
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        return userExists;
+    }
+
+    public void deleteUser(User user) {
+        try (Connection connection = connectionManager.getConnection()) {
+            String sql = "DELETE FROM habitschema.users WHERE email = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, user.getEmail());
+                preparedStatement.executeUpdate();
+                logger.info("User deleted successfully");
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    public boolean hasUser(User user) {
+        try (Connection connection = connectionManager.getConnection()) {
+            String sql = "SELECT * FROM habitschema.users WHERE email = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, user.getEmail());
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return false;
     }
 
     public User getUser(String email) {
         User user = null;
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        try (Connection connection = getConnection()) {
-
-            String sqlGetUser = "SELECT * FROM habitschema.users WHERE email = ?";
-            PreparedStatement statement = connection.prepareStatement(sqlGetUser);
-            statement.setString(1, email);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String nameDB = resultSet.getString("username");
-                String emailDB = resultSet.getString("email");
-                String passwordDB = resultSet.getString("password");
-                user = new User(nameDB, emailDB, passwordDB);
+        try (Connection connection = connectionManager.getConnection()) {
+            String sql = "SELECT * FROM habitschema.users WHERE email = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        user = new User(resultSet.getString("username"),
+                                        resultSet.getString("email"),
+                                        resultSet.getString("password") );
+                    }
+                }
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
-        }
-        if (user != null) {
-            logger.info("возвращен пользователь с почтой {}", email);
-        } else {
-            logger.error("Пользователь с почтой {} не найден", email);
         }
         return user;
     }
 
-    public void removeUser(String email) {
-        try (Connection connection = getConnection()) {
-
-            String sqlDeleteUser = "DELETE FROM habitschema.users WHERE email = ?";
-            PreparedStatement statement = connection.prepareStatement(sqlDeleteUser);
-            statement.setString(1, email);
-            statement.executeUpdate();
-            logger.info("Пользователь с почтой {} удален", email);
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    public int getUserIdFromDB(String email) {
-        int id = 0;
-        try (Connection connection = getConnection()) {
-
-            String sqlGetUserId = "SELECT id FROM habitschema.users WHERE email = ?";
-
-            PreparedStatement statement = connection.prepareStatement(sqlGetUserId);
-            statement.setString(1, email);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                id = resultSet.getInt("id");
+    public int getUserId(User user) {
+        int userId = -1;
+        try (Connection connection = connectionManager.getConnection()) {
+            String sql = "SELECT id FROM habitschema.users WHERE email = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, user.getEmail());
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        userId = resultSet.getInt("id");
+                    }
+                }
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        return id;
-    }
 
-    public void updateRedactedUser(String email, User user) {
-        try (Connection connection = getConnection()) {
-
-            String sqlRedactUser = "UPDATE habitschema.users SET username = ?, email = ?, password = ? WHERE id = ?";
-
-            PreparedStatement statement = connection.prepareStatement(sqlRedactUser);
-            statement.setString(1, user.getName());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, user.getPassword());
-            statement.setInt(4, getUserIdFromDB(email));
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-            System.out.println(e.getMessage());
-        }
-    }
-
-
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(ConfigurationManager.getProperty("DB_URL"),
-                ConfigurationManager.getProperty("DB_USER"),
-                ConfigurationManager.getProperty("DB_PASSWORD"));
+        return userId;
     }
 }

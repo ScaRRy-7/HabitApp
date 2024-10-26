@@ -18,7 +18,6 @@ public final class User {
     /**
      * Репозиторий для работы с данными о привычках пользователя.
      */
-    HabitappRepository habitappRepository = new HabitappRepository();
 
     /**
      * Имя пользователя.

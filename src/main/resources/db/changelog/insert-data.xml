@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
         logicalFilePath="db/changelog/changelog.xml">
-    <changeSet id="002-insert-data-users" author="ScaRRy-7">
+    <changeSet id="001-insert-data-users" author="ScaRRy-7">
         <!-- Insert test users -->
         <insert tableName="users" schemaName="habitschema">
             <column name="username" value="user1"/>
@@ -47,7 +47,7 @@
             <column name="user_id" value="3"/>
         </insert>
     </changeSet>
-    <changeSet id="001-insert-data-completed-days" author="">
+    <changeSet id="003-insert-data-completed-days" author="">
         <!-- Insert test completed days -->
         <insert tableName="completed_days" schemaName="habitschema">
             <column name="completed_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL 3 DAY"/>

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import habitapp.annotaions.Loggable;
 import habitapp.dto.HabitDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.controller.HabitControllerService;
+import habitapp.services.HabitsService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,11 +20,11 @@ import java.util.List;
 @WebServlet("/habits")
 public class HabitsController extends HttpServlet {
 
-    private final HabitControllerService habitControllerService;
+    private final HabitsService habitsService;
     private final ObjectMapper objectMapper;
 
     public HabitsController() {
-        this.habitControllerService = HabitControllerService.getInstance();
+        this.habitsService = HabitsService.getInstance();
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
     }
@@ -36,7 +36,7 @@ public class HabitsController extends HttpServlet {
 
         try {
             HabitDTO habitDTO = objectMapper.readValue(req.getReader(), HabitDTO.class);
-            habitControllerService.createHabit(req, habitDTO);
+            habitsService.createHabit(req, habitDTO);
             resp.setStatus(HttpServletResponse.SC_CREATED);
             resp.getWriter().write("{\"message\": \"Habit created successfully\"}");
         } catch (JsonProcessingException e) {
@@ -54,7 +54,7 @@ public class HabitsController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         try {
-            List<HabitDTO> habitDTOList = habitControllerService.getAllHabits(req);
+            List<HabitDTO> habitDTOList = habitsService.getAllHabits(req);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(objectMapper.writeValueAsString(habitDTOList));
         } catch (UserIllegalRequestException e) {
@@ -73,9 +73,9 @@ public class HabitsController extends HttpServlet {
 
         try {
             HabitDTO habitDTOtoRemove = objectMapper.readValue(req.getReader(), HabitDTO.class);
-            habitControllerService.removeHabit(req, habitDTOtoRemove);
+            habitsService.deleteHabit(req, habitDTOtoRemove);
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().write(objectMapper.writeValueAsString(habitControllerService.getAllHabits(req)));
+            resp.getWriter().write(objectMapper.writeValueAsString(habitsService.getAllHabits(req)));
         } catch (JsonProcessingException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"Incorrect Json: \": \"" + e.getMessage() + "\"}");
@@ -92,7 +92,7 @@ public class HabitsController extends HttpServlet {
 
         try {
             HabitDTO[] habitDTOs = objectMapper.readValue(req.getReader(), HabitDTO[].class);
-            habitControllerService.redactHabit(req, habitDTOs);
+            habitsService.redactHabit(req, habitDTOs);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write("{\"message\": \"Habit successfully changed\"}");
         } catch (JsonProcessingException e) {

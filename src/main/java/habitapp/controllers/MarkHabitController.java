@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import habitapp.annotaions.Loggable;
 import habitapp.dto.HabitDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.controller.HabitControllerService;
+import habitapp.services.HabitsService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,11 +19,11 @@ import java.io.IOException;
 @WebServlet("/markhabit")
 public class MarkHabitController extends HttpServlet {
 
-    private final HabitControllerService habitControllerService;
+    private final HabitsService habitsService;
     private final ObjectMapper objectMapper;
 
     public MarkHabitController() {
-        this.habitControllerService = HabitControllerService.getInstance();
+        this.habitsService = HabitsService.getInstance();
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
     }
@@ -35,7 +35,7 @@ public class MarkHabitController extends HttpServlet {
 
         try {
             HabitDTO habitDTO = objectMapper.readValue(req.getReader(), HabitDTO.class);
-            habitControllerService.markHabit(req, habitDTO);
+            habitsService.markHabit(req, habitDTO);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write("{\"message\": \"Habit marked successfully\"}");
         } catch (JsonProcessingException e) {
