@@ -6,8 +6,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Класс Habit представляет объект привычки пользователя.
@@ -41,7 +39,7 @@ public class Habit implements Comparable<Habit> {
      */
     @Setter
     @Getter
-    private HabitFrequency frequenсy;
+    private HabitFrequency frequency;
 
     /**
      * Дата и время создания привычки.
@@ -65,12 +63,6 @@ public class Habit implements Comparable<Habit> {
     private boolean isCompleted;
 
     /**
-     * Список дат, когда привычка была выполнена.
-     */
-    @Getter
-    private final List<LocalDateTime> daysHabitCompleted = new ArrayList<>();
-
-    /**
      * Создает новую привычку с заданными параметрами.
      *
      * @param name        название привычки
@@ -80,7 +72,7 @@ public class Habit implements Comparable<Habit> {
     public Habit(String name, String description, HabitFrequency frequency) {
         this.name = name;
         this.description = description;
-        this.frequenсy = frequency;
+        this.frequency = frequency;
         this.createdDateTime = LocalDateTime.now();
         this.isCompleted = false;
     }
@@ -97,14 +89,19 @@ public class Habit implements Comparable<Habit> {
     public Habit(String name, String description, HabitFrequency frequency, LocalDateTime createdDateTime, boolean isCompleted) {
         this.name = name;
         this.description = description;
-        this.frequenсy = frequency;
+        this.frequency = frequency;
         this.createdDateTime = createdDateTime;
         this.isCompleted = isCompleted;
     }
 
-    /**
-     * Создает новую пустую привычку.
-     */
+
+    public Habit(String name, String description, HabitFrequency frequency, boolean isCompleted) {
+        this.name = name;
+        this.description = description;
+        this.isCompleted = isCompleted;
+        this.frequency = frequency;
+    }
+
     public Habit() {}
 
     /**
@@ -112,32 +109,6 @@ public class Habit implements Comparable<Habit> {
      *
      * @return частота привычки
      */
-    public HabitFrequency getFrequency() {
-        return frequenсy;
-    }
-
-    /**
-     * Возвращает статус привычки (выполнена или нет).
-     *
-     * @return true, если привычка выполнена, иначе false
-     */
-    public boolean isCompleted() {
-        return isCompleted;
-    }
-
-    /**
-     * Устанавливает статус привычки как "выполнена".
-     */
-    public void setcompleted() {
-        isCompleted = true;
-    }
-
-    /**
-     * Устанавливает статус привычки как "не выполнена".
-     */
-    public void setUncompleted() {
-        isCompleted = false;
-    }
 
     /**
      * Возвращает строковое представление объекта Habit.

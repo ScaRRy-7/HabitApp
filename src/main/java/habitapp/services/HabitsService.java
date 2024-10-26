@@ -106,8 +106,8 @@ public class HabitsService implements UserMapper, HabitMapper {
         } else if (habitsRepository.hasHabit(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser(userDTO)))) {
             throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"Habit that you want to create -  already exists!\"}");
         }
-
-        habitsRepository.createHabit(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser(userDTO)));
+        int userId = usersRepository.getUserId(userDTOToUser(userDTO));
+        habitsRepository.createHabit(habitDTOToHabit(habitDTO), userId);
     }
 
     public void markHabit(HttpServletRequest req, HabitDTO habitDTO) throws UserIllegalRequestException {
@@ -154,16 +154,20 @@ public class HabitsService implements UserMapper, HabitMapper {
         int userId = usersRepository.getUserId(userDTOToUser(userDTO));
         for (HabitDTO habitDTO : habitDTOS) {
             int habitId = habitsRepository.getHabitId(habitDTOToHabit(habitDTO), userId);
-            HabitFrequency frequency = habitDTO.getFrequenсy(); // frequency  либо HabitFrequency.WEEKLY либо HabitFrequency.DAILY
+            HabitFrequency frequency = habitDTO.getFrequency(); // frequency  либо HabitFrequency.WEEKLY либо HabitFrequency.DAILY
             LocalDateTime lastCompletedDate = completedDaysRepository.getLastCompletedDay(habitId);
-            LocalDateTime now = LocalDateTime.now();
-            long daysBetween = java.time.Duration.between(lastCompletedDate, now).toDays();
-            int daysInWeek = 7;
-            int oneDay = 1;
-            if ((frequency == HabitFrequency.DAILY && daysBetween > oneDay) ||
-                (frequency == HabitFrequency.WEEKLY && daysBetween > daysInWeek)) {
-                habitsRepository.unmarkHabit(habitId);
-                logger.info("habit with id {} was unmarked", habitId);
+            if (lastCompletedDate != null) {
+                LocalDateTime now = LocalDateTime.now();
+                long daysBetween = java.time.Duration.between(lastCompletedDate, now).toDays();
+                int daysInWeek = 7;
+                int oneDay = 1;
+                if ((frequency == HabitFrequency.DAILY && daysBetween > oneDay) ||
+                        (frequency == HabitFrequency.WEEKLY && daysBetween > daysInWeek)) {
+                    habitsRepository.unmarkHabit(habitId);
+                    logger.debug("habit with id {} was unmarked", habitId);
+                }
+            } else {
+                logger.debug("No completed days found for habit (id = {}). Skipping unmarking.", habitId);
             }
         }
     }

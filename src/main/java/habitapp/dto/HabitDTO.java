@@ -12,15 +12,12 @@ import java.time.LocalDateTime;
 @Setter
 public class HabitDTO {
     private String name;
-
     private String description;
-
-    private HabitFrequency frequenсy;
-
+    private HabitFrequency frequency;
+    @JsonProperty(defaultValue = "false")
+    private boolean completed;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDateTime = LocalDateTime.now();
 
-    @JsonProperty(defaultValue = "false")
-    private boolean isComplited;
 
 }

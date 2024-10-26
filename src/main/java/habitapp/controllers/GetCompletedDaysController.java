@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Loggable
-@WebServlet("/showstatistics")
+@WebServlet("/statistics")
 public class GetCompletedDaysController extends HttpServlet {
 
     private final HabitsService habitsService;

@@ -10,7 +10,6 @@ import org.mapstruct.factory.Mappers;
 public interface HabitMapper {
     HabitMapper INSTANCE = Mappers.getMapper(HabitMapper.class);
 
-    @Mapping(target = "complited", ignore = true)
     HabitDTO habitToHabitDTO(Habit habit);
     Habit habitDTOToHabit(HabitDTO habitDTO);
 }
