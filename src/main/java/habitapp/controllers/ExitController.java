@@ -1,7 +1,7 @@
 package habitapp.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import habitapp.annotaions.Loggable;
+import habitapp.annotations.Loggable;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

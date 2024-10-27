@@ -1,7 +1,7 @@
 package habitapp.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import habitapp.annotaions.Loggable;
+import habitapp.annotations.Loggable;
 import habitapp.dto.UserDTO;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.services.UsersService;

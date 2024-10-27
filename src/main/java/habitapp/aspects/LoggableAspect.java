@@ -15,7 +15,7 @@ public class LoggableAspect {
     /**
      * Определяет точку среза для методов, аннотированных @Loggable.
      */
-    @Pointcut("within(@habitapp.annotaions.Loggable *) && execution(* *(..))")
+    @Pointcut("within(@habitapp.annotations.Loggable *) && execution(* *(..))")
     public void annotatedByLoggable() {}
 
     /**

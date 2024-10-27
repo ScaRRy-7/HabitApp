@@ -1,9 +1,8 @@
 package habitapp.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import habitapp.annotaions.Loggable;
+import habitapp.annotations.Loggable;
 import habitapp.dto.HabitDTO;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.services.HabitsService;

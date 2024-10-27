@@ -1,6 +1,6 @@
 package habitapp.services;
 
-import habitapp.annotaions.Loggable;
+import habitapp.annotations.Loggable;
 import habitapp.dto.UserDTO;
 import habitapp.entities.User;
 import habitapp.exceptions.UserIllegalRequestException;
