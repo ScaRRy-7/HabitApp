@@ -13,18 +13,28 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * GetCompletedDaysController - сервлет, который обрабатывает HTTP-запросы для получения статистики
+ * о выполненных днях для определенной привычки
+ */
 @Loggable
 @WebServlet("/statistics")
 public class GetCompletedDaysController extends HttpServlet {
 
-    private final HabitsService habitsService;
+    @Setter
+    private HabitsService habitsService;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Конструктор GetCompletedDaysController, который инициализирует HabitsService и ObjectMapper
+     * ObjectMapper настраивается для работы с датами и временем
+     */
     public GetCompletedDaysController() {
         this.habitsService = HabitsService.getInstance();
         this.objectMapper = new ObjectMapper();
@@ -32,6 +42,14 @@ public class GetCompletedDaysController extends HttpServlet {
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
+    /**
+     * Обрабатывает HTTP GET запросы для получения списка выполненных дней для привычки
+     *
+     * @param req  объект HttpServletRequest, который содержит запрос, сделанный клиентом
+     * @param resp объект HttpServletResponse, который будет использоваться для возврата ответа клиенту
+     * @throws ServletException если запрос на GET не может быть обработан
+     * @throws IOException      если возникает ошибка ввода-вывода во время обработки запроса GET
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
@@ -46,8 +64,8 @@ public class GetCompletedDaysController extends HttpServlet {
         } catch (UserIllegalRequestException e) {
             resp.setStatus(e.getErrorCode());
             resp.getWriter().write(objectMapper.writeValueAsString(e.getMessage()));
-        } catch (JsonProcessingException e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write(objectMapper.writeValueAsString(e.getMessage()));
         }
     }

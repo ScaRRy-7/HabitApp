@@ -10,12 +10,34 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Репозиторий для управления выполненными днями привычек.
+ * <p>
+ * Этот класс предоставляет методы для работы с таблицей
+ * `completed_days`, включая получение списка выполненных дней,
+ * создание новой записи о выполненном дне и получение последнего
+ * выполненного дня для заданной привычки.
+ * </p>
+ */
 public class CompletedDaysRepository {
 
+    /**
+     * Экземпляр репозитория выполненных дней.
+     */
     private static final CompletedDaysRepository completedDaysRepository = new CompletedDaysRepository();
+
+    /**
+     * Получает экземпляр репозитория выполненных дней.
+     *
+     * @return Экземпляр `CompletedDaysRepository`.
+     */
     public static CompletedDaysRepository getInstance() {
         return completedDaysRepository;
     }
+
+    /**
+     * Конструктор для инициализации репозитория выполненных дней.
+     */
     private CompletedDaysRepository() {
         logger = LoggerFactory.getLogger(CompletedDaysRepository.class);
         connectionManager = ConnectionManager.getInstance();
@@ -24,6 +46,12 @@ public class CompletedDaysRepository {
     private final Logger logger;
     private final ConnectionManager connectionManager;
 
+    /**
+     * Получает список выполненных дней для заданной привычки.
+     *
+     * @param habitId Идентификатор привычки.
+     * @return Список дат и времени выполнения привычки.
+     */
     public List<LocalDateTime> getCompletedDays(int habitId) {
         List<LocalDateTime> completedDays = new ArrayList<>();
 
@@ -43,6 +71,11 @@ public class CompletedDaysRepository {
         return completedDays;
     }
 
+    /**
+     * Создает запись о выполненном дне для заданной привычки.
+     *
+     * @param habitId Идентификатор привычки.
+     */
     public void createCompletedDay(int habitId) {
         try (Connection connection = connectionManager.getConnection()) {
             String sql = "INSERT INTO habitschema.completed_days (habit_id) VALUES(?)";
@@ -56,16 +89,25 @@ public class CompletedDaysRepository {
         }
     }
 
+    /**
+     * Получает дату последнего выполненного дня для заданной привычки.
+     *
+     * @param habitId Идентификатор привычки.
+     * @return Дата и время последнего выполненного дня, или null, если не найдено.
+     */
     public LocalDateTime getLastCompletedDay(int habitId) {
         LocalDateTime lastCompletedDay = null;
 
         try (Connection connection = connectionManager.getConnection()) {
+
             String sql = "SELECT MAX(completed_date) AS last_completed_date FROM habitschema.completed_days WHERE habit_id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, habitId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    Timestamp timestamp = resultSet.getTimestamp("last_completed_date");
-                    lastCompletedDay = timestamp.toLocalDateTime();
+                    if (resultSet.next()) {
+                        Timestamp timestamp = resultSet.getTimestamp("last_completed_date");
+                        lastCompletedDay = timestamp != null ? timestamp.toLocalDateTime() : null;
+                    }
                 }
             }
         } catch (SQLException e) {

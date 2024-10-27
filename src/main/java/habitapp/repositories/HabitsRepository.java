@@ -10,12 +10,23 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Репозиторий для работы с привычками.
+ * Предоставляет методы для создания, редактирования, удаления и получения привычек.
+ */
 public class HabitsRepository {
 
     private static final HabitsRepository habitsRepository = new HabitsRepository();
+
+    /**
+     * Получает экземпляр репозитория.
+     *
+     * @return Экземпляр HabitsRepository.
+     */
     public static HabitsRepository getInstance() {
         return habitsRepository;
     }
+
     private HabitsRepository() {
         connectionManager = ConnectionManager.getInstance();
         logger = LoggerFactory.getLogger(HabitsRepository.class);
@@ -24,6 +35,12 @@ public class HabitsRepository {
     private ConnectionManager connectionManager;
     private final Logger logger;
 
+    /**
+     * Создает новую привычку для указанного пользователя.
+     *
+     * @param habit  Привычка, которую нужно создать.
+     * @param userId Идентификатор пользователя, которому принадлежит привычка.
+     */
     public void createHabit(Habit habit, int userId) {
         try (Connection connection = connectionManager.getConnection()) {
             String sql = "INSERT INTO habitschema.habits (name, description, frequency, user_id) VALUES (?, ?, ?, ?)";
@@ -33,13 +50,19 @@ public class HabitsRepository {
                 preparedStatement.setString(3, habit.getFrequency().getName());
                 preparedStatement.setInt(4, userId);
                 preparedStatement.executeUpdate();
-                logger.info("Habit added successfully");
+                logger.info("Привычка успешно добавлена");
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
     }
 
+    /**
+     * Редактирует существующую привычку.
+     *
+     * @param oldHabit Старая привычка.
+     * @param newHabit Новая привычка с обновленными данными.
+     */
     public void redactHabit(Habit oldHabit, Habit newHabit) {
         try (Connection connection = connectionManager.getConnection()) {
             String sql = "UPDATE habitschema.habits SET name = ?, description = ?, frequency = ? " +
@@ -53,13 +76,19 @@ public class HabitsRepository {
                 preparedStatement.setString(5, oldHabit.getDescription());
                 preparedStatement.setString(6, oldHabit.getFrequency().getName());
                 preparedStatement.executeUpdate();
-                logger.info("Habit redacted successfully");
+                logger.info("Привычка успешно отредактирована");
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
     }
 
+    /**
+     * Получает все привычки пользователя.
+     *
+     * @param userId Идентификатор пользователя.
+     * @return Список привычек пользователя.
+     */
     public List<Habit> getAllHabits(int userId) {
         List<Habit> userHabits = new ArrayList<>();
         try (Connection connection = connectionManager.getConnection()) {
@@ -67,7 +96,7 @@ public class HabitsRepository {
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, userId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
+                    while (resultSet.next()) {
                         Habit habit = new Habit(
                                 resultSet.getString("name"),
                                 resultSet.getString("description"),
@@ -85,6 +114,13 @@ public class HabitsRepository {
         return userHabits;
     }
 
+    /**
+     * Проверяет, существует ли привычка у пользователя.
+     *
+     * @param habit  Привычка, которую нужно проверить.
+     * @param userId Идентификатор пользователя.
+     * @return true, если привычка существует, иначе false.
+     */
     public boolean hasHabit(Habit habit, int userId) {
         boolean hasHabit = false;
         try (Connection connection = connectionManager.getConnection()) {
@@ -97,7 +133,7 @@ public class HabitsRepository {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         hasHabit = true;
-                        logger.info("Habit has been found successfully");
+                        logger.info("Привычка успешно найдена");
                     }
                 }
             }
@@ -107,6 +143,12 @@ public class HabitsRepository {
         return hasHabit;
     }
 
+    /**
+     * Удаляет привычку у пользователя.
+     *
+     * @param habit  Привычка, которую нужно удалить.
+     * @param userId Идентификатор пользователя.
+     */
     public void deleteHabit(Habit habit, int userId) {
         try (Connection connection = connectionManager.getConnection()) {
             String sql = "DELETE FROM habitschema.habits WHERE name = ? AND description = ? AND frequency = ? AND user_id = ?";
@@ -116,13 +158,20 @@ public class HabitsRepository {
                 preparedStatement.setString(3, habit.getFrequency().getName());
                 preparedStatement.setInt(4, userId);
                 preparedStatement.executeUpdate();
-                logger.info("Habit deleted successfully");
+                logger.info("Привычка успешно удалена");
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
     }
 
+    /**
+     * Редактирует существующую привычку у пользователя.
+     *
+     * @param oldHabit Старая привычка.
+     * @param newHabit Новая привычка с обновленными данными.
+     * @param userId   Идентификатор пользователя.
+     */
     public void redactHabit(Habit oldHabit, Habit newHabit, int userId) {
         try (Connection connection = connectionManager.getConnection()) {
             String sql = "UPDATE habitschema.habits SET name = ?, description = ?, frequency = ? WHERE" +
@@ -137,13 +186,20 @@ public class HabitsRepository {
                 preparedStatement.setString(6, oldHabit.getFrequency().getName());
                 preparedStatement.setInt(7, userId);
                 preparedStatement.executeUpdate();
-                logger.info("Habit redacted successfully");
+                logger.info("Привычка успешно отредактирована");
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
     }
 
+    /**
+     * Получает идентификатор привычки у пользователя.
+     *
+     * @param habit  Привычка, для которой нужно получить идентификатор.
+     * @param userId Идентификатор пользователя.
+     * @return Идентификатор привычки.
+     */
     public int getHabitId(Habit habit, int userId) {
         int habitId = -1;
         try (Connection connection = connectionManager.getConnection()) {
@@ -165,6 +221,12 @@ public class HabitsRepository {
         return habitId;
     }
 
+    /**
+     * Помечает привычку как выполненную.
+     *
+     * @param habit  Привычка, которую нужно пометить.
+     * @param userId Идентификатор пользователя.
+     */
     public void markHabit(Habit habit, int userId) {
         try (Connection connection = connectionManager.getConnection()) {
             String sql = "UPDATE habitschema.habits SET is_completed = true WHERE user_id = ?";
@@ -177,6 +239,12 @@ public class HabitsRepository {
         }
     }
 
+    /**
+     * Проверяет, помечена ли привычка как выполненная.
+     *
+     * @param habitId Идентификатор привычки.
+     * @return true, если привычка помечена как выполненная, и наче false.
+     */
     public boolean isMarked(int habitId) {
         boolean marked = false;
         try (Connection connection = connectionManager.getConnection()) {
@@ -185,7 +253,7 @@ public class HabitsRepository {
                 preparedStatement.setInt(1, habitId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        marked =  resultSet.getBoolean("is_completed");
+                        marked = resultSet.getBoolean("is_completed");
                     }
                 }
             }
@@ -195,13 +263,18 @@ public class HabitsRepository {
         return marked;
     }
 
+    /**
+     * Снимает пометку о выполнении привычки.
+     *
+     * @param habitId Идентификатор привычки.
+     */
     public void unmarkHabit(int habitId) {
         try (Connection connection = connectionManager.getConnection()) {
             String sql = "UPDATE habitschema.habits SET is_completed = false WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, habitId);
                 preparedStatement.executeUpdate();
-                logger.info("Habit unmarked successfully with id {}", habitId);
+                logger.info("Привычка успешно снята с пометки о выполнении с id {}", habitId);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());

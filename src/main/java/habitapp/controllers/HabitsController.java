@@ -12,25 +12,42 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Класс контроллера для управления привычками.
+ * Обрабатывает HTTP-запросы, связанные с созданием, получением, удалением и изменением привычек.
+ */
 @Loggable
 @WebServlet("/habits")
 public class HabitsController extends HttpServlet {
 
-    private final HabitsService habitsService;
-    private final ObjectMapper objectMapper;
-
+    /**
+     * Конструктор контроллера привычек.
+     * Инициализирует сервис привычек и объект маппера для работы с JSON.
+     */
     public HabitsController() {
         this.habitsService = HabitsService.getInstance();
         this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
     }
 
+    @Setter
+    private HabitsService habitsService; // Сервис для работы с привычками
+    private final ObjectMapper objectMapper; // Объект для сериализации и десериализации JSON
+
+    /**
+     * Обрабатывает POST-запрос для создания новой привычки.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
@@ -39,7 +56,7 @@ public class HabitsController extends HttpServlet {
             habitsService.createHabit(req, habitDTO);
             resp.setStatus(HttpServletResponse.SC_CREATED);
             resp.getWriter().write("{\"message\": \"Habit created successfully\"}");
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
         } catch (UserIllegalRequestException e) {
@@ -48,8 +65,15 @@ public class HabitsController extends HttpServlet {
         }
     }
 
+    /**
+     * Обрабатывает GET-запрос для получения списка всех привычек.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
@@ -60,14 +84,21 @@ public class HabitsController extends HttpServlet {
         } catch (UserIllegalRequestException e) {
             resp.setStatus(e.getErrorCode());
             resp.getWriter().write(objectMapper.writeValueAsString(e.getMessage()));
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(objectMapper.writeValueAsString(e.getMessage()));
         }
     }
 
+    /**
+     * Обрабатывает DELETE-запрос для удаления привычки.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
@@ -76,7 +107,7 @@ public class HabitsController extends HttpServlet {
             habitsService.deleteHabit(req, habitDTOtoRemove);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(objectMapper.writeValueAsString(habitsService.getAllHabits(req)));
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"Incorrect Json: \": \"" + e.getMessage() + "\"}");
         } catch (UserIllegalRequestException e) {
@@ -85,6 +116,13 @@ public class HabitsController extends HttpServlet {
         }
     }
 
+    /**
+     * Обрабатывает PUT-запрос для изменения привычек.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
@@ -95,7 +133,7 @@ public class HabitsController extends HttpServlet {
             habitsService.redactHabit(req, habitDTOs);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write("{\"message\": \"Habit successfully changed\"}");
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
         } catch (UserIllegalRequestException e) {
@@ -103,6 +141,4 @@ public class HabitsController extends HttpServlet {
             resp.getWriter().write("{\"message\": \"unauthorized (" + e.getMessage() + ")\"}");
         }
     }
-
-
 }
