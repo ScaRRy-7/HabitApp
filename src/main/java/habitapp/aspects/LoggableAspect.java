@@ -15,7 +15,7 @@ public class LoggableAspect {
     /**
      * Определяет точку среза для методов, аннотированных @Loggable.
      */
-    @Pointcut("within(@habitapp.annotations.Loggable *) && execution(* *(..))")
+    @Pointcut("within(@habitapp.annotaions.Loggable *) && execution(* *(..))")
     public void annotatedByLoggable() {}
 
     /**
@@ -27,11 +27,11 @@ public class LoggableAspect {
      */
     @Around("annotatedByLoggable()")
     public Object logging(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        System.out.println("Вызов метода " + proceedingJoinPoint.getSignature());
+        System.out.println("executing method " + proceedingJoinPoint.getSignature());
         long start = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed(); // Выполнение метода
         long timeForExecution = System.currentTimeMillis() - start;
-        System.out.println("Метод " + proceedingJoinPoint.getSignature() + " выполнен за " + timeForExecution + " мс");
+        System.out.println("method " + proceedingJoinPoint.getSignature() + " was executed for " + timeForExecution + " ms");
         return result;
     }
 }
