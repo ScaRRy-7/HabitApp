@@ -16,20 +16,9 @@ import java.util.List;
  */
 public class HabitsRepository {
 
-    private static final HabitsRepository habitsRepository = new HabitsRepository();
-
-    /**
-     * Получает экземпляр репозитория.
-     *
-     * @return Экземпляр HabitsRepository.
-     */
-    public static HabitsRepository getInstance() {
-        return habitsRepository;
-    }
-
-    private HabitsRepository() {
-        connectionManager = ConnectionManager.getInstance();
-        logger = LoggerFactory.getLogger(HabitsRepository.class);
+    public HabitsRepository(ConnectionManager connectionManager, Logger logger) {
+        this.connectionManager = connectionManager;
+        this.logger = logger;
     }
 
     private ConnectionManager connectionManager;

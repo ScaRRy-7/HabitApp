@@ -1,50 +1,34 @@
 package habitapp.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import habitapp.annotations.Loggable;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
-/**
- * Контроллер для обработки выхода пользователя из системы.
- * Удаляет пользователя из сессии и возвращает соответствующий ответ.
- */
 @Loggable
-@WebServlet("/exit")
-public class ExitController extends HttpServlet {
+@RestController
+@RequestMapping("/exit")
+public class ExitController  {
 
-    @Setter
-    private ObjectMapper objectMapper = new ObjectMapper();
+    public ExitController() {}
 
-    /**
-     * Обрабатывает POST-запрос для выхода пользователя.
-     *
-     * @param req  HTTP-запрос.
-     * @param resp HTTP-ответ.
-     * @throws ServletException если происходит ошибка при обработке запроса.
-     * @throws IOException      если происходит ошибка ввода-вывода.
-     */
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
+    @GetMapping
+    public ResponseEntity<String> exitAccount(HttpServletRequest req)  {
 
         // Проверка, есть ли пользователь в сессии
         if (req.getSession().getAttribute("user") != null) {
             // Удаление пользователя из сессии
             req.getSession().removeAttribute("user");
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().write("{\"message\": \"Exit successful\"}");
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\": \"exit successful\"}");
         } else {
             // Пользователь не авторизован
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write("{\"message\": \"Exit unauthorized\"}");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\": \"you are not logged in\"}");
         }
     }
 }

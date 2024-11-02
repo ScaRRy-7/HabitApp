@@ -3,6 +3,8 @@ package habitapp.dbconnection;
 import habitapp.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,22 +14,14 @@ import java.sql.SQLException;
  * Класс для управления подключениями к базе данных.
  * Реализует паттерн Singleton для обеспечения единственного экземпляра менеджера подключения.
  */
+@Component
 public class ConnectionManager {
 
-    private static final ConnectionManager connectionManager = new ConnectionManager(); // Единственный экземпляр менеджера подключения
-
-    private ConnectionManager() {} // Приватный конструктор для предотвращения создания других экземпляров
-
-    /**
-     * Получает единственный экземпляр ConnectionManager.
-     *
-     * @return экземпляр ConnectionManager
-     */
-    public static ConnectionManager getInstance() {
-        return connectionManager;
+    public ConnectionManager() {
+        logger = LoggerFactory.getLogger(ConnectionManager.class);
     }
 
-    private final Logger logger = LoggerFactory.getLogger(ConnectionManager.class);
+    private final Logger logger;
 
     /**
      * Получает соединение с базой данных.

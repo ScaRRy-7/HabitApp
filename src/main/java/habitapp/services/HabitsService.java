@@ -71,21 +71,10 @@ public class HabitsService implements UserMapper, HabitMapper {
         return HabitMapper.INSTANCE.habitDTOToHabit(habitDTO);
     }
 
-    private static final HabitsService habitsService = new HabitsService();
-
-    /**
-     * Получает экземпляр сервиса привычек.
-     *
-     * @return экземпляр HabitsService
-     */
-    public static HabitsService getInstance() {
-        return habitsService;
-    }
-
-    private HabitsService() {
-        habitsRepository = HabitsRepository.getInstance();
-        usersRepository = UsersRepository.getInstance();
-        completedDaysRepository = CompletedDaysRepository.getInstance();
+    public HabitsService(HabitsRepository habitsRepository, UsersRepository usersRepository, CompletedDaysRepository completedDaysRepository) {
+        this.habitsRepository = habitsRepository;
+        this.usersRepository = usersRepository;
+        this.completedDaysRepository = completedDaysRepository;
         logger = LoggerFactory.getLogger(HabitsService.class);
     }
 
@@ -106,7 +95,7 @@ public class HabitsService implements UserMapper, HabitMapper {
         unmarkHabitsIfTimeLeft(req);
 
         if (!usersRepository.hasUser (userDTOToUser (userDTO))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"Вы не авторизованы для получения ваших привычек!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"You are not authorized to retrieve your habits!\"}");
         }
 
         int userId = usersRepository.getUserId(userDTOToUser (userDTO));
@@ -128,9 +117,9 @@ public class HabitsService implements UserMapper, HabitMapper {
         HabitDTO newHabit = habitDTOS[1];
 
         if (!usersRepository.hasUser (userDTOToUser (userDTO))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"Вы не авторизованы для редактирования вашей привычки!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"You are not authorized to edit your habit!\"}");
         } else if (!habitsRepository.hasHabit(habitDTOToHabit(oldHabit), usersRepository.getUserId(userDTOToUser (userDTO)))) {
-            throw new UserIllegalRequestException(HttpServletResponse .SC_NOT_FOUND, "{\"message\": \"Привычка, которую вы хотите редактировать, не найдена!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"The habit you want to edit was not found!\"}");
         }
         habitsRepository.redactHabit(habitDTOToHabit(oldHabit), habitDTOToHabit(newHabit), usersRepository.getUserId(userDTOToUser (userDTO)));
     }
@@ -145,10 +134,10 @@ public class HabitsService implements UserMapper, HabitMapper {
     public void deleteHabit(HttpServletRequest req, HabitDTO habitDTO) throws UserIllegalRequestException {
         UserDTO userDTO = (UserDTO) req.getSession().getAttribute("user");
 
-        if (!usersRepository.hasUser (userDTOToUser (userDTO))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"Вы не авторизованы для удаления вашей привычки!\"}");
+        if (!usersRepository.hasUser  (userDTOToUser (userDTO))) {
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"You are not authorized to delete your habit!\"}");
         } else if (!(habitsRepository.hasHabit(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser (userDTO))))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"Привычка, которую вы хотите удалить, не найдена!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"The habit you want to delete was not found!\"}");
         }
         habitsRepository.deleteHabit(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser (userDTO)));
     }
@@ -164,9 +153,9 @@ public class HabitsService implements UserMapper, HabitMapper {
         UserDTO userDTO = (UserDTO) req.getSession().getAttribute("user");
 
         if (!(usersRepository.hasUser (userDTOToUser (userDTO)))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"Вы не авторизованы для создания новой привычки!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"You are not authorized to create a new habit!\"}");
         } else if (habitsRepository.hasHabit(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser (userDTO)))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"Привычка, которую вы хотите создать, уже существует!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "{\"message\": \"The habit you want to create already exists!\"}");
         }
         int userId = usersRepository.getUserId(userDTOToUser (userDTO));
         habitsRepository.createHabit(habitDTOToHabit(habitDTO), userId);
@@ -184,11 +173,11 @@ public class HabitsService implements UserMapper, HabitMapper {
         unmarkHabitsIfTimeLeft(req);
 
         if (!usersRepository.hasUser (userDTOToUser (userDTO))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"Вы не авторизованы для пометки вашей привычки!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"You are not authorized to mark your habit!\"}");
         } else if (!habitsRepository.hasHabit(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser (userDTO)))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"Привычка, которую вы хотите пометить, не найдена!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"The habit you want to mark was not found!\"}");
         } else if (habitsRepository.isMarked(habitsRepository.getHabitId(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser  (userDTO))))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "{\"message\": \"Привычка, которую вы хотите пометить, уже помечена!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "{\"message\": \"The habit you want to mark is already marked!\"}");
         }
 
         int userId = usersRepository.getUserId(userDTOToUser (userDTO));
@@ -207,12 +196,12 @@ public class HabitsService implements UserMapper, HabitMapper {
      * @throws UserIllegalRequestException если пользователь не авторизован или привычка не найдена
      */
     public List<LocalDateTime> getCompletedDays(HttpServletRequest req, HabitDTO habitDTO) throws UserIllegalRequestException {
-        UserDTO userDTO = (UserDTO) req.getSession().getAttribute("user");
+        UserDTO userDTO = (UserDTO) req.getSession().getAttribute("user ");
 
         if (!usersRepository.hasUser (userDTOToUser (userDTO))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"Вы не авторизованы для просмотра статистики вашей привычки!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "{\"message\": \"You are not authorized to view your habit statistics!\"}");
         } else if (!habitsRepository.hasHabit(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser (userDTO)))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"Привычка, для которой вы хотите просмотреть статистику, не найдена!\"}");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "{\"message\": \"The habit you want to view statistics for was not found!\"}");
         }
         int habitId = habitsRepository.getHabitId(habitDTOToHabit(habitDTO), usersRepository.getUserId(userDTOToUser (userDTO)));
         return completedDaysRepository.getCompletedDays(habitId);

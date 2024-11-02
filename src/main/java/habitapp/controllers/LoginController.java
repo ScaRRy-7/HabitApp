@@ -11,6 +11,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -18,47 +26,29 @@ import java.io.IOException;
  * Класс контроллера для обработки запросов на вход пользователей.
  * Обрабатывает HTTP-запросы для аутентификации пользователей.
  */
-@Setter
 @Loggable
-@WebServlet("/login")
-public class LoginController extends HttpServlet {
+@RestController
+@RequestMapping("/login")
+public class LoginController {
 
-    /**
-     * Конструктор контроллера входа.
-     * Инициализирует сервис пользователей и объект маппера для работы с JSON.
-     */
-    public LoginController() {
-        this.usersService = UsersService.getInstance();
-        this.objectMapper = new ObjectMapper();
+
+    public LoginController(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     private UsersService usersService; // Сервис для работы с пользователями
-    private ObjectMapper objectMapper; // Объект для сериализации и десериализации JSON
 
-    /**
-     * Обрабатывает POST-запрос для входа пользователя в систему.
-     *
-     * @param req  HTTP-запрос
-     * @param resp HTTP-ответ
-     * @throws ServletException если возникает ошибка сервлета
-     * @throws IOException      если возникает ошибка ввода-вывода
-     */
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
+    @PostMapping
+    public ResponseEntity<String> login(HttpServletRequest req, @RequestBody UserDTO userDTO) {
         try {
-            UserDTO userDTO = objectMapper.readValue(req.getReader(), UserDTO.class);
             usersService.loginUser (userDTO, req);
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().write("{\"message\": \"authorized\"}");
+            return ResponseEntity.ok("{\"message\": \"authorized\"}");
         } catch (UserIllegalRequestException e) {
-            resp.setStatus(e.getErrorCode());
-            resp.getWriter().write("{\"message\": \"authorized failed (" + e.getMessage() + ")\"}");
-        } catch (IOException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+            return ResponseEntity.status(e.getErrorCode()).contentType(MediaType.APPLICATION_JSON)
+                    .body(e.getMessage());
+        } catch (HttpMessageNotReadableException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
         }
     }
 }
