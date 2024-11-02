@@ -9,15 +9,26 @@ import habitapp.services.HabitsService;
 import habitapp.services.UsersService;
 import habitapp.validators.UserValidator;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePropertySource;
+import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.IOException;
+import java.util.Properties;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "habitapp")
+@PropertySource("classpath:application.yml")
 public class AppConfig {
 
     @Bean
@@ -38,7 +49,7 @@ public class AppConfig {
 
     @Bean
     public UsersRepository usersRepository() {
-        return new UsersRepository(connectionManager(), LoggerFactory.getLogger(UsersService.class));
+        return new UsersRepository(connectionManager());
     }
 
     @Bean
@@ -53,11 +64,20 @@ public class AppConfig {
 
     @Bean
     HabitsRepository habitsRepository() {
-        return new HabitsRepository(connectionManager(), LoggerFactory.getLogger(HabitsService.class));
+        return new HabitsRepository(connectionManager());
     }
 
     @Bean
     CompletedDaysRepository completedDaysRepository() {
         return new CompletedDaysRepository(connectionManager());
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+        YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
+        yaml.setResources(new ClassPathResource("application.yml"));
+        configurer.setProperties(yaml.getObject());
+        return configurer;
     }
 }

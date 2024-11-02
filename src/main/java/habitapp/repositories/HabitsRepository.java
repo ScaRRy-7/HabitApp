@@ -16,13 +16,12 @@ import java.util.List;
  */
 public class HabitsRepository {
 
-    public HabitsRepository(ConnectionManager connectionManager, Logger logger) {
+    public HabitsRepository(ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
-        this.logger = logger;
     }
 
     private ConnectionManager connectionManager;
-    private final Logger logger;
+    private final Logger logger = LoggerFactory.getLogger(HabitsRepository.class);
 
     /**
      * Создает новую привычку для указанного пользователя.

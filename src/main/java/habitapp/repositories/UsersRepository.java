@@ -20,13 +20,12 @@ import java.util.Collection;
 @Repository
 public class UsersRepository {
 
-    public UsersRepository(ConnectionManager connectionManager, Logger logger) {
+    public UsersRepository(ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
-        this.logger = logger;
     }
 
     private ConnectionManager connectionManager;
-    private final Logger logger;
+    private final Logger logger = LoggerFactory.getLogger(UsersRepository.class);
 
 
     /**

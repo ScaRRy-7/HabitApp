@@ -40,7 +40,7 @@ public class RegisterController {
     @PostMapping
     public ResponseEntity<String> register(HttpServletRequest req, @RequestBody UserDTO userDTO) {
         try {
-            usersService.registerUser (userDTO, req);
+            usersService.registerUser(userDTO, req);
             return ResponseEntity.ok("{\"message\": \"User registered successfully\"}");
         } catch (UserIllegalRequestException e) {
             return ResponseEntity.status(e.getErrorCode()).contentType(MediaType.APPLICATION_JSON)

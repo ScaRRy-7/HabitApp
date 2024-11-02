@@ -55,11 +55,10 @@ public class UsersService implements UserMapper {
      */
     public void registerUser(UserDTO userDTO, HttpServletRequest req) throws UserIllegalRequestException {
         if (!userValidator.validateUserData(userDTO)) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "Некорректные электронная почта, пароль или имя");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "invalid user data");
         } else if (usersRepository.hasUser(userDTOToUser(userDTO))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "Пользователь уже существует");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "user already exists");
         }
-
         usersRepository.addUser(userDTOToUser(userDTO));
         req.getSession().setAttribute("user", userDTO);
     }
@@ -73,15 +72,15 @@ public class UsersService implements UserMapper {
      */
     public void loginUser(UserDTO userDTO, HttpServletRequest req) throws UserIllegalRequestException {
         if (!userValidator.validateUserData(userDTO)) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "Некорректные электронная почта, пароль или имя");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "incorrect user data");
         } else if (!usersRepository.hasUser(userDTOToUser(userDTO))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "Пользователь не существует");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "user not found");
         }
 
         UserDTO checkedUserDTO = userToUserDTO(usersRepository.getUser(userDTO.getEmail()));
         if (!(checkedUserDTO.getPassword().equals(userDTO.getPassword()))) {
 
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "Неправильный пароль");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "incorrect password");
         } else {
             req.getSession(true).setAttribute("user", checkedUserDTO);
         }
@@ -112,7 +111,7 @@ public class UsersService implements UserMapper {
      */
     public void removeAccount(HttpServletRequest req) throws UserIllegalRequestException {
         if (req.getSession().getAttribute("user") == null) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "Пользователь не авторизован");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "user is not logged in");
         }
         User userToDelete = userDTOToUser((UserDTO) req.getSession().getAttribute("user"));
         usersRepository.deleteUser(userToDelete);

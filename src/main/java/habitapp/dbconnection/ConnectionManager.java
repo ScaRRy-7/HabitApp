@@ -3,6 +3,7 @@ package habitapp.dbconnection;
 import habitapp.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +18,18 @@ import java.sql.SQLException;
 @Component
 public class ConnectionManager {
 
-    public ConnectionManager() {
-        logger = LoggerFactory.getLogger(ConnectionManager.class);
-    }
+    private final Logger logger = LoggerFactory.getLogger(ConnectionManager.class);
 
-    private final Logger logger;
+    @Value("${db.url}")
+    private String dbUrl;
+    @Value("${db.user}")
+    private String dbUser;
+    @Value("${db.password}")
+    private String dbPassword;
+
+    public ConnectionManager() {
+
+    }
 
     /**
      * Получает соединение с базой данных.
@@ -35,10 +43,6 @@ public class ConnectionManager {
         } catch (ClassNotFoundException e) {
             logger.error(e.getMessage());
         }
-        return DriverManager.getConnection(
-                ConfigurationManager.getProperty("DB_URL"), // URL базы данных
-                ConfigurationManager.getProperty("DB_USER"), // Имя пользователя базы данных
-                ConfigurationManager.getProperty("DB_PASSWORD") // Пароль базы данных
-        );
+        return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
 }

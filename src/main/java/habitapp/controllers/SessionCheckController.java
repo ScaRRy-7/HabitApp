@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,8 @@ import java.io.IOException;
 @RequestMapping("/checksession")
 public class SessionCheckController {
 
-    public ResponseEntity<String> checkSession(HttpServletRequest req) throws ServletException, IOException {
+    @GetMapping
+    public ResponseEntity<String> checkSession(HttpServletRequest req) {
         UserDTO userDTO = (UserDTO) req.getSession().getAttribute("user"); // Получаем пользователя из сессии
         if (userDTO != null) {
             return ResponseEntity.ok("{\"message\": \"user logged in: " + userDTO.getEmail() + "\"}");
