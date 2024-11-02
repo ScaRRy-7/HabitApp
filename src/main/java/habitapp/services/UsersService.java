@@ -74,13 +74,12 @@ public class UsersService implements UserMapper {
         if (!userValidator.validateUserData(userDTO)) {
             throw new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "incorrect user data");
         } else if (!usersRepository.hasUser(userDTOToUser(userDTO))) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "user not found");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_NOT_FOUND, "user not found");
         }
 
         UserDTO checkedUserDTO = userToUserDTO(usersRepository.getUser(userDTO.getEmail()));
         if (!(checkedUserDTO.getPassword().equals(userDTO.getPassword()))) {
-
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "incorrect password");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_CONFLICT, "incorrect password");
         } else {
             req.getSession(true).setAttribute("user", checkedUserDTO);
         }

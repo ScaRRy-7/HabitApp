@@ -6,11 +6,14 @@ import habitapp.annotations.Loggable;
 import habitapp.dto.HabitDTO;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.services.HabitsService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,31 +25,58 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Класс контроллера для управления привычками.
- * Обрабатывает HTTP-запросы, связанные с созданием, получением, удалением и изменением привычек.
+ * Habits controller class.
+ * Handles HTTP requests related to creating, retrieving, deleting, and modifying habits.
  */
+@Tag(name = "Habits", description = "API for managing user habits")
 @Loggable
 @RestController
 @RequestMapping("/habits")
 public class HabitsController {
 
-    /**
-     * Конструктор контроллера привычек.
-     * Инициализирует сервис привычек и объект маппера для работы с JSON.
-     */
+    @Setter
+    private HabitsService habitsService;
+    private final ObjectMapper objectMapper;
+
     public HabitsController(HabitsService habitsService, ObjectMapper objectMapper) {
         this.habitsService = habitsService;
         this.objectMapper = objectMapper;
         objectMapper.registerModule(new JavaTimeModule());
     }
 
-    @Setter
-    private HabitsService habitsService; // Сервис для работы с привычками
-    private final ObjectMapper objectMapper; // Объект для сериализации и десериализации JSON
-
-
+    @Operation(
+            summary = "Create a new habit",
+            description = "Creates a new habit for an authorized user"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Habit successfully created",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = "{\"message\": \"Habit created successfully\"}")
+            )
+    )
+    @ApiResponse(
+            responseCode = "401",
+            description = "User is not authorized",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = "{\"message\": \"User is not authorized\"}")
+            )
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Invalid JSON format",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = "{\"message\": \"Incorrect json\"}")
+            )
+    )
     @PostMapping
-    public ResponseEntity<String> createHabit(HttpServletRequest req, @RequestBody HabitDTO habitDTO) {
+    public ResponseEntity<String> createHabit(
+            @Parameter(description = "Request context") HttpServletRequest req,
+            @Parameter(description = "Habit details", required = true) @RequestBody HabitDTO habitDTO
+    ) {
         try {
             habitsService.createHabit(req, habitDTO);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
@@ -60,8 +90,32 @@ public class HabitsController {
         }
     }
 
+    @Operation(
+            summary = "Get all habits",
+            description = "Retrieves all habits for the authorized user"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "List of habits successfully retrieved",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = HabitDTO.class))
+            )
+    )
+    @ApiResponse(
+            responseCode = "401",
+            description = "User is not authorized",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+    )
+    @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+    )
     @GetMapping
-        public ResponseEntity<String> getHabits(HttpServletRequest req) {
+    public ResponseEntity<String> getHabits(
+            @Parameter(description = "Request context") HttpServletRequest req
+    ) {
         try {
             List<HabitDTO> habitDTOList = habitsService.getAllHabits(req);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
@@ -73,33 +127,80 @@ public class HabitsController {
         }
     }
 
-
+    @Operation(
+            summary = "Delete a habit",
+            description = "Deletes the specified habit for the authorized user"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Habit successfully deleted",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = HabitDTO.class))
+            )
+    )
+    @ApiResponse(
+            responseCode = "401",
+            description = "User is not authorized"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Habit not found"
+    )
     @DeleteMapping
-    public ResponseEntity<String> deleteHabit(HttpServletRequest req, @RequestBody HabitDTO habitDTO) throws IOException {
+    public ResponseEntity<String> deleteHabit(
+            @Parameter(description = "Request context") HttpServletRequest req,
+            @Parameter(description = "Habit to delete", required = true) @RequestBody HabitDTO habitDTO
+    ) throws IOException {
         try {
             habitsService.deleteHabit(req, habitDTO);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                     .body(objectMapper.writeValueAsString(habitsService.getAllHabits(req)));
-        } catch (IOException e) {
+        } catch (HttpMessageNotReadableException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"Incorrect Json: \": \"" + e.getMessage() + "\"}");
+                    .body("{\"message\": \"Incorrect json: " + e.getMessage() + "\"}");
         } catch (UserIllegalRequestException e) {
             return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
         }
     }
 
-
+    @Operation(
+            summary = "Edit a habit",
+            description = "Modifies an existing habit for the authorized user"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Habit successfully modified",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(example = "{\"message\": \"Habit successfully changed\"}")
+            )
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Invalid JSON format"
+    )
+    @ApiResponse(
+            responseCode = "401",
+            description = "User is not authorized"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Habit not found"
+    )
     @PutMapping
-    public ResponseEntity<String> doPut(HttpServletRequest req, @RequestBody HabitDTO habitDTO1, @RequestBody HabitDTO habitDTO2)
-    {
+    public ResponseEntity<String> editHabit(
+            @Parameter(description = "Request context") HttpServletRequest req,
+            @Parameter(description = "Original habit", required = true) @RequestBody HabitDTO habitDTO1,
+            @Parameter(description = "Updated habit", required = true) @RequestBody HabitDTO habitDTO2
+    ) {
         try {
-            HabitDTO[] habitDTOs = new HabitDTO[] {habitDTO1, habitDTO2};
-            habitsService.redactHabit(req, habitDTOs);
+            HabitDTO[] habitDTOs = new HabitDTO[] {habitDTO1, habitDTO2}; habitsService.redactHabit(req, habitDTOs);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                     .body("{\"message\": \"Habit successfully changed\"}");
         } catch (HttpMessageNotReadableException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"message\": \"Incorrect json: " + e.getMessage() + "\"}");
         } catch (UserIllegalRequestException e) {
             return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
         }

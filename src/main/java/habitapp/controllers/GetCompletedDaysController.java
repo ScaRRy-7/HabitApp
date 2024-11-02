@@ -6,15 +6,16 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import habitapp.annotations.Loggable;
 import habitapp.dto.HabitDTO;
-import habitapp.dto.UserDTO;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.services.HabitsService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import java.util.List;
  * GetCompletedDaysController - сервлет, который обрабатывает HTTP-запросы для получения статистики
  * о выполненных днях для определенной привычки
  */
+@Tag(name = "Statistics", description = "API для получения статистики привычек")
 @Loggable
 @RestController
 @RequestMapping("/statistics")
@@ -45,6 +47,36 @@ public class GetCompletedDaysController {
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
+    @Operation(
+            summary = "Get habit statistics",
+            description = "Get statistics about requested habit"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Habit's statistic successfully retrieved",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = LocalDateTime.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "User is not authorized",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid JSON",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)
+                    )
+            )
+    })
     @PostMapping
     public ResponseEntity<String> getHabitStatistics(HttpServletRequest req, @RequestBody HabitDTO habitDTO) {
         try {
