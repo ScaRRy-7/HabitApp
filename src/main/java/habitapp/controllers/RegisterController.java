@@ -70,13 +70,18 @@ public class RegisterController {
     @PostMapping
     public ResponseEntity<String> register(
             @Parameter(description = "Request context") HttpServletRequest req,
-            @Parameter(description = "User  registration details", required = true, schema = @Schema(implementation = UserDTO.class))
+            @Parameter(description = "User registration details", required = true, schema = @Schema(implementation = UserDTO.class))
             @RequestBody UserDTO userDTO) {
         try {
+            if (userDTO == null) {
+                return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
+                        .body("{\"message\": \"user cannot be null\"}");
+            }
+
             usersService.registerUser (userDTO, req);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"User  registered successfully\"}");
+                    .body("{\"message\": \"User registered successfully\"}");
         } catch (UserIllegalRequestException e) {
             return ResponseEntity.status(e.getErrorCode())
                     .contentType(MediaType.APPLICATION_JSON)

@@ -21,15 +21,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * GetCompletedDaysController - сервлет, который обрабатывает HTTP-запросы для получения статистики
- * о выполненных днях для определенной привычки
- */
 @Tag(name = "Statistics", description = "API для получения статистики привычек")
 @Loggable
 @RestController
@@ -79,6 +73,11 @@ public class GetCompletedDaysController {
     })
     @PostMapping
     public ResponseEntity<String> getHabitStatistics(HttpServletRequest req, @RequestBody HabitDTO habitDTO) {
+        if (habitDTO == null) {
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\": \"Habit cannot be null\"}");
+        }
+
         try {
             List<LocalDateTime> habitDTOList = habitsService.getCompletedDays(req, habitDTO);
             return ResponseEntity.ok(objectMapper.writeValueAsString(habitDTOList));

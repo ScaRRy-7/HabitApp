@@ -1,90 +1,130 @@
-//package habitapp.controllers;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-//import habitapp.dto.HabitDTO;
-//import habitapp.enums.HabitFrequency;
-//import habitapp.exceptions.UserIllegalRequestException;
-//import habitapp.services.HabitsService;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.PrintWriter;
-//import java.io.StringReader;
-//
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.*;
-//
-//class MarkHabitControllerTest {
-//
-//    private MarkHabitController markHabitController;
-//    private HabitsService habitsService;
-//    private HttpServletRequest request;
-//    private HttpServletResponse response;
-//    private ObjectMapper objectMapper;
-//    private PrintWriter writer;
-//
-//    @BeforeEach
-//    void setUp() throws IOException {
-//        habitsService = mock(HabitsService.class);
-//        request = mock(HttpServletRequest.class);
-//        response = mock(HttpServletResponse.class);
-//        objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new JavaTimeModule());
-//        writer = mock(PrintWriter.class);
-//
-//        when(response.getWriter()).thenReturn(writer);
-//        when(request.getReader()).thenReturn(new BufferedReader(new StringReader("{}")));
-//
-//        markHabitController = new MarkHabitController();
-//        markHabitController.setHabitsService(habitsService);
-//    }
-//
-//    @Test
-//    void testDoPut_Success() throws Exception {
-//        HabitDTO habitDTO = new HabitDTO();
-//        habitDTO.setName("Test Habit");
-//        habitDTO.setDescription("Description of the test habit");
-//        habitDTO.setFrequency(HabitFrequency.DAILY);
-//        habitDTO.setCompleted(false);
-//
-//        when(request.getReader()).thenReturn(new BufferedReader(new StringReader(objectMapper.writeValueAsString(habitDTO))));
-//        doNothing().when(habitsService).markHabit(any(HttpServletRequest.class), any(HabitDTO.class));
-//
-//        markHabitController.doPut(request, response);
-//
-//        verify(response).setStatus(HttpServletResponse.SC_OK);
-//        verify(writer).write("{\"message\": \"Habit marked successfully\"}");
-//    }
-//
-//    @Test
-//    void testDoPut_JsonProcessingException() throws Exception {
-//        when(request.getReader()).thenThrow(new IOException("Reader error"));
-//
-//        markHabitController.doPut(request, response);
-//
-//        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//        verify(writer).write("{\"message\": \"Incorrect json (Reader error)\"}");
-//    }
-//
-//    @Test
-//    void testDoPut_UserIllegalRequestException() throws Exception {
-//        HabitDTO habitDTO = new HabitDTO();
-//        habitDTO.setName("Test Habit");
-//        habitDTO.setDescription("Description of the test habit");
-//        habitDTO.setFrequency(HabitFrequency.DAILY);
-//        habitDTO.setCompleted(false);
-//
-//        when(request.getReader()).thenReturn(new BufferedReader(new StringReader(objectMapper.writeValueAsString(habitDTO))));
-//        doThrow(new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "User  not authorized"))
-//                .when(habitsService).markHabit(any(HttpServletRequest.class), any(HabitDTO.class));
-//
-//        markHabitController.doPut(request, response);
-//
-//        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//        verify(writer).write("User  not authorized");
-//    }
-//}
+package habitapp.controllers;
+
+import habitapp.dto.HabitDTO;
+import habitapp.exceptions.UserIllegalRequestException;
+import habitapp.services.HabitsService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.doNothing;
+
+class MarkHabitControllerTest {
+
+    @InjectMocks
+    private MarkHabitController markHabitController;
+
+    @Mock
+    private HabitsService habitsService;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void markHabit_Success() {
+        // Arrange
+        HabitDTO habitDTO = new HabitDTO();
+        doNothing().when(habitsService).markHabit(any(HttpServletRequest.class), any(HabitDTO.class));
+
+        // Act
+        ResponseEntity<String> response = markHabitController.markHabit(request, habitDTO);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"Habit marked successfully\"}", response.getBody());
+    }
+
+    @Test
+    void markHabit_InvalidJson() {
+        // Arrange
+        HabitDTO habitDTO = new HabitDTO();
+        doThrow(new HttpMessageNotReadableException("Invalid JSON format"))
+                .when(habitsService).markHabit(any(HttpServletRequest.class), any(HabitDTO.class));
+
+        // Act
+        ResponseEntity<String> response = markHabitController.markHabit(request, habitDTO);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"Incorrect json (Invalid JSON format)\"}", response.getBody());
+    }
+
+    @Test
+    void markHabit_HabitNotFound() {
+        // Arrange
+        HabitDTO habitDTO = new HabitDTO();
+        doThrow(new UserIllegalRequestException(HttpStatus.NOT_FOUND.value(),
+                "{\"message\": \"Habit not found\"}"))
+                .when(habitsService).markHabit(any(HttpServletRequest.class), any(HabitDTO.class));
+
+        // Act
+        ResponseEntity<String> response = markHabitController.markHabit(request, habitDTO);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"Habit not found\"}", response.getBody());
+    }
+
+    @Test
+    void markHabit_Unauthorized() {
+        // Arrange
+        HabitDTO habitDTO = new HabitDTO();
+        doThrow(new UserIllegalRequestException(HttpStatus.UNAUTHORIZED.value(),
+                "{\"message\": \"User is not authorized\"}"))
+                .when(habitsService).markHabit(any(HttpServletRequest.class), any(HabitDTO.class));
+
+        // Act
+        ResponseEntity<String> response = markHabitController.markHabit(request, habitDTO);
+
+        // Assert
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"User is not authorized\"}", response.getBody());
+    }
+
+    @Test
+    void markHabit_AlreadyMarked() {
+        // Arrange
+        HabitDTO habitDTO = new HabitDTO();
+        doThrow(new UserIllegalRequestException(HttpStatus.CONFLICT.value(),
+                "{\"message\": \"Habit cannot be marked because it already marked\"}"))
+                .when(habitsService).markHabit(any(HttpServletRequest.class), any(HabitDTO.class));
+
+        // Act
+        ResponseEntity<String> response = markHabitController.markHabit(request, habitDTO);
+
+        // Assert
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"Habit cannot be marked because it already marked\"}", response.getBody());
+    }
+
+    @Test
+    void markHabit_NullHabitDTO() {
+        // Act
+        ResponseEntity<String> response = markHabitController.markHabit(request, null);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"Habit cannot be null\"}", response.getBody());
+    }
+}

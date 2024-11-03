@@ -1,87 +1,136 @@
-//
-//package habitapp.controllers;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import habitapp.dto.UserDTO;
-//import habitapp.exceptions.UserIllegalRequestException;
-//import habitapp.services.UsersService;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.PrintWriter;
-//import java.io.StringReader;
-//
-//import static org.mockito.Mockito.mock;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.*;
-//
-//class LoginControllerTest {
-//
-//    private LoginController loginController;
-//    private UsersService usersService;
-//    private HttpServletRequest request;
-//    private HttpServletResponse response;
-//    private ObjectMapper objectMapper;
-//    private PrintWriter writer;
-//
-//    @BeforeEach
-//    void setUp() throws IOException {
-//        usersService = mock(UsersService.class);
-//        request = mock(HttpServletRequest.class);
-//        response = mock(HttpServletResponse.class);
-//        writer = mock(PrintWriter.class);
-//        objectMapper = new ObjectMapper();
-//        loginController = new LoginController();
-//        loginController.setObjectMapper(objectMapper);
-//        loginController.setUsersService(usersService);
-//
-//        when(response.getWriter()).thenReturn(writer);
-//        when(request.getReader()).thenReturn(new BufferedReader(new StringReader("{}")));
-//    }
-//
-//    @Test
-//    void testDoPost_Success() throws Exception {
-//        UserDTO userDTO = new UserDTO();
-//        userDTO.setName("Test User");
-//        userDTO.setEmail("user@example.com");
-//        userDTO.setPassword("password");
-//
-//        when(request.getReader()).thenReturn(new BufferedReader(new StringReader(objectMapper.writeValueAsString(userDTO))));
-//        doNothing().when(usersService).loginUser (any(UserDTO.class), any(HttpServletRequest.class));
-//
-//        loginController.doPost(request, response);
-//
-//        verify(response).setStatus(HttpServletResponse.SC_OK);
-//        verify(response.getWriter()).write("{\"message\": \"authorized\"}");
-//    }
-//
-//    @Test
-//    void testDoPost_UserIllegalRequestException() throws Exception {
-//        UserDTO userDTO = new UserDTO();
-//        userDTO.setName("Test User");
-//        userDTO.setEmail("user@example.com");
-//        userDTO.setPassword("password");
-//
-//        when(request.getReader()).thenReturn(new BufferedReader(new StringReader(objectMapper.writeValueAsString(userDTO))));
-//        doThrow(new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "Invalid email or password or name"))
-//                .when(usersService).loginUser (any(UserDTO.class), any(HttpServletRequest.class));
-//
-//        loginController.doPost(request, response);
-//
-//        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//        verify(response.getWriter()).write("{\"message\": \"authorized failed (Invalid email or password or name)\"}");
-//    }
-//
-//    @Test
-//    void testDoPost_JsonProcessingException() throws Exception {
-//        when(request.getReader()).thenThrow(new IOException("Reader error"));
-//
-//        loginController.doPost(request, response);
-//
-//        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//        verify(response.getWriter()).write("{\"message\": \"Incorrect json (Reader error)\"}");
-//    }
-//}
+package habitapp.controllers;
+
+import habitapp.dto.UserDTO;
+import habitapp.exceptions.UserIllegalRequestException;
+import habitapp.services.UsersService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+
+class LoginControllerTest {
+
+    @InjectMocks
+    private LoginController loginController;
+
+    @Mock
+    private UsersService usersService;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void login_Success() {
+        // Arrange
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName("testUser");
+        userDTO.setPassword("testPassword");
+
+        // Act
+        ResponseEntity<String> response = loginController.login(request, userDTO);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"authorized\"}", response.getBody());
+    }
+
+    @Test
+    void login_UserNotFound() {
+        // Arrange
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName("nonexistentUser");
+        userDTO.setPassword("testPassword");
+
+        doThrow(new UserIllegalRequestException(HttpStatus.NOT_FOUND.value(),
+                "{\"message\": \"User not found\"}"))
+                .when(usersService).loginUser(any(UserDTO.class), any(HttpServletRequest.class));
+
+        // Act
+        ResponseEntity<String> response = loginController.login(request, userDTO);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"User not found\"}", response.getBody());
+    }
+
+    @Test
+    void login_InvalidPassword() {
+        // Arrange
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName("testUser");
+        userDTO.setPassword("wrongPassword");
+
+        doThrow(new UserIllegalRequestException(HttpStatus.CONFLICT.value(),
+                "{\"message\": \"Invalid password\"}"))
+                .when(usersService).loginUser(any(UserDTO.class), any(HttpServletRequest.class));
+
+        // Act
+        ResponseEntity<String> response = loginController.login(request, userDTO);
+
+        // Assert
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"Invalid password\"}", response.getBody());
+    }
+
+    @Test
+    void login_InvalidJsonFormat() {
+        // Arrange
+        UserDTO userDTO = new UserDTO();
+        doThrow(new HttpMessageNotReadableException("Invalid JSON format"))
+                .when(usersService).loginUser(any(UserDTO.class), any(HttpServletRequest.class));
+
+        // Act
+        ResponseEntity<String> response = loginController.login(request, userDTO);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"Incorrect json (Invalid JSON format)\"}", response.getBody());
+    }
+
+    @Test
+    void login_NullUserDTO() {
+        // Act
+        ResponseEntity<String> response = loginController.login(request, null);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"user cannot be null\"}", response.getBody());
+    }
+
+    @Test
+    void login_EmptyCredentials() {
+        // Arrange
+        UserDTO userDTO = new UserDTO(); // empty credentials
+
+        doThrow(new UserIllegalRequestException(HttpStatus.BAD_REQUEST.value(),
+                "{\"message\": \"Username and password cannot be empty\"}"))
+                .when(usersService).loginUser(any(UserDTO.class), any(HttpServletRequest.class));
+
+        // Act
+        ResponseEntity<String> response = loginController.login(request, userDTO);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        assertEquals("{\"message\": \"Username and password cannot be empty\"}", response.getBody());
+    }
+}

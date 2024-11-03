@@ -89,6 +89,11 @@ public class MarkHabitController {
             @Parameter(description = "Habit details", required = true, schema = @Schema(implementation = HabitDTO.class))
             @RequestBody HabitDTO habitDTO) {
         try {
+            if (habitDTO == null) {
+                return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
+                        .body("{\"message\": \"Habit cannot be null\"}");
+            }
+
             habitsService.markHabit(req, habitDTO);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)

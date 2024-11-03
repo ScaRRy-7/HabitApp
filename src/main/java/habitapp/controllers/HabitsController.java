@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Habits controller class.
- * Handles HTTP requests related to creating, retrieving, deleting, and modifying habits.
- */
+
 @Tag(name = "Habits", description = "API for managing user habits")
 @Loggable
 @RestController

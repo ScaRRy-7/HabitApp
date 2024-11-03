@@ -39,6 +39,11 @@ public class AccountController {
     })
     @PutMapping
     public ResponseEntity<String> editAccount(HttpServletRequest req, @RequestBody UserDTO userDTO) {
+        if (userDTO == null) {
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\": \"user cannot be null\"}");
+        }
+
         try {
             usersService.redactUser(req, userDTO);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"message\": \"Account was redacted\"}");

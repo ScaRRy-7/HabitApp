@@ -82,6 +82,11 @@ public class LoginController {
                     schema = @Schema(implementation = UserDTO.class)
             ) @RequestBody UserDTO userDTO
     ) {
+        if (userDTO == null) {
+            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"message\": \"user cannot be null\"}");
+        }
+
         try {
             usersService.loginUser(userDTO, req);
             return ResponseEntity.ok()
