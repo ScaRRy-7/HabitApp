@@ -7,7 +7,6 @@ import habitapp.exceptions.UserIllegalRequestException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,17 +16,26 @@ import java.util.Collection;
  * Репозиторий для управления пользователями в базе данных.
  * Предоставляет методы для добавления, обновления, удаления и получения пользователей.
  */
-@Repository
 public class UsersRepository {
 
-    public UsersRepository(ConnectionManager connectionManager, Logger logger) {
-        this.connectionManager = connectionManager;
-        this.logger = logger;
+    private static final UsersRepository usersRepository = new UsersRepository();
+
+    /**
+     * Получает экземпляр репозитория пользователей.
+     *
+     * @return Экземпляр UsersRepository.
+     */
+    public static UsersRepository getInstance() {
+        return usersRepository;
+    }
+
+    private UsersRepository() {
+        connectionManager = ConnectionManager.getInstance();
+        logger = LoggerFactory.getLogger(UsersRepository.class);
     }
 
     private ConnectionManager connectionManager;
     private final Logger logger;
-
 
     /**
      * Добавляет нового пользователя в базу данных.

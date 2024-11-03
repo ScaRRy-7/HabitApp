@@ -11,14 +11,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -27,27 +19,46 @@ import java.io.IOException;
  * Обрабатывает HTTP-запросы для регистрации новых пользователей.
  */
 @Loggable
-@RestController
-@RequestMapping("/register")
-public class RegisterController {
+@WebServlet("/register")
+public class RegisterController extends HttpServlet {
 
-    public RegisterController(UsersService usersService) {
-        this.usersService = usersService;
+    /**
+     * Конструктор контроллера регистрации.
+     * Инициализирует сервис пользователей и объект маппера для работы с JSON.
+     */
+    public RegisterController() {
+        this.usersService = UsersService.getInstance();
+        this.objectMapper = new ObjectMapper();
     }
 
+    @Setter
     private UsersService usersService; // Сервис для работы с пользователями
+    private final ObjectMapper objectMapper; // Объект для сериализации и десериализации JSON
 
-    @PostMapping
-    public ResponseEntity<String> register(HttpServletRequest req, @RequestBody UserDTO userDTO) {
+    /**
+     * Обрабатывает POST-запрос для регистрации нового пользователя.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws ServletException если возникает ошибка сервлета
+     * @throws IOException      если возникает ошибка ввода-вывода
+     */
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
         try {
+            UserDTO userDTO = objectMapper.readValue(req.getReader(), UserDTO.class);
             usersService.registerUser (userDTO, req);
-            return ResponseEntity.ok("{\"message\": \"User registered successfully\"}");
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            resp.getWriter().write("{\"message\": \"User registered successfully\"}");
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).contentType(MediaType.APPLICATION_JSON)
-                    .body(e.getMessage());
-        } catch (HttpMessageNotReadableException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+            resp.setStatus(e.getErrorCode());
+            resp.getWriter().write("{\"message\": \"Registration failed (" + e.getMessage() + ")\"}");
+        } catch (IOException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
         }
     }
 }

@@ -12,11 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,17 +21,16 @@ import java.util.List;
  * Обрабатывает HTTP-запросы, связанные с созданием, получением, удалением и изменением привычек.
  */
 @Loggable
-@RestController
-@RequestMapping("/habits")
-public class HabitsController {
+@WebServlet("/habits")
+public class HabitsController extends HttpServlet {
 
     /**
      * Конструктор контроллера привычек.
      * Инициализирует сервис привычек и объект маппера для работы с JSON.
      */
-    public HabitsController(HabitsService habitsService, ObjectMapper objectMapper) {
-        this.habitsService = habitsService;
-        this.objectMapper = objectMapper;
+    public HabitsController() {
+        this.habitsService = HabitsService.getInstance();
+        this.objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
     }
 
@@ -44,64 +38,106 @@ public class HabitsController {
     private HabitsService habitsService; // Сервис для работы с привычками
     private final ObjectMapper objectMapper; // Объект для сериализации и десериализации JSON
 
+    /**
+     * Обрабатывает POST-запрос для создания новой привычки.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
 
-    @PostMapping
-    public ResponseEntity<String> createHabit(HttpServletRequest req, @RequestBody HabitDTO habitDTO) {
         try {
+            HabitDTO habitDTO = objectMapper.readValue(req.getReader(), HabitDTO.class);
             habitsService.createHabit(req, habitDTO);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Habit created successfully\"}");
-        } catch (HttpMessageNotReadableException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            resp.getWriter().write("{\"message\": \"Habit created successfully\"}");
+        } catch (IOException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).contentType(MediaType.APPLICATION_JSON)
-                    .body(e.getMessage());
+            resp.setStatus(e.getErrorCode());
+            resp.getWriter().write(e.getMessage());
         }
     }
 
-    @GetMapping
-        public ResponseEntity<String> getHabits(HttpServletRequest req) {
+    /**
+     * Обрабатывает GET-запрос для получения списка всех привычек.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
         try {
             List<HabitDTO> habitDTOList = habitsService.getAllHabits(req);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(objectMapper.writeValueAsString(habitDTOList));
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(habitDTOList));
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
+            resp.setStatus(e.getErrorCode());
+            resp.getWriter().write(objectMapper.writeValueAsString(e.getMessage()));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write(objectMapper.writeValueAsString(e.getMessage()));
         }
     }
 
+    /**
+     * Обрабатывает DELETE-запрос для удаления привычки.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
 
-    @DeleteMapping
-    public ResponseEntity<String> deleteHabit(HttpServletRequest req, @RequestBody HabitDTO habitDTO) throws IOException {
         try {
-            habitsService.deleteHabit(req, habitDTO);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(objectMapper.writeValueAsString(habitsService.getAllHabits(req)));
+            HabitDTO habitDTOtoRemove = objectMapper.readValue(req.getReader(), HabitDTO.class);
+            habitsService.deleteHabit(req, habitDTOtoRemove);
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(habitsService.getAllHabits(req)));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"Incorrect Json: \": \"" + e.getMessage() + "\"}");
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"Incorrect Json: \": \"" + e.getMessage() + "\"}");
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
+            resp.setStatus(e.getErrorCode());
+            resp.getWriter().write(e.getMessage());
         }
     }
 
+    /**
+     * Обрабатывает PUT-запрос для изменения привычек.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws IOException если возникает ошибка ввода-вывода
+     */
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
 
-    @PutMapping
-    public ResponseEntity<String> doPut(HttpServletRequest req, @RequestBody HabitDTO habitDTO1, @RequestBody HabitDTO habitDTO2)
-    {
         try {
-            HabitDTO[] habitDTOs = new HabitDTO[] {habitDTO1, habitDTO2};
+            HabitDTO[] habitDTOs = objectMapper.readValue(req.getReader(), HabitDTO[].class);
             habitsService.redactHabit(req, habitDTOs);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Habit successfully changed\"}");
-        } catch (HttpMessageNotReadableException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write("{\"message\": \"Habit successfully changed\"}");
+        } catch (IOException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
+            resp.setStatus(e.getErrorCode());
+            resp.getWriter().write("{\"message\": \"unauthorized (" + e.getMessage() + ")\"}");
         }
     }
 }

@@ -9,7 +9,6 @@ import habitapp.repositories.UsersRepository;
 import habitapp.validators.UserValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Service;
 
 /**
  * Сервис для управления пользователями.
@@ -20,10 +19,21 @@ import org.springframework.stereotype.Service;
  * </p>
  */
 @Loggable
-@Service
 public class UsersService implements UserMapper {
 
+    /**
+     * Экземпляр сервиса пользователей.
+     */
+    private static final UsersService usersService = new UsersService();
 
+    /**
+     * Получает экземпляр сервиса пользователей.
+     *
+     * @return Экземпляр `UsersService`.
+     */
+    public static UsersService getInstance() {
+        return usersService;
+    }
 
     private final UserValidator userValidator;
     private final UsersRepository usersRepository;
@@ -31,9 +41,9 @@ public class UsersService implements UserMapper {
     /**
      * Конструктор для инициализации сервиса пользователей.
      */
-    public UsersService(UserValidator userValidator, UsersRepository usersRepository) {
-        this.userValidator = userValidator;
-        this.usersRepository = usersRepository;
+    private UsersService() {
+        userValidator = UserValidator.getInstance();
+        usersRepository = UsersRepository.getInstance();
     }
 
     @Override
@@ -96,7 +106,7 @@ public class UsersService implements UserMapper {
      */
     public void redactUser(HttpServletRequest req, UserDTO userDTO) throws UserIllegalRequestException {
         if (req.getSession().getAttribute("user") == null) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "User is not logged in");
+            throw new UserIllegalRequestException(HttpServletResponse.SC_UNAUTHORIZED, "Пользователь не авторизован");
         }
         User oldUser = userDTOToUser((UserDTO) req.getSession().getAttribute("user"));
         User newUser = userDTOToUser(userDTO);

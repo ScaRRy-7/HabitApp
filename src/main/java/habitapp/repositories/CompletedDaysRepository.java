@@ -21,13 +21,26 @@ import java.util.List;
  */
 public class CompletedDaysRepository {
 
+    /**
+     * Экземпляр репозитория выполненных дней.
+     */
+    private static final CompletedDaysRepository completedDaysRepository = new CompletedDaysRepository();
+
+    /**
+     * Получает экземпляр репозитория выполненных дней.
+     *
+     * @return Экземпляр `CompletedDaysRepository`.
+     */
+    public static CompletedDaysRepository getInstance() {
+        return completedDaysRepository;
+    }
 
     /**
      * Конструктор для инициализации репозитория выполненных дней.
      */
-    public CompletedDaysRepository(ConnectionManager connectionManager) {
+    private CompletedDaysRepository() {
         logger = LoggerFactory.getLogger(CompletedDaysRepository.class);
-        this.connectionManager = connectionManager;
+        connectionManager = ConnectionManager.getInstance();
     }
 
     private final Logger logger;

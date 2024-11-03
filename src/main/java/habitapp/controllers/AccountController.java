@@ -1,45 +1,96 @@
 package habitapp.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import habitapp.annotations.Loggable;
 import habitapp.dto.UserDTO;
 import habitapp.exceptions.UserIllegalRequestException;
 import habitapp.services.UsersService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
+/**
+ * Контроллер для управления аккаунтом пользователя.
+ * <p>
+ * Этот класс обрабатывает HTTP-запросы, связанные с редактированием и удалением аккаунта пользователя.
+ * Он использует сервис `UsersService` для выполнения операций над аккаунтом.
+ * </p>
+ */
+@Setter
 @Loggable
-@RestController
-@RequestMapping("/account")
-public class AccountController {
+@WebServlet("/account")
+public class AccountController extends HttpServlet {
 
+    /**
+     * Объект для работы с JSON.
+     */
+    private ObjectMapper objectMapper;
+
+    /**
+     * Сервис для управления пользователями.
+     */
     private UsersService usersService;
 
-    @Autowired
-    public AccountController(UsersService usersService) {
-        this.usersService = usersService;
+    /**
+     * Конструктор для инициализации контроллера аккаунта.
+     */
+    public AccountController() {
+        objectMapper = new ObjectMapper();
+        usersService = UsersService.getInstance();
     }
 
-    @PutMapping
-    public ResponseEntity<String> editAccount(HttpServletRequest req, @RequestBody UserDTO userDTO) {
+    /**
+     * Обрабатывает HTTP PUT-запрос для редактирования аккаунта пользователя.
+     *
+     * @param req  HTTP-запрос.
+     * @param resp HTTP-ответ.
+     * @throws ServletException если возникает ошибка в процессе обработки.
+     * @throws IOException      если возникает ошибка ввода-вывода.
+     */
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
         try {
-            usersService.redactUser(req, userDTO);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"message\": \"Account was redacted\"}");
+            usersService.redactUser(req, objectMapper.readValue(req.getReader(), UserDTO.class));
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write("{\"message\": \"Account was redacted: \"" +
+                    objectMapper.writeValueAsString(req.getSession().getAttribute("user")) + "}");
+        } catch (IOException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
         } catch (UserIllegalRequestException e) {
-           return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
+            resp.setStatus(e.getErrorCode());
+            resp.getWriter().write(e.getMessage());
         }
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> deleteAccount(HttpServletRequest req) {
+    /**
+     * Обрабатывает HTTP DELETE-запрос для удаления аккаунта пользователя.
+     *
+     * @param req  HTTP-запрос.
+     * @param resp HTTP-ответ.
+     * @throws ServletException если возникает ошибка в процессе обработки.
+     * @throws IOException      если возникает ошибка ввода-вывода.
+     */
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
         try {
             usersService.removeAccount(req);
-            return ResponseEntity.ok("{\"message\": \"Account was deleted\"}");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write("{\"message\": \"Account removed\"}");
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
+            resp.setStatus(e.getErrorCode());
+            resp.getWriter().write(e.getMessage());
         }
     }
 }

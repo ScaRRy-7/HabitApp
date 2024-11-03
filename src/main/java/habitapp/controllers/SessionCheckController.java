@@ -8,11 +8,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -21,17 +16,32 @@ import java.io.IOException;
  * Обрабатывает HTTP-запросы для проверки, авторизован ли пользователь.
  */
 @Loggable
-@RestController
-@RequestMapping("/checksession")
-public class SessionCheckController {
+@WebServlet("/checksession")
+public class SessionCheckController extends HttpServlet {
 
-    public ResponseEntity<String> checkSession(HttpServletRequest req) throws ServletException, IOException {
+    private final ObjectMapper objectMapper = new ObjectMapper(); // Объект для сериализации и десериализации JSON
+
+    /**
+     * Обрабатывает GET-запрос для проверки состояния сессии пользователя.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws ServletException если возникает ошибка сервлета
+     * @throws IOException      если возникает ошибка ввода-вывода
+     */
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
         UserDTO userDTO = (UserDTO) req.getSession().getAttribute("user"); // Получаем пользователя из сессии
+
         if (userDTO != null) {
-            return ResponseEntity.ok("{\"message\": \"user logged in: " + userDTO.getEmail() + "\"}");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write("{\"message\": \"user logged in: " + userDTO.getEmail() + "\"}");
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"user not logged in\"}");
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.getWriter().write("{\"message\": \"user not logged in\"}");
         }
     }
 }

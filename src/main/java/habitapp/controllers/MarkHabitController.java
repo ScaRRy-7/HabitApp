@@ -12,14 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -29,27 +21,46 @@ import java.io.IOException;
  */
 @Loggable
 @WebServlet("/markhabit")
-@RestController
-@RequestMapping("/markhabit")
 public class MarkHabitController extends HttpServlet {
 
-    public MarkHabitController(HabitsService habitsService) {
-        this.habitsService = habitsService;
+    /**
+     * Конструктор контроллера отметки привычек.
+     * Инициализирует сервис привычек и объект маппера для работы с JSON.
+     */
+    public MarkHabitController() {
+        this.habitsService = HabitsService.getInstance();
+        this.objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
+    @Setter
     private HabitsService habitsService; // Сервис для работы с привычками
+    private final ObjectMapper objectMapper; // Объект для сериализации и десериализации JSON
 
-    @PutMapping
-    public ResponseEntity<String> markHabit(HttpServletRequest req, @RequestBody HabitDTO habitDTO) {
+    /**
+     * Обрабатывает PUT-запрос для отметки привычки как выполненной.
+     *
+     * @param req  HTTP-запрос
+     * @param resp HTTP-ответ
+     * @throws ServletException если возникает ошибка сервлета
+     * @throws IOException      если возникает ошибка ввода-вывода
+     */
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
         try {
+            HabitDTO habitDTO = objectMapper.readValue(req.getReader(), HabitDTO.class);
             habitsService.markHabit(req, habitDTO);
-            return ResponseEntity.ok("{\"message\": \"Habit marked successfully\"}");
-        } catch (HttpMessageNotReadableException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write("{\"message\": \"Habit marked successfully\"}");
+        } catch (IOException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().write("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).contentType(MediaType.APPLICATION_JSON)
-                    .body(e.getMessage());
+            resp.setStatus(e.getErrorCode());
+            resp.getWriter().write(e.getMessage());
         }
     }
 }

@@ -10,7 +10,18 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class UserValidator {
 
-    public UserValidator() {}
+    private static final UserValidator userValidator = new UserValidator();
+
+    /**
+     * Получает экземпляр валидатора пользователя.
+     *
+     * @return Экземпляр UserValidator.
+     */
+    public static UserValidator getInstance() {
+        return userValidator;
+    }
+
+    private UserValidator() {}
 
     /**
      * Проверяет, являются ли данные пользователя действительными.
