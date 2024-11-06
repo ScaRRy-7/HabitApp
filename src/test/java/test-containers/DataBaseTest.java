@@ -32,7 +32,7 @@ public class DataBaseTest {
 
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
             Assertions.assertNotNull(connection);
-            Assertions.assertTrue(connection.isValid(5));
+            Assertions.assertTrue(connection.isValid(1));
         }
     }
 

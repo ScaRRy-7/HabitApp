@@ -1,6 +1,7 @@
 package habitapp.dbconnection;
 
 import habitapp.configuration.ConfigurationManager;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +17,9 @@ import java.sql.SQLException;
  * Реализует паттерн Singleton для обеспечения единственного экземпляра менеджера подключения.
  */
 @Component
+@Slf4j
 public class ConnectionManager {
 
-    private final Logger logger = LoggerFactory.getLogger(ConnectionManager.class);
 
     @Value("${db.url}")
     private String dbUrl;
@@ -41,7 +42,7 @@ public class ConnectionManager {
         try {
             Class.forName("org.postgresql.Driver"); // Загружаем драйвер PostgreSQL
         } catch (ClassNotFoundException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }

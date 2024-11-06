@@ -38,12 +38,14 @@ public enum HabitFrequency {
      * @return Экземпляр {@link HabitFrequency}, соответствующий переданному имени.
      * @throws IllegalArgumentException если не существует частоты привычки с указанным именем.
      */
+
     public static HabitFrequency getFrequencyByName(String name) {
         for (HabitFrequency frequency : HabitFrequency.values()) {
             if (frequency.getName().equals(name)) {
                 return frequency;
             }
         }
-        throw new IllegalArgumentException("Нет такой частоты привычки: " + name);
+        throw new IllegalArgumentException("this habit frequency does not exist!: " + name);
     }
+
 }

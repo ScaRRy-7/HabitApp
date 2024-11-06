@@ -2,12 +2,13 @@ package habitapp.validators;
 
 import habitapp.dto.UserDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
 
 /**
  * Валидатор для проверки данных пользователя.
  * Предоставляет методы для валидации имени, пароля и электронной почты.
  */
+@Component
 public class UserValidator {
 
     public UserValidator() {}
@@ -19,17 +20,9 @@ public class UserValidator {
      * @return true, если данные пользователя действительны, иначе false.
      * @throws UserIllegalRequestException Исключение, если данные пользователя недействительны.
      */
-    public boolean validateUserData(UserDTO userDTO) throws UserIllegalRequestException {
-        if (!isValidEmail(userDTO.getEmail())) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "Недействительный адрес электронной почты.");
-        }
-        if (!isValidPassword(userDTO.getPassword())) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "Недействительный пароль.");
-        }
-        if (!isValidName(userDTO.getName())) {
-            throw new UserIllegalRequestException(HttpServletResponse.SC_BAD_REQUEST, "Недействительное имя.");
-        }
-        return true;
+    public boolean validUserData(UserDTO userDTO) throws UserIllegalRequestException {
+        return isValidEmail(userDTO.getEmail()) && isValidPassword(userDTO.getPassword()) &&
+                isValidName(userDTO.getName());
     }
 
     /**
@@ -61,4 +54,6 @@ public class UserValidator {
     public boolean isValidEmail(String email) {
         return email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     }
+
+
 }

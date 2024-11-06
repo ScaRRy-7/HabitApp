@@ -1,11 +1,13 @@
 package habitapp.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import habitapp.annotations.Loggable;
 import habitapp.dto.HabitDTO;
+import habitapp.dto.MessageDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.HabitsService;
+import habitapp.services.HabitsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -26,17 +28,16 @@ import java.util.List;
 
 
 @Tag(name = "Habits", description = "API for managing user habits")
-@Loggable
 @RestController
 @RequestMapping("/habits")
 public class HabitsController {
 
     @Setter
-    private HabitsService habitsService;
+    private HabitsServiceImpl habitsServiceImpl;
     private final ObjectMapper objectMapper;
 
-    public HabitsController(HabitsService habitsService, ObjectMapper objectMapper) {
-        this.habitsService = habitsService;
+    public HabitsController(HabitsServiceImpl habitsServiceImpl, ObjectMapper objectMapper) {
+        this.habitsServiceImpl = habitsServiceImpl;
         this.objectMapper = objectMapper;
         objectMapper.registerModule(new JavaTimeModule());
     }
@@ -71,11 +72,11 @@ public class HabitsController {
     )
     @PostMapping
     public ResponseEntity<String> createHabit(
-            @Parameter(description = "Request context") HttpServletRequest req,
+            @RequestHeader("Authorization") String authHeader,
             @Parameter(description = "Habit details", required = true) @RequestBody HabitDTO habitDTO
     ) {
         try {
-            habitsService.createHabit(req, habitDTO);
+            habitsServiceImpl.createHabit(authHeader, habitDTO);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
                     .body("{\"message\": \"Habit created successfully\"}");
         } catch (HttpMessageNotReadableException e) {
@@ -104,23 +105,21 @@ public class HabitsController {
             description = "User is not authorized",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     )
-    @ApiResponse(
-            responseCode = "500",
-            description = "Internal server error",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
-    )
     @GetMapping
     public ResponseEntity<String> getHabits(
-            @Parameter(description = "Request context") HttpServletRequest req
-    ) {
+            @RequestHeader("Authorization") String authHeader
+    ) throws JsonProcessingException {
+        MessageDTO messageDTO;
         try {
-            List<HabitDTO> habitDTOList = habitsService.getAllHabits(req);
+            List<HabitDTO> habitDTOList = habitsServiceImpl.getAllHabits(authHeader);
+            messageDTO = new MessageDTO(objectMapper.writeValueAsString(habitDTOList));
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(objectMapper.writeValueAsString(habitDTOList));
+                    .body(jsonResponse);
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            messageDTO = new MessageDTO(e.getMessage());
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
+            return ResponseEntity.status(e.getErrorCode()).body(jsonResponse);
         }
     }
 
@@ -146,16 +145,22 @@ public class HabitsController {
     )
     @DeleteMapping
     public ResponseEntity<String> deleteHabit(
-            @Parameter(description = "Request context") HttpServletRequest req,
+            @RequestHeader("Authorization") String authHeader,
             @Parameter(description = "Habit to delete", required = true) @RequestBody HabitDTO habitDTO
     ) throws IOException {
+        MessageDTO messageDTO;
         try {
-            habitsService.deleteHabit(req, habitDTO);
+            habitsServiceImpl.deleteHabit(authHeader, habitDTO);
+            List<HabitDTO> habits = habitsServiceImpl.getAllHabits(authHeader);
+            messageDTO = new MessageDTO(habits.toString());
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(objectMapper.writeValueAsString(habitsService.getAllHabits(req)));
+                    .body(jsonResponse);
         } catch (HttpMessageNotReadableException e) {
+            messageDTO = new MessageDTO("{\"message\": \"Incorrect json: " + e.getMessage() + "\"}");
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"message\": \"Incorrect json: " + e.getMessage() + "\"}");
+                    .body(jsonResponse);
         } catch (UserIllegalRequestException e) {
             return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
         }
@@ -187,19 +192,27 @@ public class HabitsController {
     )
     @PutMapping
     public ResponseEntity<String> editHabit(
-            @Parameter(description = "Request context") HttpServletRequest req,
+            @RequestHeader("Authorization") String authHeader,
             @Parameter(description = "Original habit", required = true) @RequestBody HabitDTO habitDTO1,
             @Parameter(description = "Updated habit", required = true) @RequestBody HabitDTO habitDTO2
-    ) {
+    ) throws JsonProcessingException {
+        MessageDTO messageDTO;
         try {
-            HabitDTO[] habitDTOs = new HabitDTO[] {habitDTO1, habitDTO2}; habitsService.redactHabit(req, habitDTOs);
+            HabitDTO[] habitDTOs = new HabitDTO[] {habitDTO1, habitDTO2};
+            habitsServiceImpl.redactHabit(authHeader, habitDTOs);
+            messageDTO = new MessageDTO("{\"message\": \"Habit successfully changed\"}");
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Habit successfully changed\"}");
+                    .body(jsonResponse);
         } catch (HttpMessageNotReadableException e) {
+            messageDTO = new MessageDTO("{\"message\": \"Incorrect json: " + e.getMessage() + "\"}");
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"message\": \"Incorrect json: " + e.getMessage() + "\"}");
+                    .body(jsonResponse);
         } catch (UserIllegalRequestException e) {
-            return ResponseEntity.status(e.getErrorCode()).body(e.getMessage());
+            messageDTO = new MessageDTO(e.getMessage());
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
+            return ResponseEntity.status(e.getErrorCode()).body(jsonResponse);
         }
     }
 }

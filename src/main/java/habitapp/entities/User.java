@@ -43,7 +43,7 @@ public final class User {
     /**
      * Флаг, указывающий, заблокирован ли пользователь.
      */
-    private boolean isBlocked = false;
+    private boolean blocked = false;
 
     /**
      * Конструктор для создания нового пользователя.
@@ -56,22 +56,5 @@ public final class User {
         this.name = name;
         this.email = email;
         this.password = password;
-    }
-
-    /**
-     * Устанавливает статус блокировки пользователя.
-     * После вызова этого метода пользователь будет заблокирован.
-     */
-    public void setBlocked() {
-        isBlocked = true;
-    }
-
-    /**
-     * Проверяет, заблокирован ли пользователь.
-     *
-     * @return true, если пользователь заблокирован; false в противном случае
-     */
-    public boolean isBlocked() {
-        return isBlocked;
     }
 }

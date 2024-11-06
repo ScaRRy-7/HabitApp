@@ -2,11 +2,12 @@ package habitapp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import habitapp.dbconnection.ConnectionManager;
-import habitapp.repositories.CompletedDaysRepository;
-import habitapp.repositories.HabitsRepository;
-import habitapp.repositories.UsersRepository;
-import habitapp.services.HabitsService;
-import habitapp.services.UsersService;
+import habitapp.jwt.JwtUtil;
+import habitapp.repositories.CompletedDaysRepositoryImpl;
+import habitapp.repositories.HabitsRepositoryImpl;
+import habitapp.repositories.UsersRepositoryImpl;
+import habitapp.services.HabitsServiceImpl;
+import habitapp.services.UsersServiceImpl;
 import habitapp.validators.UserValidator;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.*;
@@ -28,8 +29,8 @@ public class AppConfig {
     }
 
     @Bean
-    public UsersService usersService() {
-        return new UsersService(userValidator(), usersRepository());
+    public UsersServiceImpl usersServiceImpl() {
+        return new UsersServiceImpl(userValidator(), usersRepositoryImpl(), jwtUtil());
     }
 
     @Bean
@@ -38,8 +39,8 @@ public class AppConfig {
     }
 
     @Bean
-    public UsersRepository usersRepository() {
-        return new UsersRepository(connectionManager());
+    public UsersRepositoryImpl usersRepositoryImpl() {
+        return new UsersRepositoryImpl(connectionManager());
     }
 
     @Bean
@@ -48,18 +49,18 @@ public class AppConfig {
     }
 
     @Bean
-    public HabitsService habitsService() {
-        return new HabitsService(habitsRepository(), usersRepository(), completedDaysRepository());
+    public HabitsServiceImpl habitsServiceImpl() {
+        return new HabitsServiceImpl(usersRepositoryImpl(), habitsRepositoryImpl(), completedDaysRepositoryImpl(), jwtUtil());
     }
 
     @Bean
-    HabitsRepository habitsRepository() {
-        return new HabitsRepository(connectionManager());
+    HabitsRepositoryImpl habitsRepositoryImpl() {
+        return new HabitsRepositoryImpl(connectionManager());
     }
 
     @Bean
-    CompletedDaysRepository completedDaysRepository() {
-        return new CompletedDaysRepository(connectionManager());
+    CompletedDaysRepositoryImpl completedDaysRepositoryImpl() {
+        return new CompletedDaysRepositoryImpl(connectionManager());
     }
 
     @Bean
@@ -69,5 +70,10 @@ public class AppConfig {
         yaml.setResources(new ClassPathResource("application.yml"));
         configurer.setProperties(yaml.getObject());
         return configurer;
+    }
+
+    @Bean
+    JwtUtil jwtUtil() {
+        return new JwtUtil();
     }
 }

@@ -1,7 +1,9 @@
 package habitapp.entities;
 
 import habitapp.enums.HabitFrequency;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,8 @@ import java.time.format.DateTimeFormatter;
  * @author ScaRRy-7
  * @version 1.0
  */
+@AllArgsConstructor
+@NoArgsConstructor
 public class Habit implements Comparable<Habit> {
 
     /**
@@ -77,32 +81,12 @@ public class Habit implements Comparable<Habit> {
         this.isCompleted = false;
     }
 
-    /**
-     * Создает новую привычку с заданными параметрами, включая дату создания и статус выполнения.
-     *
-     * @param name            название привычки
-     * @param description     описание привычки
-     * @param frequency       частота привычки
-     * @param createdDateTime дата и время создания привычки
-     * @param isCompleted     статус выполнения привычки
-     */
-    public Habit(String name, String description, HabitFrequency frequency, LocalDateTime createdDateTime, boolean isCompleted) {
-        this.name = name;
-        this.description = description;
-        this.frequency = frequency;
-        this.createdDateTime = createdDateTime;
-        this.isCompleted = isCompleted;
-    }
-
-
     public Habit(String name, String description, HabitFrequency frequency, boolean isCompleted) {
         this.name = name;
         this.description = description;
         this.isCompleted = isCompleted;
         this.frequency = frequency;
     }
-
-    public Habit() {}
 
     /**
      * Возвращает частоту привычки.

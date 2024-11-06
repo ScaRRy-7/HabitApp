@@ -1,9 +1,12 @@
 package habitapp.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import habitapp.annotations.Loggable;
 import habitapp.dto.HabitDTO;
+import habitapp.dto.MessageDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.HabitsService;
+import habitapp.services.HabitsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,25 +19,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Класс контроллера для отметки привычек.
  * Обрабатывает HTTP-запросы для отметки привычек как выполненных.
  */
 @Tag(name = "Habit Management", description = "API for marking habits")
-@Loggable
 @RestController
 @RequestMapping("/markhabit")
 public class MarkHabitController {
 
-    private final HabitsService habitsService; // Сервис для работы с привычками
+    private final HabitsServiceImpl habitsServiceImpl; // Сервис для работы с привычками
+    private final ObjectMapper objectMapper;
 
-    public MarkHabitController(HabitsService habitsService) {
-        this.habitsService = habitsService;
+    public MarkHabitController(HabitsServiceImpl habitsServiceImpl, ObjectMapper objectMapper) {
+        this.habitsServiceImpl = habitsServiceImpl;
+        this.objectMapper = objectMapper;
     }
 
     @Operation(
@@ -85,27 +86,36 @@ public class MarkHabitController {
     })
     @PutMapping
     public ResponseEntity<String> markHabit(
-            @Parameter(description = "Request context") HttpServletRequest req,
+            @RequestHeader("Authorizaton") String authHeader,
             @Parameter(description = "Habit details", required = true, schema = @Schema(implementation = HabitDTO.class))
-            @RequestBody HabitDTO habitDTO) {
+            @RequestBody HabitDTO habitDTO) throws JsonProcessingException {
+        MessageDTO messageDTO;
         try {
             if (habitDTO == null) {
+                messageDTO = new MessageDTO("{\"message\": \"Habit cannot be null\"}");
+                String jsonResponse = objectMapper.writeValueAsString(messageDTO);
                 return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
-                        .body("{\"message\": \"Habit cannot be null\"}");
+                        .body(jsonResponse);
             }
 
-            habitsService.markHabit(req, habitDTO);
+            habitsServiceImpl.markHabit(authHeader, habitDTO);
+            messageDTO = new MessageDTO("{\"message\": \"Habit marked successfully\"}");
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Habit marked successfully\"}");
+                    .body(jsonResponse);
         } catch (HttpMessageNotReadableException e) {
+            messageDTO = new MessageDTO("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+                    .body(jsonResponse);
         } catch (UserIllegalRequestException e) {
+            messageDTO = new MessageDTO(e.getMessage());
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.status(e.getErrorCode())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(e.getMessage());
+                    .body(jsonResponse);
         }
     }
 }

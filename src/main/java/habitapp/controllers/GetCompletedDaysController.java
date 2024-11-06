@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import habitapp.annotations.Loggable;
 import habitapp.dto.HabitDTO;
+import habitapp.dto.MessageDTO;
 import habitapp.exceptions.UserIllegalRequestException;
-import habitapp.services.HabitsService;
+import habitapp.services.HabitsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,16 +25,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "Statistics", description = "API для получения статистики привычек")
-@Loggable
 @RestController
 @RequestMapping("/statistics")
 public class GetCompletedDaysController {
 
-    private HabitsService habitsService;
+    private HabitsServiceImpl habitsServiceImpl;
     private final ObjectMapper objectMapper;
 
-    public GetCompletedDaysController(HabitsService habitsService, ObjectMapper objectMapper) {
-        this.habitsService = habitsService;
+    public GetCompletedDaysController(HabitsServiceImpl habitsServiceImpl, ObjectMapper objectMapper) {
+        this.habitsServiceImpl = habitsServiceImpl;
         this.objectMapper = objectMapper;
 
         objectMapper.registerModule(new JavaTimeModule());
@@ -72,21 +71,30 @@ public class GetCompletedDaysController {
             )
     })
     @PostMapping
-    public ResponseEntity<String> getHabitStatistics(HttpServletRequest req, @RequestBody HabitDTO habitDTO) {
+    public ResponseEntity<String> getHabitStatistics(@RequestHeader("Authorizaton") String authHeader, @RequestBody HabitDTO habitDTO) throws JsonProcessingException {
+        MessageDTO messageDTO;
         if (habitDTO == null) {
+            messageDTO = new MessageDTO("{\"message\": \"Habit cannot be null\"}");
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Habit cannot be null\"}");
+                    .body(jsonResponse);
         }
 
         try {
-            List<LocalDateTime> habitDTOList = habitsService.getCompletedDays(req, habitDTO);
-            return ResponseEntity.ok(objectMapper.writeValueAsString(habitDTOList));
+            List<LocalDateTime> habitDTOList = habitsServiceImpl.getCompletedDays(authHeader, habitDTO);
+            messageDTO = new MessageDTO(habitDTOList.toString());
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
+            return ResponseEntity.ok(jsonResponse);
         } catch (UserIllegalRequestException e) {
+            messageDTO = new MessageDTO(e.getMessage());
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.status(e.getErrorCode()).contentType(MediaType.APPLICATION_JSON)
-                    .body(e.getMessage());
+                    .body(jsonResponse);
         } catch (HttpMessageNotReadableException | JsonProcessingException e) {
+            messageDTO = new MessageDTO("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+            String jsonResponse = objectMapper.writeValueAsString(messageDTO);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
-                    .body("{\"message\": \"Incorrect json (" + e.getMessage() + ")\"}");
+                    .body(jsonResponse);
         }
     }
 }
