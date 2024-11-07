@@ -25,7 +25,7 @@ public class JwtRequestFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String requestURI = httpRequest.getRequestURI();
-        if (requestURI.equals("/habitapp/register")) {
+        if (requestURI.equals("/habitapp/register") || requestURI.equals("/habitapp/login")) {
             chain.doFilter(request, response);
             return;
         }

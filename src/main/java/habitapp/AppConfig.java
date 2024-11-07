@@ -3,6 +3,8 @@ package habitapp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import habitapp.dbconnection.ConnectionManager;
 import habitapp.jwt.JwtUtil;
+import habitapp.mappers.HabitMapper;
+import habitapp.mappers.UserMapper;
 import habitapp.repositories.CompletedDaysRepositoryImpl;
 import habitapp.repositories.HabitsRepositoryImpl;
 import habitapp.repositories.UsersRepositoryImpl;
@@ -30,7 +32,7 @@ public class AppConfig {
 
     @Bean
     public UsersServiceImpl usersServiceImpl() {
-        return new UsersServiceImpl(userValidator(), usersRepositoryImpl(), jwtUtil());
+        return new UsersServiceImpl(userValidator(), usersRepositoryImpl(), jwtUtil(), userMapper());
     }
 
     @Bean
@@ -50,7 +52,7 @@ public class AppConfig {
 
     @Bean
     public HabitsServiceImpl habitsServiceImpl() {
-        return new HabitsServiceImpl(usersRepositoryImpl(), habitsRepositoryImpl(), completedDaysRepositoryImpl(), jwtUtil());
+        return new HabitsServiceImpl(usersRepositoryImpl(), habitsRepositoryImpl(), completedDaysRepositoryImpl(), jwtUtil(), userMapper(), habitMapper());
     }
 
     @Bean
@@ -67,7 +69,7 @@ public class AppConfig {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
         YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
-        yaml.setResources(new ClassPathResource("application.yml"));
+        yaml.setResources(new ClassPathResource("application.yml"), new ClassPathResource("jwt.yml"));
         configurer.setProperties(yaml.getObject());
         return configurer;
     }
@@ -75,5 +77,15 @@ public class AppConfig {
     @Bean
     JwtUtil jwtUtil() {
         return new JwtUtil();
+    }
+
+    @Bean
+    public UserMapper userMapper() {
+        return UserMapper.INSTANCE;
+    }
+
+    @Bean
+    public HabitMapper habitMapper() {
+        return HabitMapper.INSTANCE;
     }
 }
