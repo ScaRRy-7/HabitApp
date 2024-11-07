@@ -84,21 +84,10 @@ public class RegisterController {
             @RequestBody UserDTO userDTO) throws JsonProcessingException {
         MessageDTO messageDTO;
         try {
-            if (userDTO == null) {
-                messageDTO = new MessageDTO("{\"message\": \"user cannot be null\"}");
-                String jsonResponse = objectMapper.writeValueAsString(messageDTO);
-                return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON)
-                        .body(jsonResponse);
-            }
-
-            usersServiceImpl.registerUser(userDTO);
-            String token  = jwtUtil.generateToken(userDTO.getEmail());
-            log.debug(token);
+            String token = usersServiceImpl.registerUser(userDTO);
             messageDTO = new MessageDTO("User registered successfully, token: " + token);
             String jsonResponse = objectMapper.writeValueAsString(messageDTO);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(jsonResponse);
+            return ResponseEntity.ok(jsonResponse);
         } catch (UserIllegalRequestException e) {
             messageDTO = new MessageDTO(e.getMessage());
             String jsonResponse = objectMapper.writeValueAsString(messageDTO);
