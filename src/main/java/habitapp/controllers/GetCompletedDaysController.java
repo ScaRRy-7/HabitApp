@@ -71,7 +71,7 @@ public class GetCompletedDaysController {
             )
     })
     @PostMapping
-    public ResponseEntity<String> getHabitStatistics(@RequestHeader("Authorizaton") String authHeader, @RequestBody HabitDTO habitDTO) throws JsonProcessingException {
+    public ResponseEntity<String> getHabitStatistics(@RequestHeader("Authorization") String authHeader, @RequestBody HabitDTO habitDTO) throws JsonProcessingException {
         MessageDTO messageDTO;
         if (habitDTO == null) {
             messageDTO = new MessageDTO("{\"message\": \"Habit cannot be null\"}");
