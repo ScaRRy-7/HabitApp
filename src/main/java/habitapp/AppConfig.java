@@ -11,11 +11,15 @@ import habitapp.repositories.UsersRepositoryImpl;
 import habitapp.services.HabitsServiceImpl;
 import habitapp.services.UsersServiceImpl;
 import habitapp.validators.UserValidator;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebMvc
@@ -87,5 +91,23 @@ public class AppConfig {
     @Bean
     public HabitMapper habitMapper() {
         return HabitMapper.INSTANCE;
+    }
+
+    @Bean
+    public SpringLiquibase liquibase() {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setChangeLog("classpath:db.changelog/changelog.xml");
+        liquibase.setDataSource(dataSource());
+        return liquibase;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        dataSourceBuilder.driverClassName("org.postgresql.Driver");
+        dataSourceBuilder.url("${db.url}");
+        dataSourceBuilder.username("${db.username}");
+        dataSourceBuilder.password("${db.password}");
+        return dataSourceBuilder.build();
     }
 }

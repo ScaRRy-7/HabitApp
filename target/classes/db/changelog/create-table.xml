@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        logicalFilePath="db/changelog/changelog.xml">
+
+    <changeSet id="001-create-schema" author="ScaRRy-7">
+
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS habitschema;
+            CREATE SCHEMA IF NOT EXISTS services;
+        </sql>
+    </changeSet>
+
+    <changeSet id="002-create-sequence" author="ScaRRy-7">
+
+        <sql>
+
+            CREATE SEQUENCE IF NOT EXISTS users_sequence START 1;
+            CREATE SEQUENCE IF NOT EXISTS habits_sequence START 1;
+            CREATE SEQUENCE IF NOT EXISTS completed_days_sequence START 1;
+        </sql>
+    </changeSet>
+
+    <changeSet id="003-create-table-users" author="ScaRRy-7">
+        <createSequence sequenceName="users_sequence" schemaName="habitschema"/>
+        <createTable tableName="users" schemaName="habitschema" >
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('users_sequence')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_blocked" type="BOOLEAN" defaultValue="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-create-table-habits" author="ScaRRy-7">
+        <createSequence sequenceName="habits_sequence" schemaName="habitschema"/>
+        <createTable tableName="habits" schemaName="habitschema">
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('habits_sequence')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="frequency" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date_time" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_completed" type="BOOLEAN" defaultValue="false"/>
+            <column name="user_id" type="BIGINT">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="005-create-table-completed-days" author="ScaRRy-7">
+        <createSequence sequenceName="completed_days_sequence" schemaName="habitschema"/>
+        <createTable tableName="completed_days" schemaName="habitschema">
+            <column name="id" type="BIGINT" defaultValue="NEXTVAL('completed_days_sequence')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="completed_date" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="habit_id" type="BIGINT">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="006-create-foreign-keys" author="ScaRRy-7">
+        <addForeignKeyConstraint baseTableSchemaName="habitschema" baseTableName="habits" baseColumnNames="user_id"
+                                 constraintName="fk_habits_users"
+                                 referencedTableSchemaName="habitschema" referencedTableName="users" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableSchemaName="habitschema" baseTableName="completed_days" baseColumnNames="habit_id"
+                                 constraintName="fk_completed_days_habits"
+                                 referencedTableSchemaName="habitschema" referencedTableName="habits" referencedColumnNames="id"   onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
