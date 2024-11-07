@@ -8,12 +8,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="HabitApp" />
-        <module name="habitapp-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="demo" target="17" />
       <module name="habitapp-audit-starter" target="17" />
+      <module name="habitapp-core" target="17" />
       <module name="habitapp-logging-starter" target="17" />
     </bytecodeTargetLevel>
   </component>
