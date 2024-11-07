@@ -1,3 +1,0 @@
-jwt:
-  secret: myveryveryandcomplexsecretkeyhereforjwtofcourse1092384756
-  expiration: 3600000 # 1 час в миллисекундах
