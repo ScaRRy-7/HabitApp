@@ -12,6 +12,7 @@ import habitapp.services.HabitsServiceImpl;
 import habitapp.services.UsersServiceImpl;
 import habitapp.validators.UserValidator;
 import liquibase.integration.spring.SpringLiquibase;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.*;
@@ -28,6 +29,12 @@ import javax.sql.DataSource;
 @Import(SwaggerConfig.class)
 public class AppConfig {
 
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private HabitMapper habitMapper;
+
     @Bean
     @Scope("prototype")
     public ObjectMapper objectMapper() {
@@ -36,7 +43,7 @@ public class AppConfig {
 
     @Bean
     public UsersServiceImpl usersServiceImpl() {
-        return new UsersServiceImpl(userValidator(), usersRepositoryImpl(), jwtUtil(), userMapper());
+        return new UsersServiceImpl(userValidator(), usersRepositoryImpl(), jwtUtil(), userMapper);
     }
 
     @Bean
@@ -56,7 +63,7 @@ public class AppConfig {
 
     @Bean
     public HabitsServiceImpl habitsServiceImpl() {
-        return new HabitsServiceImpl(usersRepositoryImpl(), habitsRepositoryImpl(), completedDaysRepositoryImpl(), jwtUtil(), userMapper(), habitMapper());
+        return new HabitsServiceImpl(usersRepositoryImpl(), habitsRepositoryImpl(), completedDaysRepositoryImpl(), jwtUtil(), userMapper, habitMapper);
     }
 
     @Bean
@@ -84,30 +91,20 @@ public class AppConfig {
     }
 
     @Bean
-    public UserMapper userMapper() {
-        return UserMapper.INSTANCE;
-    }
-
-    @Bean
-    public HabitMapper habitMapper() {
-        return HabitMapper.INSTANCE;
-    }
-
-    @Bean
     public SpringLiquibase liquibase() {
         SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setChangeLog("classpath:db.changelog/changelog.xml");
+        liquibase.setChangeLog("classpath:/db/changelog/changelog.xml");
         liquibase.setDataSource(dataSource());
         return liquibase;
     }
 
     @Bean
     public DataSource dataSource() {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.postgresql.Driver");
-        dataSourceBuilder.url("${db.url}");
-        dataSourceBuilder.username("${db.username}");
-        dataSourceBuilder.password("${db.password}");
+        dataSourceBuilder.url("jdbc:postgresql://localhost:5432/habitappdb");
+        dataSourceBuilder.username("habitapp");
+        dataSourceBuilder.password("habitapppassword");
         return dataSourceBuilder.build();
     }
 }

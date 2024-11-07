@@ -3,3 +3,6 @@ db:
   user: habitapp
   password: habitapppassword
   name: habitappdb
+
+server:
+  port: 6666

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Account Management", description = "API для управления аккаунтом")
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/habitapp")
 public class AccountController {
 
 
@@ -39,7 +39,7 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "User is not unauthorized"),
             @ApiResponse(responseCode = "400", description = "Invalid JSON")
     })
-    @PutMapping
+    @PutMapping("editaccount")
     public ResponseEntity<String> editAccount(@RequestHeader("Authorization") String authHeader, @RequestBody UserDTO userDTO) throws JsonProcessingException {
         MessageDTO messageDTO;
         try {
@@ -66,7 +66,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Account successfully deleted"),
             @ApiResponse(responseCode = "401", description = "User is not unauthorized")
     })
-    @DeleteMapping
+    @DeleteMapping("/deleteaccount")
     public ResponseEntity<String> deleteAccount(@RequestHeader("Authorization") String authHeader) throws JsonProcessingException {
         MessageDTO messageDTO;
         try {

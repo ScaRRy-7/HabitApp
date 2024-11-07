@@ -6,6 +6,7 @@ import jakarta.servlet.Filter;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,10 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 @Configuration
 public class WebAppInitializer implements WebApplicationInitializer {
+
+    @Autowired
+    JwtRequestFilter jwtRequestFilter;
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
@@ -30,7 +35,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
     @Bean
     public FilterRegistrationBean<JwtRequestFilter> jwtFilter() {
         FilterRegistrationBean<JwtRequestFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new JwtRequestFilter());
+        registrationBean.setFilter(jwtRequestFilter);
         registrationBean.addUrlPatterns("/*");
         return registrationBean;
     }

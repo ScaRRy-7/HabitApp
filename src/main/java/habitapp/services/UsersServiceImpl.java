@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class UsersServiceImpl implements UsersService {
 
     private final UserValidator userValidator;
@@ -32,13 +33,7 @@ public class UsersServiceImpl implements UsersService {
 
     private final UserMapper userMapper;
     
-    public UsersServiceImpl(UserValidator userValidator, UsersRepositoryImpl usersRepositoryImpl, JwtUtil jwtUtil, UserMapper userMapper) {
-        this.userValidator = userValidator;
-        this.usersRepositoryImpl = usersRepositoryImpl;
-        this.jwtUtil = jwtUtil;
-        this.userMapper = userMapper;
-    }
-    
+
 
     @Override
     public String registerUser(UserDTO userDTO) throws UserIllegalRequestException {

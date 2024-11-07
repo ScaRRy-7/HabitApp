@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "Habit Management", description = "API for marking habits")
 @RestController
-@RequestMapping("/markhabit")
+@RequestMapping("/habitapp")
 public class MarkHabitController {
 
     private final HabitsServiceImpl habitsServiceImpl; // Сервис для работы с привычками
@@ -84,7 +84,7 @@ public class MarkHabitController {
                     )
             )
     })
-    @PutMapping
+    @PutMapping("/markhabit")
     public ResponseEntity<String> markHabit(
             @RequestHeader("Authorizaton") String authHeader,
             @Parameter(description = "Habit details", required = true, schema = @Schema(implementation = HabitDTO.class))

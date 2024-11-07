@@ -26,7 +26,7 @@ import java.util.List;
 
 @Tag(name = "Statistics", description = "API для получения статистики привычек")
 @RestController
-@RequestMapping("/statistics")
+@RequestMapping("/habitapp")
 public class GetCompletedDaysController {
 
     private HabitsServiceImpl habitsServiceImpl;
@@ -70,7 +70,7 @@ public class GetCompletedDaysController {
                     )
             )
     })
-    @PostMapping
+    @PostMapping("/statistics")
     public ResponseEntity<String> getHabitStatistics(@RequestHeader("Authorization") String authHeader, @RequestBody HabitDTO habitDTO) throws JsonProcessingException {
         MessageDTO messageDTO;
         if (habitDTO == null) {

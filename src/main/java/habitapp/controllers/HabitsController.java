@@ -29,7 +29,7 @@ import java.util.List;
 
 @Tag(name = "Habits", description = "API for managing user habits")
 @RestController
-@RequestMapping("/habits")
+@RequestMapping("/habitapp")
 public class HabitsController {
 
     @Setter
@@ -70,7 +70,7 @@ public class HabitsController {
                     schema = @Schema(example = "{\"message\": \"Incorrect json\"}")
             )
     )
-    @PostMapping
+    @PostMapping("/habits")
     public ResponseEntity<String> createHabit(
             @RequestHeader("Authorization") String authHeader,
             @Parameter(description = "Habit details", required = true) @RequestBody HabitDTO habitDTO
@@ -105,7 +105,7 @@ public class HabitsController {
             description = "User is not authorized",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     )
-    @GetMapping
+    @GetMapping("/habits")
     public ResponseEntity<String> getHabits(
             @RequestHeader("Authorization") String authHeader
     ) throws JsonProcessingException {
@@ -143,7 +143,7 @@ public class HabitsController {
             responseCode = "404",
             description = "Habit not found"
     )
-    @DeleteMapping
+    @DeleteMapping("/habits")
     public ResponseEntity<String> deleteHabit(
             @RequestHeader("Authorization") String authHeader,
             @Parameter(description = "Habit to delete", required = true) @RequestBody HabitDTO habitDTO
@@ -190,7 +190,7 @@ public class HabitsController {
             responseCode = "404",
             description = "Habit not found"
     )
-    @PutMapping
+    @PutMapping("/habits")
     public ResponseEntity<String> editHabit(
             @RequestHeader("Authorization") String authHeader,
             @Parameter(description = "Original habit", required = true) @RequestBody HabitDTO habitDTO1,

@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "User  Registration", description = "API for user registration operations")
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/habitapp")
 @Slf4j
 public class RegisterController {
 
@@ -78,7 +78,7 @@ public class RegisterController {
                     )
             )
     })
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<String> register(
             @Parameter(description = "User registration details", required = true, schema = @Schema(implementation = UserDTO.class))
             @RequestBody UserDTO userDTO) throws JsonProcessingException {

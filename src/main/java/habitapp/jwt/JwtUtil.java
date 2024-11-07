@@ -10,16 +10,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String SECRET_KEY;
-    @Value("${jwt.expiration}")
-    private long EXPIRATION_TIME;
+    //@Value("${jwt.secret}")
+    private String SECRET_KEY = "myveryveryandcomplexsecretkeyhereforjwtofcourse1092384756";
+    //@Value("${jwt.expiration}")
+    private long EXPIRATION_TIME = 3600000;
 
     public String generateToken(String email) {
-        Map<String, Object> claims =  new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
         return createToken(claims, email);
     }
 

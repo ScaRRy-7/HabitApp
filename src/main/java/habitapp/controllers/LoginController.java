@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Loggable
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/habitapp")
 public class LoginController {
 
 
@@ -38,7 +38,7 @@ public class LoginController {
 
     private UsersServiceImpl usersServiceImpl; // Сервис для работы с пользователями
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<String> login(@Parameter(description = "User authentification details", required = true,
             schema = @Schema(implementation = UserDTO.class)) @RequestBody UserDTO userDTO) throws JsonProcessingException {
         MessageDTO messageDTO;
