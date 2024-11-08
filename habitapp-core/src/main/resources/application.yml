@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/habitappdb
+    username: habitapp
+    password: habitapppassword
+
+server:
+  port: 6666
+
+security:
+  jwt:
+    secret: myveryveryandcomplexsecretkeyhereforjwtofcourse1092384756
+    expiration: 3600000

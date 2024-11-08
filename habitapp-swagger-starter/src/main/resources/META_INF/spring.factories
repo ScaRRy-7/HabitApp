@@ -1,0 +1,3 @@
+# habitapp-swagger-starter/src/main/resources/META-INF/spring.factories
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+habitapp.com.habitappswaggerstarter.config.SwaggerAutoConfiguration

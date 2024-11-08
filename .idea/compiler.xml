@@ -7,21 +7,23 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="HabitApp" />
+        <module name="habitapp-core" />
+        <module name="habitapp-audit-logger-starter" />
+        <module name="habitapp-swagger-starter" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="demo" target="17" />
       <module name="habitapp-audit-starter" target="17" />
-      <module name="habitapp-core" target="17" />
       <module name="habitapp-logging-starter" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="HabitApp" options="-parameters" />
+      <module name="HabitApp" options="" />
+      <module name="habitapp-audit-logger-starter" options="" />
       <module name="habitapp-audit-starter" options="-parameters" />
-      <module name="habitapp-core" options="-parameters" />
+      <module name="habitapp-core" options="" />
       <module name="habitapp-logging-starter" options="-parameters" />
     </option>
   </component>
